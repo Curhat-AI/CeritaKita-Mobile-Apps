@@ -49,10 +49,22 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
 
 dependencies {
-    implementation("com.facebook.shimmer:shimmer:0.5.0")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation("com.github.tehras:charts:0.2.4-alpha")
+        // For Jetpack Compose.
+        implementation("com.patrykandpatrick.vico:compose:2.0.0-alpha.19")
+        // For `compose`. Creates a `ChartStyle` based on an M2 Material Theme.
+        implementation("com.patrykandpatrick.vico:compose-m2:2.0.0-alpha.19")
+        // For `compose`. Creates a `ChartStyle` based on an M3 Material Theme.
+        implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.19")
+        // Houses the core logic for charts and other elements. Included in all other modules.
+        implementation("com.patrykandpatrick.vico:core:2.0.0-alpha.19")
+        // For the view system.
+        implementation("com.patrykandpatrick.vico:views:2.0.0-alpha.19")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

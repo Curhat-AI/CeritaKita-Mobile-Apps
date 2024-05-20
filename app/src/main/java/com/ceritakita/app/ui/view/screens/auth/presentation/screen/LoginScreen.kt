@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.navigation.NavController
 import androidx.compose.ui.Modifier
@@ -30,13 +32,26 @@ import com.ceritakita.app.R
 import com.ceritakita.app.ui.view.main_component.TextBigDescription
 import com.ceritakita.app.ui.view.main_component.TextBigHeader
 import com.ceritakita.app.ui.view.main_component.TextMediumDescription
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer.ColumnProvider.Companion.series
 
+data class EmojiDataPoint(val value: Float, val emoji: String)
 
 @Composable
 fun LoginScreen(navController: NavController) {
+
+
     Column (
         modifier = Modifier
-            .fillMaxSize() .padding(WindowInsets.systemBars.asPaddingValues()).padding(horizontal = 20.dp)
+            .fillMaxSize()
+            .padding(WindowInsets.systemBars.asPaddingValues())
+            .padding(horizontal = 20.dp)
     ){
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -53,9 +68,27 @@ fun LoginScreen(navController: NavController) {
         Spacer(modifier = Modifier.heightIn(5.dp))
         TextMediumDescription(text = "Masuk untuk mengakses seluruh fitur Curhat.ai",)
         Spacer(modifier = Modifier.heightIn(10.dp))
+        LineChartExample()
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun LineChartExample() {
+    val modelProducer = remember { CartesianChartModelProducer.build() }
+    LaunchedEffect(Unit) { modelProducer.tryRunTransaction { lineSeries { series(4, 12, 8, 16) } } }
+    CartesianChartHost(
+        rememberCartesianChart(
+            rememberLineCartesianLayer(),
+            startAxis = rememberStartAxis(title = "hello"),
+            bottomAxis = rememberBottomAxis(),
+        ),
+        modelProducer,
+    )
+
+
+
+}
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
