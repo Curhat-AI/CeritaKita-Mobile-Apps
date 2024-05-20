@@ -16,6 +16,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavGraph
+import com.ceritakita.app.ui.navigation.Navigation
 import com.ceritakita.app.ui.theme.CeritaKitaTheme
 
 class MainActivity : ComponentActivity() {
@@ -24,35 +26,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CeritaKitaTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                Navigation()
             }
         }
     }
 }
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Column {
-        Text(
-            text = "Hello $name!",
-            modifier = modifier
-        )
-        Text(text = "Description",
-            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            )
-    }
-
-}
-
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-    CeritaKitaTheme {
-        Greeting("Android")
-    }
+fun Previews() {
+    Navigation()
 }
+
