@@ -27,6 +27,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.button.ButtonPrimary
+import com.ceritakita.app._core.presentation.components.buttons.ButtonType
+import com.ceritakita.app._core.presentation.components.buttons.CustomButton
 import com.ceritakita.app._core.presentation.components.texts.BodyMedium
 import com.ceritakita.app._core.presentation.components.texts.HeadingLarge
 import com.ceritakita.app._core.presentation.components.texts.HeadingSmall
@@ -76,7 +78,7 @@ fun LoginScreen(navController: NavController) {
         BodyMedium(modifier = Modifier.align(Alignment.End),text = "Lupa Password?", color = Color.Blue)
 
         Spacer(modifier = Modifier.heightIn(10.dp))
-        ButtonPrimary()
+        CustomButton(text = "Masuk", onClick = { /*TODO*/ }, buttonType = ButtonType.Primary)
         BodyMedium(modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 30.dp) ,text = "atau", color = Color.Gray, textAlign = TextAlign.Center)
