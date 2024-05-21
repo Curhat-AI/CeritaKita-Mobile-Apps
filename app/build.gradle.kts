@@ -73,6 +73,7 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.compose.preview.renderer)
     ksp("androidx.room:room-compiler:2.5.2")
     implementation("androidx.room:room-runtime:2.5.2")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")

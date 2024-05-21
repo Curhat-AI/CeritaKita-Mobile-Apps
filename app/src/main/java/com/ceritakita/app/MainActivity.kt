@@ -17,8 +17,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph
-import com.ceritakita.app.ui.navigation.Navigation
-import com.ceritakita.app.ui.theme.CeritaKitaTheme
+import com.ceritakita.app._core.presentation.ui.navigation.Navigation
+import com.ceritakita.app._core.presentation.ui.theme.CeritaKitaTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
