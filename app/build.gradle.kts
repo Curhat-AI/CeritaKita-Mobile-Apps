@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
-    id("kotlin-android")
+    alias(libs.plugins.jetbrains.kotlin.android)
 }
 
 android {
@@ -53,31 +53,25 @@ android {
 }
 
 dependencies {
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
-    implementation("com.github.tehras:charts:0.2.4-alpha")
-        // For Jetpack Compose.
-        implementation("com.patrykandpatrick.vico:compose:2.0.0-alpha.19")
-        // For `compose`. Creates a `ChartStyle` based on an M2 Material Theme.
-        implementation("com.patrykandpatrick.vico:compose-m2:2.0.0-alpha.19")
-        // For `compose`. Creates a `ChartStyle` based on an M3 Material Theme.
-        implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.19")
-        // Houses the core logic for charts and other elements. Included in all other modules.
-        implementation("com.patrykandpatrick.vico:core:2.0.0-alpha.19")
-        // For the view system.
-        implementation("com.patrykandpatrick.vico:views:2.0.0-alpha.19")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation(libs.mpandroidchart)
+    implementation(libs.charts)
+    implementation(libs.compose)
+    implementation(libs.compose.m2)
+    implementation(libs.compose.m3)
+    implementation(libs.core)
+    implementation(libs.views)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.glide)
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.ui.text.google.fonts)
-    implementation(libs.compose.preview.renderer)
-    ksp("androidx.room:room-compiler:2.5.2")
-    implementation("androidx.room:room-runtime:2.5.2")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("androidx.room:room-ktx:2.5.2")
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.okhttp)
+    implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
