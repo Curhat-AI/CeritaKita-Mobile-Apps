@@ -27,7 +27,6 @@ fun HeadingLarge(
     fontWeight: FontWeight = FontWeight.Bold,
     fontFamily: FontFamily = dmSansFontFamily,
     modifier: Modifier = Modifier,
-    lineHeight: TextUnit = 1.sp,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: androidx.compose.ui.text.style.TextAlign? = null  // Optional text alignment
@@ -39,7 +38,6 @@ fun HeadingLarge(
             fontSize = fontSize,
             fontWeight = fontWeight,
             fontFamily = fontFamily,
-            lineHeight = lineHeight
         ),
         modifier = modifier,
         maxLines = maxLines,
@@ -56,7 +54,6 @@ fun HeadingMedium(
     fontWeight: FontWeight = FontWeight.Bold,
     fontFamily: FontFamily = dmSansFontFamily,
     modifier: Modifier = Modifier,
-    lineHeight: TextUnit = 1.sp,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: androidx.compose.ui.text.style.TextAlign? = null  // Optional text alignment
@@ -68,7 +65,6 @@ fun HeadingMedium(
             fontSize = fontSize,
             fontWeight = fontWeight,
             fontFamily = fontFamily,
-            lineHeight = lineHeight
         ),
         modifier = modifier,
         maxLines = maxLines,
@@ -85,7 +81,6 @@ fun HeadingSmall(
     fontWeight: FontWeight = FontWeight.Bold,
     fontFamily: FontFamily = dmSansFontFamily,
     modifier: Modifier = Modifier,
-    lineHeight: TextUnit = 1.sp,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: androidx.compose.ui.text.style.TextAlign? = null  // Optional text alignment
@@ -97,7 +92,6 @@ fun HeadingSmall(
             fontSize = fontSize,
             fontWeight = fontWeight,
             fontFamily = fontFamily,
-            lineHeight = lineHeight
         ),
         modifier = modifier,
         maxLines = maxLines,
@@ -114,7 +108,6 @@ fun TitleLarge(
     fontWeight: FontWeight = FontWeight.Bold,
     fontFamily: FontFamily = dmSansFontFamily,
     modifier: Modifier = Modifier,
-    lineHeight: TextUnit = 1.sp,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: androidx.compose.ui.text.style.TextAlign? = null  // Optional text alignment
@@ -126,7 +119,6 @@ fun TitleLarge(
             fontSize = fontSize,
             fontWeight = fontWeight,
             fontFamily = fontFamily,
-            lineHeight = lineHeight
         ),
         modifier = modifier,
         maxLines = maxLines,
@@ -143,7 +135,6 @@ fun TitleMedium(
     fontWeight: FontWeight = FontWeight.Bold,
     fontFamily: FontFamily = dmSansFontFamily,
     modifier: Modifier = Modifier,
-    lineHeight: TextUnit = 1.sp,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: androidx.compose.ui.text.style.TextAlign? = null  // Optional text alignment
@@ -155,7 +146,6 @@ fun TitleMedium(
             fontSize = fontSize,
             fontWeight = fontWeight,
             fontFamily = fontFamily,
-            lineHeight = lineHeight
         ),
         modifier = modifier,
         maxLines = maxLines,
@@ -172,7 +162,6 @@ fun TitleSmall(
     fontWeight: FontWeight = FontWeight.Bold,
     fontFamily: FontFamily = dmSansFontFamily,
     modifier: Modifier = Modifier,
-    lineHeight: TextUnit = 1.sp,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: androidx.compose.ui.text.style.TextAlign? = null  // Optional text alignment
@@ -184,7 +173,6 @@ fun TitleSmall(
             fontSize = fontSize,
             fontWeight = fontWeight,
             fontFamily = fontFamily,
-            lineHeight = lineHeight
         ),
         modifier = modifier,
         maxLines = maxLines,
@@ -201,7 +189,6 @@ fun LabelLarge(
     fontWeight: FontWeight = FontWeight.SemiBold,
     fontFamily: FontFamily = dmSansFontFamily,
     modifier: Modifier = Modifier,
-    lineHeight: TextUnit = 1.sp,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: androidx.compose.ui.text.style.TextAlign? = null  // Optional text alignment
@@ -213,7 +200,6 @@ fun LabelLarge(
             fontSize = fontSize,
             fontWeight = fontWeight,
             fontFamily = fontFamily,
-            lineHeight = lineHeight
         ),
         modifier = modifier,
         maxLines = maxLines,
@@ -230,7 +216,6 @@ fun LabelMedium(
     fontWeight: FontWeight = FontWeight.SemiBold,
     fontFamily: FontFamily = dmSansFontFamily,
     modifier: Modifier = Modifier,
-    lineHeight: TextUnit = 1.sp,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: androidx.compose.ui.text.style.TextAlign? = null  // Optional text alignment
@@ -242,7 +227,6 @@ fun LabelMedium(
             fontSize = fontSize,
             fontWeight = fontWeight,
             fontFamily = fontFamily,
-            lineHeight = lineHeight
         ),
         modifier = modifier,
         maxLines = maxLines,
@@ -259,7 +243,6 @@ fun LabelSmall(
     fontWeight: FontWeight = FontWeight.SemiBold,
     fontFamily: FontFamily = dmSansFontFamily,
     modifier: Modifier = Modifier,
-    lineHeight: TextUnit = 1.sp,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: androidx.compose.ui.text.style.TextAlign? = null  // Optional text alignment
@@ -271,7 +254,6 @@ fun LabelSmall(
             fontSize = fontSize,
             fontWeight = fontWeight,
             fontFamily = fontFamily,
-            lineHeight = lineHeight
         ),
         modifier = modifier,
         maxLines = maxLines,
@@ -288,7 +270,6 @@ fun BodyLarge(
     fontWeight: FontWeight = FontWeight.Normal,
     fontFamily: FontFamily = dmSansFontFamily,
     modifier: Modifier = Modifier,
-    lineHeight: TextUnit = 1.5.sp,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: androidx.compose.ui.text.style.TextAlign? = null  // Optional text alignment
@@ -300,7 +281,6 @@ fun BodyLarge(
             fontSize = fontSize,
             fontWeight = fontWeight,
             fontFamily = fontFamily,
-            lineHeight = lineHeight
         ),
         modifier = modifier,
         maxLines = maxLines,
@@ -317,7 +297,6 @@ fun BodyMedium(
     fontWeight: FontWeight = FontWeight.Normal,
     fontFamily: FontFamily = dmSansFontFamily,
     modifier: Modifier = Modifier,
-    lineHeight: TextUnit = 1.5.sp,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: androidx.compose.ui.text.style.TextAlign? = null  // Optional text alignment
@@ -329,7 +308,6 @@ fun BodyMedium(
             fontSize = fontSize,
             fontWeight = fontWeight,
             fontFamily = fontFamily,
-            lineHeight = lineHeight
         ),
         modifier = modifier,
         maxLines = maxLines,
@@ -346,7 +324,6 @@ fun BodySmall(
     fontWeight: FontWeight = FontWeight.Normal,
     fontFamily: FontFamily = dmSansFontFamily,
     modifier: Modifier = Modifier,
-    lineHeight: TextUnit = 1.5.sp,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: androidx.compose.ui.text.style.TextAlign? = null  // Optional text alignment
@@ -358,7 +335,6 @@ fun BodySmall(
             fontSize = fontSize,
             fontWeight = fontWeight,
             fontFamily = fontFamily,
-            lineHeight = lineHeight
         ),
         modifier = modifier,
         maxLines = maxLines,
