@@ -42,8 +42,8 @@ object BrandColors {
 }
 
 object AppColors {
-    val successColor = Color(0xFFFFFFFF)
-    val warningColor = Color(0xFFF9FAFB)
-    val errorColor = Color(0xFF27AE60)
-    val linkColor = Color(0xFF27AE60)
+    val successColor = Color(0xFF219653)
+    val warningColor = Color(0xFFF2994A)
+    val errorColor = Color(0xFFEB5757)
+    val linkColor = Color(0xFF2F80ED)
 }

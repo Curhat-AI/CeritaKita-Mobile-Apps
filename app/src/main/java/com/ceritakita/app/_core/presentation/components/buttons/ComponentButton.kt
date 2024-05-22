@@ -16,11 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ceritakita.app._core.presentation.ui.theme.BrandColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
+import com.ceritakita.app._core.presentation.ui.theme.dmSansFontFamily
 
 /**
  * A custom button component in Jetpack Compose that can be styled with an optional icon,
@@ -46,7 +49,7 @@ fun CustomButton(
     onClick: () -> Unit,
     icon: ImageVector? = null,
     buttonType: ButtonType = ButtonType.Primary,
-    padding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+    padding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
     shape: RoundedCornerShape = AppShapes.mediumCorners, // Default shape
     modifier: Modifier = Modifier
 ) {
@@ -78,7 +81,7 @@ fun CustomButton(
                 Icon(icon, contentDescription = null) // Assuming you pass a description if needed elsewhere
                 BasicText(text = " ", modifier = Modifier) // Spacer hack
             }
-            Text(text = text, textAlign = TextAlign.Center)
+            Text(text = text, textAlign = TextAlign.Center, fontFamily = dmSansFontFamily, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
         }
     }
 }

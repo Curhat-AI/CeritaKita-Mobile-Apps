@@ -1,4 +1,5 @@
 package com.ceritakita.app.auth.presentation.screen
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,14 +8,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,97 +29,123 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.ceritakita.app.R
-import com.ceritakita.app._core.presentation.components.button.ButtonPrimary
 import com.ceritakita.app._core.presentation.components.buttons.ButtonType
 import com.ceritakita.app._core.presentation.components.buttons.CustomButton
+import com.ceritakita.app._core.presentation.components.fields.CustomTextField
+import com.ceritakita.app._core.presentation.components.textfield.CustomOutlinedTextField
+import com.ceritakita.app._core.presentation.components.textfield.CustomPasswordTextField
+import com.ceritakita.app._core.presentation.components.texts.BodyLarge
 import com.ceritakita.app._core.presentation.components.texts.BodyMedium
 import com.ceritakita.app._core.presentation.components.texts.HeadingLarge
 import com.ceritakita.app._core.presentation.components.texts.HeadingSmall
-import com.ceritakita.app._core.presentation.components.textfield.TextFieldOutline
-import com.ceritakita.app._core.presentation.components.textfield.TextFieldOutlinePassword
+import com.ceritakita.app._core.presentation.ui.theme.AppColors
+import com.ceritakita.app._core.presentation.ui.theme.TextColors
 
 data class EmojiDataPoint(val value: Float, val emoji: String)
 
 @Composable
 fun LoginScreen(navController: NavController) {
 
+    val emailState = remember { mutableStateOf("") }
+    val passwordState = remember { mutableStateOf("") }
 
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(WindowInsets.systemBars.asPaddingValues())
-            .padding(horizontal = 20.dp, vertical = 40.dp)
+            .padding(horizontal = 20.dp, vertical = 20.dp)
 
-    ){
+    ) {
         Spacer(modifier = Modifier.heightIn(15.dp))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround
 
-        ){
+        ) {
 
-            Image(painter = painterResource(id = R.drawable.logosvg) , contentDescription = "logo")
+            Image(
+                painter = painterResource(id = R.drawable.logosvg),
+                contentDescription = "logo",
+                Modifier.size(32.dp)
+            )
             Spacer(modifier = Modifier.widthIn(10.dp))
-            HeadingSmall(text = "Curhat.ai")
+            HeadingSmall(text = "CeritaKita")
         }
         Spacer(modifier = Modifier.heightIn(20.dp))
         HeadingLarge(text = "Masuk Ke Akun Kamu")
-        Spacer(modifier = Modifier.heightIn(10.dp))
-        BodyMedium(
-            text = "Masuk untuk mengakses seluruh fitur Curhat.asadadi",
+        Spacer(modifier = Modifier.heightIn(4.dp))
+        BodyLarge(
+            text = "Masuk untuk mengakses seluruh fitur CeritaKita",
             modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Start // Atau TextAlign.Center sesuai kebutuhan
+            textAlign = TextAlign.Start,
+            color = TextColors.grey600
         )
 
-        Spacer(modifier = Modifier.heightIn(10.dp))
-        TextFieldOutline()
-        Spacer(modifier = Modifier.heightIn(10.dp))
-        TextFieldOutlinePassword()
-        Spacer(modifier = Modifier.heightIn(10.dp))
+        Spacer(modifier = Modifier.heightIn(24.dp))
+        CustomOutlinedTextField(
+            value = emailState.value,
+            onValueChange = { emailState.value = it },
+            label = "Email",
+            iconId = R.drawable.ic_email_icon,
+            placeholderText = "Enter your email"
+        )
+        Spacer(modifier = Modifier.heightIn(16.dp))
+        CustomPasswordTextField(
+            value = passwordState.value,
+            onValueChange = { passwordState.value = it },
+            label = "Password",
+            iconId = R.drawable.ic_password_icon,
+            placeholderText = "Enter your password"
+        )
+        Spacer(modifier = Modifier.heightIn(16.dp))
 
-        BodyMedium(modifier = Modifier.align(Alignment.End),text = "Lupa Password?", color = Color.Blue)
+        BodyLarge(
+            modifier = Modifier.align(Alignment.End),
+            text = "Lupa Password?",
+            fontWeight = FontWeight.Medium,
+            color = AppColors.linkColor
+        )
 
-        Spacer(modifier = Modifier.heightIn(10.dp))
+        Spacer(modifier = Modifier.heightIn(40.dp))
         CustomButton(text = "Masuk", onClick = { /*TODO*/ }, buttonType = ButtonType.Primary)
-        BodyMedium(modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 30.dp) ,text = "atau", color = Color.Gray, textAlign = TextAlign.Center)
-        ButtonPrimary()
-        Spacer(modifier = Modifier.weight(2f)) // Menambahkan ruang kosong untuk mendorong konten ke bawah
+//        BodyMedium(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(vertical = 30.dp),
+//            text = "atau",
+//            color = Color.Gray,
+//            textAlign = TextAlign.Center
+//        )
+//        CustomButton(text = "Masuk", onClick = { /*TODO*/ })
+        Spacer(modifier = Modifier.weight(2f))
         Box(
             modifier = Modifier
                 .fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
         ) {
-Row(
+            Row(
 
-){
-    BodyMedium(
-        modifier = Modifier
-            .padding(vertical = 30.dp),
-        text = "Belum punya Akun?",
-        color = Color.Gray,
-        textAlign = TextAlign.Center
-    )
-    Spacer(Modifier.widthIn(5.dp))
-    BodyMedium(
-        modifier = Modifier
-            .padding(vertical = 30.dp),
-        text = "Daftar",
-        color = Color.Blue,
-        textAlign = TextAlign.Center,
-        fontWeight = FontWeight.Bold
-    )
-}
+            ) {
+                BodyMedium(
+                    text = "Belum punya Akun?",
+                    color = TextColors.grey500,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(Modifier.widthIn(5.dp))
+                BodyMedium(
+                    text = "Daftar",
+                    color = AppColors.linkColor,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold
+                )
+            }
 
         }
 
 
-
     }
 }
-
 
 
 @Preview(showSystemUi = true, showBackground = true)

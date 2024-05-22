@@ -283,9 +283,9 @@ fun LabelSmall(
 @Composable
 fun BodyLarge(
     text: String,
-    color: Color = TextColors.grey800,
+    color: Color = TextColors.grey500,
     fontSize: TextUnit = 16.sp,
-    fontWeight: FontWeight = FontWeight.Bold,
+    fontWeight: FontWeight = FontWeight.Normal,
     fontFamily: FontFamily = dmSansFontFamily,
     modifier: Modifier = Modifier,
     lineHeight: TextUnit = 1.5.sp,
@@ -312,7 +312,7 @@ fun BodyLarge(
 @Composable
 fun BodyMedium(
     text: String,
-    color: Color = TextColors.grey800,
+    color: Color = TextColors.grey500,
     fontSize: TextUnit = 15.sp,
     fontWeight: FontWeight = FontWeight.Normal,
     fontFamily: FontFamily = dmSansFontFamily,
@@ -341,7 +341,7 @@ fun BodyMedium(
 @Composable
 fun BodySmall(
     text: String,
-    color: Color = TextColors.grey800,
+    color: Color = TextColors.grey500,
     fontSize: TextUnit = 14.sp,
     fontWeight: FontWeight = FontWeight.Normal,
     fontFamily: FontFamily = dmSansFontFamily,

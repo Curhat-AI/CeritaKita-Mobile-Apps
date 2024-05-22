@@ -1,15 +1,23 @@
 package com.ceritakita.app._core.presentation.components.textfield
 
+import AppShapes
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,67 +25,183 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.texts.LabelLarge
-
+import com.ceritakita.app._core.presentation.ui.theme.AppColors
+import com.ceritakita.app._core.presentation.ui.theme.BrandColors
+import com.ceritakita.app._core.presentation.ui.theme.TextColors
+import com.ceritakita.app._core.presentation.ui.theme.dmSansFontFamily
 
 @Composable
-fun TextFieldOutline(){
-    var email by remember { mutableStateOf("kahfismith@gmail.com") }
+fun CustomOutlinedTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    iconId: Int? = null,
+    iconSize: Dp = 24.dp,
+    iconColor: Color = TextColors.grey500,
+    placeholderText: String = "",
+    placeholderTextStyle: TextStyle = TextStyle(
+        color = TextColors.grey500,
+        fontSize = 16.sp,
+        fontFamily = dmSansFontFamily,
+        fontWeight = FontWeight.Normal
+    ),
+    isSingleLine: Boolean = true,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    textFieldColors: TextFieldColors = OutlinedTextFieldDefaults.colors(
+        unfocusedContainerColor = BrandColors.brandPrimary50,
+        focusedContainerColor = BrandColors.brandPrimary100,
+        focusedBorderColor = BrandColors.brandPrimary600,
+        unfocusedBorderColor = BrandColors.brandPrimary200,
+        cursorColor = BrandColors.brandPrimary600,
+        focusedTextColor = TextColors.grey700,
+        unfocusedTextColor = TextColors.grey700
+    ),
+    shape: Shape = AppShapes.largeCorners,
 
-    Column(        horizontalAlignment = Alignment.Start,
     ) {
-        LabelLarge("Email")
-        Spacer(modifier = Modifier.heightIn(5.dp))
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Outlined.Email,
-                    contentDescription = "Email Icon"
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
 
+    Column(
+        horizontalAlignment = Alignment.Start,
+    ) {
+        LabelLarge(label, fontWeight = FontWeight.Normal)
+        Spacer(modifier = Modifier.height(8.dp))
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            leadingIcon = iconId?.let {
+                {
+                    Icon(
+                        painter = painterResource(id = it),
+                        contentDescription = "$label Icon",
+                        modifier = Modifier.size(iconSize),
+                        tint = iconColor
+                    )
+                }
+            },
+            modifier = modifier.fillMaxWidth(),
+            placeholder = { Text(placeholderText, style = placeholderTextStyle) },
+            singleLine = isSingleLine,
+            visualTransformation = visualTransformation,
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
+            colors = textFieldColors,
+            shape = shape,
         )
     }
 }
 
 @Composable
-fun TextFieldOutlinePassword(){
-    var password by remember { mutableStateOf("kahfismith@gmail.com") }
+fun CustomPasswordTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    iconId: Int? = null,
+    iconSize: Dp = 24.dp,
+    iconColor: Color = TextColors.grey500,
+    placeholderText: String = "",
+    passwordLengthRequirement: Int = 8,
+    placeholderTextStyle: TextStyle = TextStyle(
+        color = TextColors.grey500,
+        fontSize = 16.sp,
+        fontFamily = dmSansFontFamily,
+        fontWeight = FontWeight.Normal
+    ),
+    isSingleLine: Boolean = true,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    textFieldColors: TextFieldColors = OutlinedTextFieldDefaults.colors(
+        unfocusedContainerColor = BrandColors.brandPrimary50,
+        focusedContainerColor = BrandColors.brandPrimary100,
+        focusedBorderColor = BrandColors.brandPrimary600,
+        unfocusedBorderColor = BrandColors.brandPrimary200,
+        cursorColor = BrandColors.brandPrimary600,
+        focusedTextColor = TextColors.grey700,
+        unfocusedTextColor = TextColors.grey700
+    ),
+    shape: Shape = AppShapes.largeCorners,
+    onInteraction: () -> Unit = {}  // Callback for interaction
+) {
+    var passwordVisible by remember { mutableStateOf(false) }
+    var hasInteracted by remember { mutableStateOf(false) }
 
-    Column(        horizontalAlignment = Alignment.Start,
-    ) {
-        LabelLarge("Password")
-        Spacer(modifier = Modifier.height(5.dp))
+    Column(horizontalAlignment = Alignment.Start) {
+        LabelLarge(label)
+        Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Outlined.Lock,
-                    contentDescription = "Password Icon"
-                )
+            value = value,
+            onValueChange = {
+                onValueChange(it)
+                hasInteracted = true  // Set has interacted when the user types
             },
-            modifier = Modifier
-                .fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation()
+            leadingIcon = iconId?.let {
+                {
+                    Icon(
+                        painter = painterResource(id = it),
+                        contentDescription = "$label Icon",
+                        modifier = Modifier.size(iconSize),
+                        tint = iconColor
+                    )
+                }
+            },
+            modifier = modifier.fillMaxWidth(),
+            placeholder = { Text(placeholderText, style = placeholderTextStyle) },
+            singleLine = isSingleLine,
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+            keyboardActions = keyboardActions,
+            colors = textFieldColors,
+            shape = shape,
+            trailingIcon = {
+                val iconRes = if (passwordVisible) R.drawable.ic_hide_icon else R.drawable.ic_show_icon
+                val description = if (passwordVisible) "Hide password" else "Show password"
+                IconButton(onClick = { passwordVisible = !passwordVisible; onInteraction() }) {
+                    Icon(
+                        painter = painterResource(id = iconRes),
+                        contentDescription = description,
+                        modifier = Modifier.size(iconSize),
+                        tint = iconColor
+                    )
+                }
+            }
         )
+        if (hasInteracted && value.length < passwordLengthRequirement) {
+            Text(
+                "Password must be at least $passwordLengthRequirement characters",
+                color = AppColors.errorColor
+            )
+        }
     }
 }
-@Composable
-@Preview(showBackground = true, showSystemUi = true)
-fun previewTextfield(){
-    TextFieldOutline()
-}
 
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
-fun previewTextfieldPassword(){
-    TextFieldOutlinePassword()
+fun PreviewCustomTextFields() {
+    val emailState = remember { mutableStateOf("") }
+
+    Column {
+        CustomOutlinedTextField(
+            value = emailState.value,
+            onValueChange = { emailState.value = it },
+            label = "Email",
+            iconId = R.drawable.ic_email_icon,  // Ganti dengan ID drawable yang sesuai
+            placeholderText = "Enter your email"
+        )
+    }
 }
