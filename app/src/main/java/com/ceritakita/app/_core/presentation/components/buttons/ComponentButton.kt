@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ceritakita.app._core.presentation.components.texts.LabelMedium
 import com.ceritakita.app._core.presentation.ui.theme.BrandColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app._core.presentation.ui.theme.dmSansFontFamily
@@ -46,6 +47,8 @@ enum class ButtonType { Primary, Secondary, Tertiary }
 @Composable
 fun CustomButton(
     text: String,
+    textButtonColor: Color = Color.White,
+    outlineButtonColor: Color? = BrandColors.brandPrimary600,
     onClick: () -> Unit,
     icon: ImageVector? = null,
     buttonType: ButtonType = ButtonType.Primary,
@@ -66,7 +69,7 @@ fun CustomButton(
             },
             contentColor = when (buttonType) {
                 ButtonType.Primary -> Color.White
-                ButtonType.Secondary -> BrandColors.brandPrimary600
+                ButtonType.Secondary -> outlineButtonColor ?: BrandColors.brandPrimary600
                 ButtonType.Tertiary -> TextColors.grey700
             }
         ),
@@ -78,10 +81,11 @@ fun CustomButton(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             icon?.let {
-                Icon(icon, contentDescription = null) // Assuming you pass a description if needed elsewhere
-                BasicText(text = " ", modifier = Modifier) // Spacer hack
+                Icon(icon, contentDescription = "Button $text", tint= Color.Unspecified
+                ) // Assuming you pass a description if needed elsewhere
+                LabelMedium(text = " ", modifier = Modifier, color = textButtonColor) // Spacer hack
             }
-            Text(text = text, textAlign = TextAlign.Center, fontFamily = dmSansFontFamily, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+            LabelMedium(text = text,color = textButtonColor, textAlign = TextAlign.Center, fontFamily = dmSansFontFamily, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
         }
     }
 }

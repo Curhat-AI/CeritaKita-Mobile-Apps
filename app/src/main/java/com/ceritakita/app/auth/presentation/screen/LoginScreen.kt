@@ -140,7 +140,6 @@ fun LoginScreen(navController: NavController) {
                     fontWeight = FontWeight.Bold
                 )
             }
-
         }
 
 

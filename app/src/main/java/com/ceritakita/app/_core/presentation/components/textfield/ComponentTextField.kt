@@ -157,6 +157,8 @@ fun CustomPasswordTextField(
                         contentDescription = "$label Icon",
                         modifier = Modifier.size(iconSize),
                         tint = iconColor
+
+
                     )
                 }
             },
