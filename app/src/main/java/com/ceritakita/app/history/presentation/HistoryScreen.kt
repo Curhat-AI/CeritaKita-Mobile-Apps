@@ -39,6 +39,7 @@ import com.ceritakita.app._core.presentation.components.buttons.CustomButton
 import com.ceritakita.app._core.presentation.components.tabBar.CustomTabBar
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.history.presentation.components.DeteksiHistoryCard
+import com.ceritakita.app.history.presentation.components.KonselingHistoryCard
 
 @Composable
 fun HistoryScreen(navController: NavController) {
@@ -89,7 +90,13 @@ fun TabOneContent() {
 fun TabTwoContent() {
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         repeat(30) {
-            Text("Item ${it + 1} of Tab 2", style = MaterialTheme.typography.bodyLarge)
+            KonselingHistoryCard(
+                imagePainter = painterResource(id = R.drawable.sample_image),
+                textDate = "18 Mei 2024 • 14:00",
+                textName = "Yanuar Tri Laksono, M.Psi, Psikolog",
+                textStatus = "Berlangsung",
+                textPrice = "Rp 50.000"
+            )
             Spacer(modifier = Modifier.height(10.dp))
         }
     }
