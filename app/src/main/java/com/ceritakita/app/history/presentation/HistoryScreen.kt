@@ -74,7 +74,12 @@ fun TabContent(index: Int) {
 fun TabOneContent() {
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         repeat(30) {
-            Text("Item ${it + 1} of Tab 1", style = MaterialTheme.typography.bodyLarge)
+            DeteksiHistoryCard(
+                imagePainter = painterResource(id = R.drawable.sample_image),
+                textDate = "18:40",
+                textTitle = "Cemas dan Khawatir",
+                textDescription = "but i'm only human after all. don't put your blame on me, ohhh",
+            )
             Spacer(modifier = Modifier.height(10.dp))
         }
     }
