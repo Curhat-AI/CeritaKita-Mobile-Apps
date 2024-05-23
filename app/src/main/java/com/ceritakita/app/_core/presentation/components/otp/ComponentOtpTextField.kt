@@ -87,8 +87,7 @@ fun OtpInputRow(otpType: OtpType) {
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 15.dp, start = 15.dp, end = 15.dp),
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         CommonOtpTextField(
