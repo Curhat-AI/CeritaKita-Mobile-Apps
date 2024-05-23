@@ -118,7 +118,6 @@ fun RegisterScreen(navController: NavController) {
             iconId = R.drawable.ic_password_icon,
             placeholderText = "Enter your password"
         )
-
         Spacer(modifier = Modifier.heightIn(40.dp))
         CustomButton(text = "Masuk", onClick = { /*TODO*/ }, buttonType = ButtonType.Primary)
         Spacer(modifier = Modifier.weight(0.1f))
@@ -128,7 +127,6 @@ fun RegisterScreen(navController: NavController) {
                 color = TextColors.grey500,
                 textAlign = TextAlign.Center,
             )
-
         Spacer(modifier = Modifier.weight(0.1f))
         CustomButton(text = "Masuk dengan Google", onClick = { /*TODO*/ }, buttonType = ButtonType.Secondary,
             icon = ImageVector.vectorResource(id = R.drawable.ic_google_sign_in),

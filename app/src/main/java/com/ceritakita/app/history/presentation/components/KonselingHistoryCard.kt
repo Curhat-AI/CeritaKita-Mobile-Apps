@@ -19,8 +19,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material.Card
-import androidx.compose.material.Divider
+import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,7 +68,7 @@ fun KonselingHistoryCard(
                 clip = true
             ),
         shape = RoundedCornerShape(8.dp),
-        elevation = 0.dp
+
     ) {
         Column(
             modifier = Modifier
