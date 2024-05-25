@@ -285,7 +285,8 @@ fun BodyLarge(
         modifier = modifier,
         maxLines = maxLines,
         overflow = overflow,
-        textAlign = textAlign
+        textAlign = textAlign,
+        lineHeight = 16.sp * 1.4
     )
 }
 
