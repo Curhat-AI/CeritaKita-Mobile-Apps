@@ -1,9 +1,7 @@
 package com.ceritakita.app.history.presentation.screen
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,13 +14,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,12 +31,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.ceritakita.app.R
-import com.ceritakita.app._core.presentation.components.texts.BodyLarge
-import com.ceritakita.app._core.presentation.components.texts.BodyMedium
 import com.ceritakita.app._core.presentation.components.texts.TitleMedium
 import com.ceritakita.app._core.presentation.components.texts.TitleSmall
 import com.ceritakita.app._core.presentation.ui.theme.AppColors
-import com.ceritakita.app._core.presentation.ui.theme.TextColors
+import com.ceritakita.app.history.presentation.components.KonselingDetailCard
 import com.ceritakita.app.history.presentation.components.KonselorDetailCard
 
 @Composable
@@ -50,6 +44,7 @@ fun CounselingDetailScreen(navController: NavController) {
             .fillMaxSize()
             .padding(WindowInsets.systemBars.asPaddingValues())
             .padding(horizontal = 16.dp, vertical = 16.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         Image(
             painter = painterResource(id = R.drawable.sample_image),
@@ -69,7 +64,10 @@ fun CounselingDetailScreen(navController: NavController) {
             TitleMedium(text = "Tentang Konselor")
             Box(
                 modifier = Modifier
-                    .background(color = AppColors.warningColor.copy(alpha = 0.16f), shape = CircleShape)
+                    .background(
+                        color = AppColors.warningColor.copy(alpha = 0.16f),
+                        shape = CircleShape
+                    )
                     .padding(horizontal = 12.dp, vertical = 6.dp)
             ) {
                 TitleSmall(text = "Berlangsung", color = AppColors.warningColor, fontSize = 14.sp)
@@ -81,6 +79,13 @@ fun CounselingDetailScreen(navController: NavController) {
             counselorDetails = "Speciality: Psychology",
             counselorExpertise = "Psychology",
             counselorExperience = "10 years"
+        )
+        Spacer(modifier = Modifier.heightIn(24.dp))
+        TitleMedium(text = "Detail Konseling")
+        Spacer(modifier = Modifier.heightIn(10.dp))
+        KonselingDetailCard(
+            counselingSchedule = "Senin, 20 Mei • 14:00 - 14:30 WIB",
+            counselingMedia = "Voice Call"
         )
     }
 }
