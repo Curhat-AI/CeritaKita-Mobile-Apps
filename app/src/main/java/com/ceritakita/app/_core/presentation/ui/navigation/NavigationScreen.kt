@@ -5,5 +5,6 @@ RegisterScreen,
     LoginScreen,
     EmailVerificationScreen,
     EmailVerificationSuccess,
-    HistoryScreen
+    HistoryScreen,
+    CounselingDetailScreen
 }
