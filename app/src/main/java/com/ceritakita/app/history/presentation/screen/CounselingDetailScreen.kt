@@ -20,6 +20,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,10 +41,20 @@ import com.ceritakita.app._core.presentation.ui.theme.AppColors
 import com.ceritakita.app.history.presentation.components.KonselingDetailCard
 import com.ceritakita.app.history.presentation.components.KonselorDetailCard
 import com.ceritakita.app.history.presentation.components.RatingReviewCard
+import com.ceritakita.app.history.presentation.components.ReviewFormBottomSheet
 import com.ceritakita.app.history.presentation.components.RingkasanPembayaranCard
 
 @Composable
 fun CounselingDetailScreen(navController: NavController) {
+    // State untuk menampilkan bottom sheet
+    var showReviewForm by remember { mutableStateOf(false) }
+
+    // Function untuk membuka bottom sheet
+    val openReviewForm = { showReviewForm = true }
+
+    // Function untuk menutup bottom sheet
+    val closeReviewForm = { showReviewForm = false }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -96,7 +110,16 @@ fun CounselingDetailScreen(navController: NavController) {
         Spacer(modifier = Modifier.heightIn(24.dp))
         TitleMedium(text = "Ulasan Kamu")
         Spacer(modifier = Modifier.heightIn(10.dp))
-        RatingReviewCard(rating = null, review = null, onWriteReviewClick = { })
+        RatingReviewCard(rating = null, review = null, onWriteReviewClick = openReviewForm)
+
+        if (showReviewForm) {
+            ReviewFormBottomSheet(
+                onReviewSubmit = { rating, review ->
+                    closeReviewForm()
+                },
+                onDismiss = closeReviewForm
+            )
+        }
     }
 }
 

@@ -48,7 +48,7 @@ import com.ceritakita.app._core.presentation.ui.theme.dmSansFontFamily
 fun CustomOutlinedTextField(
     value: String,
     onValueChange: (String) -> Unit,
-    label: String,
+    label: String? = null,
     modifier: Modifier = Modifier,
     iconId: Int? = null,
     iconSize: Dp = 24.dp,
@@ -80,8 +80,10 @@ fun CustomOutlinedTextField(
     Column(
         horizontalAlignment = Alignment.Start,
     ) {
-        LabelLarge(label, fontWeight = FontWeight.Normal)
-        Spacer(modifier = Modifier.height(8.dp))
+        if (!label.isNullOrEmpty()) {
+            LabelLarge(text = label, fontWeight = FontWeight.Normal)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
@@ -111,7 +113,7 @@ fun CustomOutlinedTextField(
 fun CustomPasswordTextField(
     value: String,
     onValueChange: (String) -> Unit,
-    label: String,
+    label: String? = null,
     modifier: Modifier = Modifier,
     iconId: Int? = null,
     iconSize: Dp = 24.dp,
@@ -142,8 +144,10 @@ fun CustomPasswordTextField(
     var hasInteracted by remember { mutableStateOf(false) }
 
     Column(horizontalAlignment = Alignment.Start) {
-        LabelLarge(label)
-        Spacer(modifier = Modifier.height(8.dp))
+        if (!label.isNullOrEmpty()) {  // Cek jika label tidak null dan tidak kosong
+            LabelLarge(text = label, fontWeight = FontWeight.Normal)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
         OutlinedTextField(
             value = value,
             onValueChange = {
