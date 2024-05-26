@@ -36,6 +36,7 @@ import com.ceritakita.app._core.presentation.components.texts.TitleSmall
 import com.ceritakita.app._core.presentation.ui.theme.AppColors
 import com.ceritakita.app.history.presentation.components.KonselingDetailCard
 import com.ceritakita.app.history.presentation.components.KonselorDetailCard
+import com.ceritakita.app.history.presentation.components.RatingReviewCard
 import com.ceritakita.app.history.presentation.components.RingkasanPembayaranCard
 
 @Composable
@@ -89,9 +90,13 @@ fun CounselingDetailScreen(navController: NavController) {
             counselingMedia = "Voice Call"
         )
         Spacer(modifier = Modifier.heightIn(24.dp))
-        TitleMedium(text = "Detail Konseling")
+        TitleMedium(text = "Ringkasan Biaya")
         Spacer(modifier = Modifier.heightIn(10.dp))
         RingkasanPembayaranCard()
+        Spacer(modifier = Modifier.heightIn(24.dp))
+        TitleMedium(text = "Ulasan Kamu")
+        Spacer(modifier = Modifier.heightIn(10.dp))
+        RatingReviewCard(rating = null, review = null, onWriteReviewClick = { })
     }
 }
 

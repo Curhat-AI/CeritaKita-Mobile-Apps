@@ -18,7 +18,7 @@ import com.ceritakita.app._core.presentation.components.texts.TitleMedium
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
 
 @Composable
-fun KonselingDetailCard (
+fun KonselingDetailCard(
     counselingSchedule: String = "Counseling Schedule",
     counselingMedia: String = "Counseling Media"
 ) {
@@ -43,7 +43,7 @@ fun KonselingDetailCard (
                 BodyMedium(text = "Jadwal Konseling")
             }
             Spacer(modifier = Modifier.height(8.dp))
-            TitleMedium(text = counselingSchedule)
+            TitleMedium(text = counselingSchedule, color = TextColors.grey700)
             Spacer(modifier = Modifier.height(16.dp))
             Divider(thickness = 1.dp, color = TextColors.grey200)
             Spacer(modifier = Modifier.height(16.dp))
@@ -58,7 +58,7 @@ fun KonselingDetailCard (
                 BodyMedium(text = "Media Konseling")
             }
             Spacer(modifier = Modifier.height(8.dp))
-            TitleMedium(text = counselingMedia)
+            TitleMedium(text = counselingMedia, color = TextColors.grey700)
         }
     }
 }
