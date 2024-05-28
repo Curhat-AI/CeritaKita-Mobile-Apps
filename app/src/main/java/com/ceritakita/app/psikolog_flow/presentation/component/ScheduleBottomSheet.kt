@@ -57,7 +57,14 @@ fun ScheduleBottomSheet(
     var selectedTimeIndex by remember { mutableStateOf(-1) }  // Initialise with -1 or any invalid index if no initial selection
 
     val handleTimeClick = { index: Int ->
-        selectedTimeIndex = index  // Simply update the index
+        selectedTimeIndex = index
+    }
+
+    val durations = listOf("30 Menit", "1 Jam")
+    var selectedDurationIndex by remember { mutableStateOf(-1) }  // Initialise with -1 or any invalid index if no initial selection
+
+    val handleDurationClick = { index: Int ->
+        selectedDurationIndex = index
     }
 
     if (showBottomSheet) {
@@ -92,6 +99,14 @@ fun ScheduleBottomSheet(
                     times = times,
                     selectedIndex = selectedTimeIndex,
                     onTimeClick = handleTimeClick
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                LabelLarge(text = "Pilih Durasi Konseling")
+                Spacer(modifier = Modifier.height(10.dp))
+                DurationChipRow(
+                    durations = durations,
+                    selectedIndex = selectedDurationIndex,
+                    onDurationClick = handleDurationClick
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Divider(thickness = 1.dp, color = TextColors.grey200)
