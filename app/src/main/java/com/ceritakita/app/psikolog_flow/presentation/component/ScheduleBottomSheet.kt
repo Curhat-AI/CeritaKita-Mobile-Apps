@@ -7,11 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,20 +18,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.buttons.CustomButton
-import com.ceritakita.app._core.presentation.components.textfield.CustomOutlinedTextField
 import com.ceritakita.app._core.presentation.components.texts.BodyLarge
-import com.ceritakita.app._core.presentation.components.texts.BodyMedium
 import com.ceritakita.app._core.presentation.components.texts.BodySmall
 import com.ceritakita.app._core.presentation.components.texts.HeadingSmall
 import com.ceritakita.app._core.presentation.components.texts.LabelLarge
-import com.ceritakita.app._core.presentation.components.texts.TitleLarge
-import com.ceritakita.app._core.presentation.ui.theme.AppColors
 import com.ceritakita.app._core.presentation.ui.theme.BrandColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
 
@@ -144,7 +134,16 @@ fun ScheduleBottomSheet(
                     CustomButton(
                         text = "Konfirmasi",
                         onClick = {
-                            onReviewSubmit(reviewState.toString(), rating)
+                            // Retrieve selections
+                            val selectedDate = if (selectedIndex >= 0) "${days[selectedIndex]} ${dates[selectedIndex]}" else "None"
+                            val selectedTime = if (selectedTimeIndex >= 0) times[selectedTimeIndex] else "None"
+                            val selectedDuration = if (selectedDurationIndex >= 0) durations[selectedDurationIndex] else "None"
+                            val selectedMedia = if (selectedMediaIndex == 0) "Voice Call" else "Video Call"
+
+                            // Do something with these selections, e.g., submitting to a server
+                            onReviewSubmit("Selected Date: $selectedDate, Time: $selectedTime, Duration: $selectedDuration, Media: $selectedMedia", rating)
+
+                            // Close the bottom sheet
                             showBottomSheet = false
                         },
                         modifier = Modifier.weight(1f)

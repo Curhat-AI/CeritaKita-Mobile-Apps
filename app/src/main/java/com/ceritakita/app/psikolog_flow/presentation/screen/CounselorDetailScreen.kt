@@ -1,6 +1,5 @@
 package com.ceritakita.app.psikolog_flow.presentation.screen
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -19,14 +18,10 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -49,39 +43,41 @@ import com.ceritakita.app._core.presentation.components.buttons.ButtonType
 import com.ceritakita.app._core.presentation.components.buttons.CustomButton
 import com.ceritakita.app._core.presentation.components.texts.BodyLarge
 import com.ceritakita.app._core.presentation.components.texts.BodyMedium
-import com.ceritakita.app._core.presentation.components.texts.BodySmall
-import com.ceritakita.app._core.presentation.components.texts.HeadingLarge
 import com.ceritakita.app._core.presentation.components.texts.LabelLarge
-import com.ceritakita.app._core.presentation.components.texts.LabelMedium
 import com.ceritakita.app._core.presentation.components.texts.TitleLarge
 import com.ceritakita.app._core.presentation.ui.theme.AppColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
+import com.ceritakita.app.history.presentation.components.ReviewFormBottomSheet
 import com.ceritakita.app.psikolog_flow.presentation.component.DateChipRow
-import com.ceritakita.app.psikolog_flow.presentation.component.DateSelector
 import com.ceritakita.app.psikolog_flow.presentation.component.ScheduleBottomSheet
 import com.ceritakita.app.psikolog_flow.presentation.component.TimeChipRow
 
 @Composable
 fun CounselorDetailScreen(navController: NavController) {
-    // State untuk menampilkan bottom sheet
     var showReviewForm by remember { mutableStateOf(false) }
 
-    // Function untuk membuka bottom sheet
-    val openReviewForm = { showReviewForm = true }
+    // Function to handle the submission from the bottom sheet
+    val onReviewSubmit = { review: String, rating: Int ->
+        // Placeholder for what to do on review submit, e.g., navigate or show a toast
+        navController.navigate("NextScreenRoute") {
+            // Pass the review and rating as arguments or set them somewhere they can be used
+        }
+        showReviewForm = false // Close the bottom sheet after submitting
+    }
 
-    // Function untuk menutup bottom sheet
+    // Function to close the bottom sheet
     val closeReviewForm = { showReviewForm = false }
 
     val days = listOf("Senin", "Selasa", "Rabu")
     val dates = listOf("19 Mei", "20 Mei", "21 Mei")
-    var selectedIndex by remember { mutableStateOf(-1) }  // Initialise with -1 if no initial selection
+    var selectedIndex by remember { mutableStateOf(-1) }
 
     val handleDateClick = { index: Int ->
         selectedIndex = index
     }
 
-    val times = listOf("09:00 WIB", "12:00 WIB", "09:00 WIB", "12:00 WIB")
-    var selectedTimeIndex by remember { mutableStateOf(-1) }  // Initialise with -1 or any invalid index if no initial selection
+    val times = listOf("09:00 WIB", "12:00 WIB", "15:00 WIB", "18:00 WIB")
+    var selectedTimeIndex by remember { mutableStateOf(-1) }
 
     val handleTimeClick = { index: Int ->
         selectedTimeIndex = index
@@ -111,7 +107,7 @@ fun CounselorDetailScreen(navController: NavController) {
             LabelLarge(text = "Profil Psikolog", color = TextColors.grey700)
         }
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_background),
+            painter = painterResource(id = R.drawable.sample_image),
             contentDescription = "Profile Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -213,9 +209,16 @@ fun CounselorDetailScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(32.dp))
             CustomButton(
                 text = "Pilih Psikolog",
-                onClick = { /*TODO*/ },
+                onClick = { showReviewForm = true },
                 buttonType = ButtonType.Primary
             )
+
+            if (showReviewForm) {
+                ScheduleBottomSheet(
+                    onReviewSubmit = onReviewSubmit,
+                    onDismiss = closeReviewForm
+                )
+            }
         }
 
     }
