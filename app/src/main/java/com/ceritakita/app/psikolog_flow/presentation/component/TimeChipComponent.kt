@@ -1,6 +1,7 @@
 package com.ceritakita.app.psikolog_flow.presentation.component
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,7 +26,7 @@ fun TimeChipRow(
     selectedIndex: Int,
     onTimeClick: (Int) -> Unit
 ) {
-    Row(modifier = Modifier.fillMaxWidth()) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         times.forEachIndexed { index, time ->
             TimeChip(
                 time = time,
@@ -33,7 +34,6 @@ fun TimeChipRow(
                 onTimeClick = { onTimeClick(index) },
                 modifier = Modifier
                     .then(if (times.size > 3) Modifier.weight(1f) else Modifier.wrapContentWidth())
-                    .padding(4.dp)
             )
         }
     }

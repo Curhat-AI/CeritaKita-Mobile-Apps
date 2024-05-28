@@ -1,7 +1,8 @@
-package com.ceritakita.app.template_feature.presentation.screen
+package com.ceritakita.app.psikolog_flow.presentation.screen
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,68 +18,97 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.navigation.NavController
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.buttons.ButtonType
 import com.ceritakita.app._core.presentation.components.buttons.CustomButton
+import com.ceritakita.app._core.presentation.components.texts.BodyLarge
+import com.ceritakita.app._core.presentation.components.texts.BodyMedium
 import com.ceritakita.app._core.presentation.components.texts.BodySmall
 import com.ceritakita.app._core.presentation.components.texts.HeadingLarge
 import com.ceritakita.app._core.presentation.components.texts.LabelLarge
 import com.ceritakita.app._core.presentation.components.texts.LabelMedium
-import com.ceritakita.app._core.presentation.components.texts.LabelSmall
+import com.ceritakita.app._core.presentation.components.texts.TitleLarge
+import com.ceritakita.app._core.presentation.ui.theme.AppColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
+import com.ceritakita.app.psikolog_flow.presentation.component.DateChipRow
+import com.ceritakita.app.psikolog_flow.presentation.component.DateSelector
+import com.ceritakita.app.psikolog_flow.presentation.component.ScheduleBottomSheet
+import com.ceritakita.app.psikolog_flow.presentation.component.TimeChipRow
 
 @Composable
 fun CounselorDetailScreen(navController: NavController) {
+    // State untuk menampilkan bottom sheet
+    var showReviewForm by remember { mutableStateOf(false) }
+
+    // Function untuk membuka bottom sheet
+    val openReviewForm = { showReviewForm = true }
+
+    // Function untuk menutup bottom sheet
+    val closeReviewForm = { showReviewForm = false }
+
+    val days = listOf("Senin", "Selasa", "Rabu")
+    val dates = listOf("19 Mei", "20 Mei", "21 Mei")
+    var selectedIndex by remember { mutableStateOf(-1) }  // Initialise with -1 if no initial selection
+
+    val handleDateClick = { index: Int ->
+        selectedIndex = index
+    }
+
+    val times = listOf("09:00 WIB", "12:00 WIB", "09:00 WIB", "12:00 WIB")
+    var selectedTimeIndex by remember { mutableStateOf(-1) }  // Initialise with -1 or any invalid index if no initial selection
+
+    val handleTimeClick = { index: Int ->
+        selectedTimeIndex = index
+    }
+
     Column(
         Modifier
             .fillMaxSize()
             .padding(WindowInsets.systemBars.asPaddingValues())
-    ){
-
-        Column(
+            .verticalScroll(rememberScrollState())
+    ) {
+        Row(
             modifier = Modifier
-
-                .padding(WindowInsets.systemBars.asPaddingValues())
-                .padding(horizontal = 20.dp, vertical = 20.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 16.dp),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .width(24.dp)
-                        .height(24.dp),
-                    painter = painterResource(id = R.drawable.ic_back),
-                    contentDescription = "Button Back",
-                )
-                Spacer(modifier = Modifier.widthIn(16.dp))
-                LabelMedium(text = "Profil Psikolog", color = TextColors.grey700)
-            }
-
+            Icon(
+                modifier = Modifier
+                    .width(24.dp)
+                    .height(24.dp),
+                painter = painterResource(id = R.drawable.ic_back),
+                contentDescription = "Button Back",
+            )
+            Spacer(modifier = Modifier.widthIn(16.dp))
+            LabelLarge(text = "Profil Psikolog", color = TextColors.grey700)
         }
         Image(
             painter = painterResource(id = R.drawable.ic_launcher_background),
@@ -89,166 +119,110 @@ fun CounselorDetailScreen(navController: NavController) {
                 .height(200.dp)
                 .align(Alignment.CenterHorizontally)
         )
-        Column(modifier = Modifier                .padding(horizontal = 20.dp, vertical = 20.dp)
+        Spacer(modifier = Modifier.height(16.dp))
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp)
         ) {
-            HeadingLarge(
-                text = "Profil Psikolog",
+            TitleLarge(
+                text = "Yanuar Tri Laksono, M.Psi",
                 fontSize = 22.sp,
             )
-            Row(
-                modifier = Modifier.padding(top = 12.dp, bottom = 10.dp)
-            ){
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_work_icon),
-                        contentDescription = "Rating",
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Text(
-                        text = "4.3",
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(start = 4.dp)
-                    )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row {
+                Box(
+                    modifier = Modifier
+                        .border(1.dp, TextColors.grey300, RoundedCornerShape(200.dp))
+                        .padding(vertical = 10.dp, horizontal = 16.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_work_icon),
+                            contentDescription = "Work Experience Icon",
+                            modifier = Modifier.size(20.dp),
+                            tint = AppColors.warningColor
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        BodyMedium(text = "5 Tahun")
+                    }
                 }
                 Spacer(modifier = Modifier.width(10.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Filled.Star,
-                        contentDescription = "Rating",
-                        modifier = Modifier.size(24.dp),
-
+                Box(
+                    modifier = Modifier
+                        .border(1.dp, TextColors.grey300, RoundedCornerShape(200.dp))
+                        .padding(vertical = 10.dp, horizontal = 16.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_star_icon),
+                            contentDescription = "Rating Icon",
+                            modifier = Modifier.size(20.dp),
+                            tint = AppColors.warningColor
                         )
-                    Text(
-                        text = "6 Tahun",
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(start = 4.dp)
-                    )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        BodyMedium(text = "4.5 (120)")
+                    }
                 }
             }
-            BodySmall(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-                color = TextColors.grey500, )
-            Spacer(modifier = Modifier.padding(vertical = 20.dp))
-            HeadingLarge(
+            Spacer(modifier = Modifier.height(16.dp))
+            BodyLarge(
+                text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                color = TextColors.grey600,
+            )
+            Divider(
+                thickness = 1.dp,
+                color = TextColors.grey200,
+                modifier = Modifier.padding(vertical = 20.dp)
+            )
+            TitleLarge(
                 text = "Spesialisasi",
-                fontSize = 18.sp,
             )
-            Spacer(modifier = Modifier.padding(vertical = 2.dp))
-
-            BodySmall(text = "Pekerjaan, Percintaan, Positif Psikologi, Karir, Mindfulness, Person Center Therapy (PCT)",
-                color = TextColors.grey500, )
-            Divider(thickness = 1.dp, color = TextColors.grey200, modifier = Modifier.padding(vertical = 20.dp))
-            HeadingLarge(
+            Spacer(modifier = Modifier.padding(vertical = 4.dp))
+            BodyLarge(
+                text = "Pekerjaan, Percintaan, Positif Psikologi, Karir, Mindfulness, Person Center Therapy (PCT)",
+                color = TextColors.grey600,
+            )
+            Divider(
+                thickness = 1.dp,
+                color = TextColors.grey200,
+                modifier = Modifier.padding(vertical = 20.dp)
+            )
+            TitleLarge(
                 text = "Jadwal Tersedia",
-                fontSize = 18.sp,
             )
-            Spacer(modifier = Modifier.padding(vertical = 2.dp))
-            Row {
-                DateChip(date = "Minggu 19 Mei", isSelected = true)
-                DateChip(date = "Senin 20 Mei")
-                DateChip(date = "Senin 20 Mei")
-                DateChip(date = "Mei", isSelected = true)  // Assuming this chip is selected for demonstration
-            }
-            HeadingLarge(
+            Spacer(modifier = Modifier.height(10.dp))
+            DateChipRow(
+                days = days,
+                dates = dates,
+                selectedIndex = selectedIndex,
+                onDateClick = handleDateClick
+            )
+            Divider(
+                thickness = 1.dp,
+                color = TextColors.grey200,
+                modifier = Modifier.padding(vertical = 20.dp)
+            )
+            TitleLarge(
                 text = "Waktu Tersedia",
-                fontSize = 18.sp,
             )
-            Spacer(modifier = Modifier.padding(vertical = 2.dp))
-            Row {
-                DateChip(date = "14:00 WIB", isSelected = true)
-                DateChip(date = "16:00 WIB")
-            }
-            Spacer(modifier = Modifier.padding(vertical = 10.dp))
-
-            CustomButton(text = "Masuk", onClick = { /*TODO*/ }, buttonType = ButtonType.Primary)
-
-        }
-
-    }
-}
-@Composable
-fun bottomSheet(){
-    Column {
-        HeadingLarge(
-            text = "Konfirmasi Jadwal & Media Konseling",
-            fontSize = 18.sp,
-        )
-        Spacer(modifier = Modifier.padding(vertical = 2.dp))
-
-        BodySmall(text = "Pastikan jadwal yang kamu pilih sudah sesuai",
-            color = TextColors.grey500, )
-
-        Spacer(modifier = Modifier.padding(vertical = 4.dp))
-        HeadingLarge(
-            text = "Waktu Dipilih",
-            fontSize = 18.sp,
-        )
-        Spacer(modifier = Modifier.padding(vertical = 2.dp))
-        Row {
-            DateChip(date = "Minggu 19 Mei", isSelected = true)
-            DateChip(date = "Senin 20 Mei")
-            DateChip(date = "Senin 20 Mei")
-            DateChip(date = "Mei", isSelected = true)  // Assuming this chip is selected for demonstration
-        }
-
-        HeadingLarge(
-            text = "Durasi Konseling",
-            fontSize = 18.sp,
-        )
-        Spacer(modifier = Modifier.padding(vertical = 2.dp))
-        Row {
-            DateChip(date = "30 Menit", isSelected = true)
-            DateChip(date = "1 Jam")
-            // Assuming this chip is selected for demonstration
-        }
-
-    }
-}
-@Composable
-fun DateChip(
-    date: String,
-    isSelected: Boolean = false,
-    onClick: () -> Unit = {}
-) {
-    Surface(
-        modifier = Modifier.padding(4.dp),
-        shape = RoundedCornerShape(8.dp),
-        color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.White,
-        border = BorderStroke(1.dp, if (isSelected) MaterialTheme.colorScheme.primary else Color.Gray),
-        shadowElevation = if (isSelected) 4.dp else 0.dp,
-        onClick = onClick
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
-        ) {
-            Text(
-                text = date,
-                color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else Color.Black,
-                fontSize = 16.sp
+            Spacer(modifier = Modifier.height(10.dp))
+            TimeChipRow(
+                times = times,
+                selectedIndex = selectedTimeIndex,
+                onTimeClick = handleTimeClick
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            CustomButton(
+                text = "Pilih Psikolog",
+                onClick = { /*TODO*/ },
+                buttonType = ButtonType.Primary
             )
         }
+
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewDateChips() {
-    Row {
-        DateChip(date = "Minggu 19 Mei", isSelected = true)
-        DateChip(date = "Senin 20 Mei")
-        DateChip(date = "Senin 20 Mei")
-        DateChip(date = "Mei", isSelected = true)  // Assuming this chip is selected for demonstration
-    }
-}
 @Preview(showSystemUi = false, showBackground = true)
 @Composable
 fun PreviewCounselorDetail() {
     CounselorDetailScreen(navController = rememberNavController())
-}
-
-@Preview(showSystemUi = false, showBackground = true)
-@Composable
-fun PreviewSheet() {
-    bottomSheet()
 }

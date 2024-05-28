@@ -108,7 +108,7 @@ fun ScheduleBottomSheet(
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 LabelLarge(text = "Pilih Durasi Konseling")
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 DurationChipRow(
                     durations = durations,
                     selectedIndex = selectedDurationIndex,
@@ -150,7 +150,6 @@ fun ScheduleBottomSheet(
                         modifier = Modifier.weight(1f)
                     )
                 }
-
             }
         }
     }

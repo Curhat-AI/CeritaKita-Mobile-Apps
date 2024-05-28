@@ -1,6 +1,7 @@
 package com.ceritakita.app.psikolog_flow.presentation.component
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,7 +26,7 @@ fun DateChipRow(
     selectedIndex: Int,
     onDateClick: (Int) -> Unit
 ) {
-    Row(modifier = Modifier.fillMaxWidth()) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         days.zip(dates).forEachIndexed { index, (day, date) ->
             DateChip(
                 day = day,
@@ -34,7 +35,6 @@ fun DateChipRow(
                 onDateClick = { onDateClick(index) },
                 modifier = Modifier
                     .weight(1f)
-                    .padding(4.dp)
             )
         }
     }
@@ -62,7 +62,7 @@ fun DateChip(
             contentAlignment = Alignment.Center,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
         ) {
-            Column (
+            Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 BodyMedium(

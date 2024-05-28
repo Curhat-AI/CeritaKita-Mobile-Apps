@@ -1,10 +1,13 @@
 package com.ceritakita.app.psikolog_flow.presentation.component
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
@@ -25,15 +28,19 @@ fun DurationChipRow(
     selectedIndex: Int,
     onDurationClick: (Int) -> Unit
 ) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        durations.forEachIndexed { index, time ->
-            TimeChip(
-                time = time,
-                isTimeSelected = index == selectedIndex,
-                onTimeClick = { onDurationClick(index) },
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.Top
+    ) {
+        durations.forEachIndexed { index, duration ->
+            DurationChip(
+                duration = duration,
+                isDurationSelected = index == selectedIndex,
+                onDurationClick = { onDurationClick(index) },
                 modifier = Modifier
                     .then(if (durations.size > 3) Modifier.weight(1f) else Modifier.wrapContentWidth())
-                    .padding(4.dp)
             )
         }
     }

@@ -1,6 +1,7 @@
 package com.ceritakita.app.psikolog_flow.presentation.component
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,7 +30,10 @@ fun MediaChipRow(
     selectedMediaIndex: Int,
     onMediaClick: (Int) -> Unit
 ) {
-    Row(modifier = Modifier.fillMaxWidth()) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         MediaChip(
             mediaType = "Voice Call",
             description = "Via WhatsApp",
@@ -59,8 +63,7 @@ fun MediaChip(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier
-            .padding(4.dp),
+        modifier = modifier,
         shape = RoundedCornerShape(8.dp),
         color = if (isMediaSelected) BrandColors.brandPrimary100 else Color.Transparent,
         border = BorderStroke(
