@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ceritakita.app.R
@@ -29,9 +30,12 @@ import com.ceritakita.app._core.presentation.components.buttons.CustomButton
 import com.ceritakita.app._core.presentation.components.textfield.CustomOutlinedTextField
 import com.ceritakita.app._core.presentation.components.texts.BodyLarge
 import com.ceritakita.app._core.presentation.components.texts.BodyMedium
+import com.ceritakita.app._core.presentation.components.texts.BodySmall
 import com.ceritakita.app._core.presentation.components.texts.HeadingSmall
 import com.ceritakita.app._core.presentation.components.texts.LabelLarge
+import com.ceritakita.app._core.presentation.components.texts.TitleLarge
 import com.ceritakita.app._core.presentation.ui.theme.AppColors
+import com.ceritakita.app._core.presentation.ui.theme.BrandColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,6 +71,8 @@ fun ScheduleBottomSheet(
         selectedDurationIndex = index
     }
 
+    var selectedMediaIndex by remember { mutableStateOf(0) }
+
     if (showBottomSheet) {
         ModalBottomSheet(
             containerColor = Color.White,
@@ -77,7 +83,7 @@ fun ScheduleBottomSheet(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                     .imePadding()
             ) {
                 HeadingSmall(text = "Konfirmasi Jadwal & Media Konseling")
@@ -108,16 +114,43 @@ fun ScheduleBottomSheet(
                     selectedIndex = selectedDurationIndex,
                     onDurationClick = handleDurationClick
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                Divider(thickness = 1.dp, color = TextColors.grey200)
-                Spacer(modifier = Modifier.height(16.dp))
                 Spacer(modifier = Modifier.height(24.dp))
-                CustomButton(
-                    text = "Kirim Ulasan",
-                    onClick = {
-                        onReviewSubmit(reviewState.toString(), rating)
-                        showBottomSheet = false
-                    })
+                Divider(thickness = 1.dp, color = TextColors.grey200)
+                Spacer(modifier = Modifier.height(24.dp))
+                LabelLarge(text = "Pilih Media Konseling")
+                Spacer(modifier = Modifier.height(10.dp))
+                MediaChipRow(
+                    selectedMediaIndex = selectedMediaIndex,
+                    onMediaClick = { index ->
+                        selectedMediaIndex = index
+                    }
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                Divider(thickness = 1.dp, color = TextColors.grey200)
+                Spacer(modifier = Modifier.height(32.dp))
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
+                        BodySmall(text = "Total bayar")
+                        Spacer(modifier = Modifier.height(4.dp))
+                        HeadingSmall(
+                            text = "RP 329.000",
+                            color = BrandColors.brandPrimary600,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    }
+                    CustomButton(
+                        text = "Konfirmasi",
+                        onClick = {
+                            onReviewSubmit(reviewState.toString(), rating)
+                            showBottomSheet = false
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
             }
         }
     }
