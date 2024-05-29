@@ -55,6 +55,7 @@ android {
 
 dependencies {
     implementation (libs.androidx.material)
+    implementation(libs.coil.compose)
     implementation(libs.mpandroidchart)
     implementation(libs.charts)
     implementation(libs.compose)
