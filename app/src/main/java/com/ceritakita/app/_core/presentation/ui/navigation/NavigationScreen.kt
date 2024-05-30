@@ -7,5 +7,6 @@ RegisterScreen,
     EmailVerificationSuccess,
     HistoryScreen,
     CounselingDetailScreen,
-    CounselorDetailScreen
+    CounselorDetailScreen,
+    PaymentScreen
 }

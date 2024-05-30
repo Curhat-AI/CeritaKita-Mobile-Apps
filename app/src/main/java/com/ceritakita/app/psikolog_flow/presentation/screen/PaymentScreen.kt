@@ -20,6 +20,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,12 +43,29 @@ import com.ceritakita.app._core.presentation.components.texts.LabelLarge
 import com.ceritakita.app._core.presentation.components.texts.TitleLarge
 import com.ceritakita.app._core.presentation.components.texts.TitleMedium
 import com.ceritakita.app._core.presentation.ui.theme.AppColors
+import com.ceritakita.app._core.presentation.ui.theme.BrandColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.history.presentation.components.KonselingDetailCard
 import com.ceritakita.app.history.presentation.components.RingkasanPembayaranCard
+import com.ceritakita.app.psikolog_flow.presentation.component.PaymentMethodBottomSheet
+import com.ceritakita.app.psikolog_flow.presentation.component.PaymentOption
 
 @Composable
 fun PaymentScreen(navController: NavController) {
+    var selectedPaymentOption by remember { mutableStateOf<PaymentOption?>(null) }
+    var showPaymentMethodSheet by remember { mutableStateOf(false) }
+
+    val ewalletOptions = listOf(
+        PaymentOption("ew1", "OVO", R.drawable.logo_ovo),
+        PaymentOption("ew2", "GoPay", R.drawable.logo_gopay),
+        PaymentOption("ew3", "Dana", R.drawable.logo_dana)
+    )
+    val bankOptions = listOf(
+        PaymentOption("b1", "BCA", R.drawable.logo_bca),
+        PaymentOption("b2", "Mandiri", R.drawable.logo_mandiri),
+        PaymentOption("b3", "BRI", R.drawable.logo_bri)
+    )
+
     Scaffold(
         containerColor = Color.White,
         topBar = {
@@ -97,7 +118,7 @@ fun PaymentScreen(navController: NavController) {
             RingkasanPembayaranCard()
             Spacer(modifier = Modifier.height(24.dp))
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { showPaymentMethodSheet = true },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent,
                     contentColor = TextColors.grey500,
@@ -118,15 +139,51 @@ fun PaymentScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    LabelLarge(text = "Pilih Metode Pembayaran", color = TextColors.grey700)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(
+                                id = selectedPaymentOption?.icon ?: R.drawable.logo_payment
+                            ),
+                            contentDescription = "Payment Logo",
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        LabelLarge(
+                            text = selectedPaymentOption?.name ?: "Pilih Metode Pembayaran",
+                            color = TextColors.grey700
+                        )
+                    }
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_arrow_right),
-                        contentDescription = "Pilih Metode Pembayaran"
+                        painter = painterResource(id = if (selectedPaymentOption != null) R.drawable.ic_check_icon else R.drawable.ic_arrow_right),
+                        contentDescription = "Icon Status",
+                        tint = if (selectedPaymentOption != null) BrandColors.brandPrimary600 else TextColors.grey500
                     )
                 }
             }
             Spacer(modifier = Modifier.height(32.dp))
-            CustomButton(text = "Bayar Sekarang", onClick = { /*TODO*/ })
+            CustomButton(text = "Bayar Sekarang", onClick = {})
+
+            if (showPaymentMethodSheet) {
+                PaymentMethodBottomSheet(
+                    onSubmit = { id, amount ->
+                        // Handle submission
+                        showPaymentMethodSheet = false
+                    },
+                    onDismiss = {
+                        showPaymentMethodSheet = false
+                    },
+                    ewalletList = ewalletOptions,
+                    bankList = bankOptions,
+                    selectedOption = selectedPaymentOption?.id ?: "",
+                    onOptionSelected = { id ->
+                        // Find the selected payment option from the list of all options
+                        val allOptions = ewalletOptions + bankOptions
+                        selectedPaymentOption = allOptions.find { it.id == id }
+                    }
+                )
+            }
+
         }
     }
 }

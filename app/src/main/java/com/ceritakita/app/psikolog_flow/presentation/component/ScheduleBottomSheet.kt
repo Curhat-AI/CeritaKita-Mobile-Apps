@@ -33,7 +33,6 @@ import com.ceritakita.app._core.presentation.ui.theme.TextColors
 fun ScheduleBottomSheet(
     onReviewSubmit: (String, Int) -> Unit,
     onDismiss: () -> Unit
-
 ) {
     val reviewState = remember { mutableStateOf("") }
     var showBottomSheet by remember { mutableStateOf(true) }
@@ -135,13 +134,20 @@ fun ScheduleBottomSheet(
                         text = "Konfirmasi",
                         onClick = {
                             // Retrieve selections
-                            val selectedDate = if (selectedIndex >= 0) "${days[selectedIndex]} ${dates[selectedIndex]}" else "None"
-                            val selectedTime = if (selectedTimeIndex >= 0) times[selectedTimeIndex] else "None"
-                            val selectedDuration = if (selectedDurationIndex >= 0) durations[selectedDurationIndex] else "None"
-                            val selectedMedia = if (selectedMediaIndex == 0) "Voice Call" else "Video Call"
+                            val selectedDate =
+                                if (selectedIndex >= 0) "${days[selectedIndex]} ${dates[selectedIndex]}" else "None"
+                            val selectedTime =
+                                if (selectedTimeIndex >= 0) times[selectedTimeIndex] else "None"
+                            val selectedDuration =
+                                if (selectedDurationIndex >= 0) durations[selectedDurationIndex] else "None"
+                            val selectedMedia =
+                                if (selectedMediaIndex == 0) "Voice Call" else "Video Call"
 
                             // Do something with these selections, e.g., submitting to a server
-                            onReviewSubmit("Selected Date: $selectedDate, Time: $selectedTime, Duration: $selectedDuration, Media: $selectedMedia", rating)
+                            onReviewSubmit(
+                                "Selected Date: $selectedDate, Time: $selectedTime, Duration: $selectedDuration, Media: $selectedMedia",
+                                rating
+                            )
 
                             // Close the bottom sheet
                             showBottomSheet = false
