@@ -3,6 +3,7 @@ package com.ceritakita.app.auth.presentation.screen
 
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
@@ -45,6 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.credentials.CredentialManager
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.buttons.ButtonType
@@ -57,6 +59,7 @@ import com.ceritakita.app._core.presentation.components.texts.HeadingLarge
 import com.ceritakita.app._core.presentation.components.texts.HeadingSmall
 import com.ceritakita.app._core.presentation.ui.theme.AppColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
+import com.ceritakita.app.auth.presentation.viewmodel.RegisterPageViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -71,6 +74,8 @@ import kotlinx.coroutines.tasks.await
 
 @Composable
 fun RegisterScreen(navController: NavController) {
+    val viewModel: RegisterPageViewModel = hiltViewModel()
+
     val namaState = remember { mutableStateOf("") }
     val emailState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
@@ -79,6 +84,7 @@ fun RegisterScreen(navController: NavController) {
     var credentialManager = CredentialManager.create(context)
     var user by remember { mutableStateOf(Firebase.auth.currentUser) }
     val token = stringResource(id = R.string.web_client)
+    val coroutineScope = rememberCoroutineScope()
 
     val launcher = rememberFirebaseAuthLauncher(
         onAuthComplete = { result ->
@@ -154,7 +160,17 @@ fun RegisterScreen(navController: NavController) {
             placeholderText = "Enter your password"
         )
         Spacer(modifier = Modifier.heightIn(40.dp))
-        CustomButton(text = "Masuk", onClick = { /*TODO*/ }, buttonType = ButtonType.Primary)
+        CustomButton(text = "Masuk", onClick = {
+            if (passwordState.value == passwordRepeatState.value) {
+                coroutineScope.launch {
+                    viewModel.registerUser(namaState.value, emailState.value, passwordState.value)
+//                    navController.navigate("nextScreen")
+                }
+            } else {
+                Toast.makeText(context, "Password tidak sama", Toast.LENGTH_SHORT).show()
+            }
+
+        }, buttonType = ButtonType.Primary)
         Spacer(modifier = Modifier.weight(0.1f))
             BodyMedium(
                 modifier = Modifier.fillMaxWidth(),
@@ -180,11 +196,9 @@ fun RegisterScreen(navController: NavController) {
             outlineButtonColor = Color.Black
             )
         Spacer(modifier = Modifier.weight(0.1f))
-
         Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth(),
-
                 ) {
                 BodyMedium(
                     text = "Belum punya Akun?",
