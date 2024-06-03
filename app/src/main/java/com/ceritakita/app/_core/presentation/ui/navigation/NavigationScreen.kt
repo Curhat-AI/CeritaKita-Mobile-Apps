@@ -8,5 +8,6 @@ RegisterScreen,
     HistoryScreen,
     CounselingDetailScreen,
     CounselorDetailScreen,
-    PaymentScreen
+    PaymentScreen,
+    TextRecognitionScreen
 }
