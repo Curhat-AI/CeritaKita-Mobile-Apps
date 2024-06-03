@@ -1,6 +1,5 @@
-package com.ceritakita.app.template_feature.presentation.screen
+package com.ceritakita.app.psikolog_flow.presentation.screen
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,25 +29,24 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.navigation.NavController
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavController
 import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.texts.BodyLarge
 import com.ceritakita.app._core.presentation.components.texts.HeadingLarge
 import com.ceritakita.app._core.presentation.ui.theme.AppColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.template_feature.data.Profile
+
 val profiles = listOf(
     Profile(
         name = "Yanuar Tri Laksono",
@@ -96,7 +93,7 @@ val profiles = listOf(
 @Composable
 fun ProfileList(profiles: List<Profile>) {
     LazyRow(
-        contentPadding = PaddingValues( vertical = 8.dp),
+        contentPadding = PaddingValues(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(profiles) { profile ->
@@ -105,24 +102,18 @@ fun ProfileList(profiles: List<Profile>) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewProfileList() {
-    ProfileList(profiles = profiles)
-}
 @Composable
 fun CounselorListScreen(navController: NavController) {
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(WindowInsets.systemBars.asPaddingValues())
             .padding(horizontal = 20.dp, vertical = 20.dp)
-    ){
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-        ){
-
+        ) {
             BodyLarge(
                 text = "Konsultasi Psikolog",
                 textAlign = TextAlign.Start,
@@ -132,18 +123,20 @@ fun CounselorListScreen(navController: NavController) {
                 modifier = Modifier
                     .width(24.dp)
                     .height(24.dp),
-                painter = painterResource(id = R.drawable.ic_search_icon), contentDescription = "Button Search",)
+                painter = painterResource(id = R.drawable.ic_search_icon),
+                contentDescription = "Button Search",
+            )
         }
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(top = 16.dp)
 
-        ){
+        ) {
             HeadingLarge(
                 text = "Rekomendasi Untukmu",
                 fontSize = 24.sp,
-                )
+            )
             BodyLarge(
                 text = "Semua",
                 fontWeight = FontWeight.Medium,
@@ -195,6 +188,7 @@ fun CounselorListScreen(navController: NavController) {
 
     }
 }
+
 @Composable
 fun ProfileCard(profile: Profile) {
     Card(
@@ -205,8 +199,7 @@ fun ProfileCard(profile: Profile) {
             .padding(top = 16.dp)
     ) {
         Column(
-            modifier = Modifier.
-                width(200.dp)
+            modifier = Modifier.width(200.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_launcher_background),
@@ -218,9 +211,11 @@ fun ProfileCard(profile: Profile) {
                     .align(Alignment.CenterHorizontally)
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Column(modifier = Modifier
-                .padding(top = 10.dp)
-                .padding(horizontal = 10.dp)) {
+            Column(
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .padding(horizontal = 10.dp)
+            ) {
                 Text(
                     text = "${profile.name}, ${profile.degree}",
                     fontSize = 18.sp,
@@ -233,7 +228,7 @@ fun ProfileCard(profile: Profile) {
                 )
                 Row(
                     modifier = Modifier.padding(top = 12.dp, bottom = 10.dp)
-                ){
+                ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_work_icon),
@@ -269,26 +264,11 @@ fun ProfileCard(profile: Profile) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewProfileCardHorizontal() {
-    ProfileCardHorizontal(
-        profile = Profile(
-            name = "Yanuar Tri Laksono",
-            degree = "M.Psi",
-            expertise = "Coding",
-            imageUrl = "https://example.com/profile.jpg", // Replace with actual image URL
-            yearsExperience = 6,
-            rating = 4.5
-        )
-    )
-}
-
 @Composable
 fun ProfileCardHorizontal(profile: Profile) {
     Card(
         shape = RoundedCornerShape(8.dp), modifier = Modifier.padding(top = 10.dp)
-        )
+    )
     {
 
         Row(
@@ -306,7 +286,7 @@ fun ProfileCardHorizontal(profile: Profile) {
             )
             Column(
                 modifier = Modifier.padding(start = 10.dp),
-            ){
+            ) {
                 Text(
                     text = "${profile.name}, ${profile.degree}",
                     fontSize = 18.sp,
@@ -315,7 +295,7 @@ fun ProfileCardHorizontal(profile: Profile) {
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(
                     modifier = Modifier.padding(top = 12.dp, bottom = 10.dp)
-                ){
+                ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_work_icon),
@@ -361,7 +341,7 @@ fun ProfileCardHorizontal(profile: Profile) {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
 
-        ){
+        ) {
             Text(
                 modifier = Modifier
                     .padding(start = 16.dp, end = 5.dp),
@@ -385,6 +365,7 @@ fun ProfileCardHorizontal(profile: Profile) {
 
     }
 }
+
 @Composable
 fun TimeChip(time: String) {
 
@@ -408,15 +389,4 @@ fun TimeChip(time: String) {
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewTimeChip() {
-    TimeChip(time = "12:00")
-}
-@Preview(showSystemUi = false, showBackground = true)
-@Composable
-fun PreviewCounselorListScreen() {
-    CounselorListScreen(navController = rememberNavController())
 }
