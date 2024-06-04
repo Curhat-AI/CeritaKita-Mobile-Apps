@@ -9,9 +9,7 @@ RegisterScreen,
     CounselingDetailScreen,
     CounselorDetailScreen,
     PaymentScreen,
-<<<<<<< Updated upstream
-    TextRecognitionScreen
-=======
-    CounselorListScreen
->>>>>>> Stashed changes
+    TextRecognitionScreen,
+    CounselorListScreen,
+    RecognitionResultScreen
 }
