@@ -11,6 +11,10 @@ import com.ceritakita.app.recognition.presentation.screen.RecognitionResultScree
 fun Navigation(){
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = NavigationScreen.RecognitionResultScreen.name) {
-        composable(NavigationScreen.RecognitionResultScreen.name) { RecognitionResultScreen(navController) }
+        composable(NavigationScreen.RecognitionResultScreen.name) {
+            RecognitionResultScreen(navController)
+
+        }
+
     }
 }
