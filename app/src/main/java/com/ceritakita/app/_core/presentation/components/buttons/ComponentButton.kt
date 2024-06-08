@@ -53,13 +53,15 @@ fun CustomButton(
     buttonType: ButtonType = ButtonType.Primary,
     padding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
     shape: RoundedCornerShape = AppShapes.mediumCorners, // Default shape
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     Button(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = shape,
         contentPadding = padding,
+        enabled = enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = when (buttonType) {
                 ButtonType.Primary -> BrandColors.brandPrimary600
