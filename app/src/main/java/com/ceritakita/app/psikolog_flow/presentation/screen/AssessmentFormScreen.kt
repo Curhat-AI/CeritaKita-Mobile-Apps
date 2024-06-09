@@ -13,7 +13,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
+import com.ceritakita.app.psikolog_flow.presentation.component.multistep_form.StepFive
+import com.ceritakita.app.psikolog_flow.presentation.component.multistep_form.StepFour
 import com.ceritakita.app.psikolog_flow.presentation.component.multistep_form.StepOne
+import com.ceritakita.app.psikolog_flow.presentation.component.multistep_form.StepSeven
+import com.ceritakita.app.psikolog_flow.presentation.component.multistep_form.StepSix
 import com.ceritakita.app.psikolog_flow.presentation.component.multistep_form.StepThree
 import com.ceritakita.app.psikolog_flow.presentation.component.multistep_form.StepTwo
 
@@ -41,6 +45,10 @@ fun AssessmentFormScreen(
                 1 -> StepOne(onNext = { step++ })
                 2 -> StepTwo(onNext = { step++ }, onBack = { step-- })
                 3 -> StepThree(onNext = { step++ }, onBack = { step-- })
+                4 -> StepFour(onNext = { step++ }, onBack = { step-- })
+                5 -> StepFive(onNext = { step++ }, onBack = { step-- })
+                6 -> StepSix(onNext = { step++ }, onBack = { step-- })
+                7 -> StepSeven(onNext = { step++ }, onBack = { step-- })
             }
         }
 
