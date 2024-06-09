@@ -57,6 +57,7 @@ import com.ceritakita.app._core.presentation.components.texts.BodyLarge
 import com.ceritakita.app._core.presentation.components.texts.BodyMedium
 import com.ceritakita.app._core.presentation.components.texts.HeadingLarge
 import com.ceritakita.app._core.presentation.components.texts.HeadingSmall
+import com.ceritakita.app._core.presentation.ui.navigation.NavigationScreen
 import com.ceritakita.app._core.presentation.ui.theme.AppColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.auth.presentation.viewmodel.RegisterPageViewModel
@@ -118,10 +119,10 @@ fun RegisterScreen(navController: NavController) {
             HeadingSmall(text = "CeritaKita")
         }
         Spacer(modifier = Modifier.heightIn(20.dp))
-        HeadingLarge(text = "Masuk Ke Akun Kamu")
+        HeadingLarge(text = "Daftar Akun Curhat.ai")
         Spacer(modifier = Modifier.heightIn(4.dp))
         BodyLarge(
-            text = "Masuk untuk mengakses seluruh fitur CeritaKita",
+            text = "Daftar untuk mengakses seluruh fitur Curhat.ai",
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Start,
             color = TextColors.grey600
@@ -160,7 +161,7 @@ fun RegisterScreen(navController: NavController) {
             placeholderText = "Enter your password"
         )
         Spacer(modifier = Modifier.heightIn(40.dp))
-        CustomButton(text = "Masuk", onClick = {
+        CustomButton(text = "Daftar", onClick = {
             if (passwordState.value == passwordRepeatState.value) {
                 coroutineScope.launch {
                     viewModel.registerUser(namaState.value, emailState.value, passwordState.value)
@@ -198,17 +199,18 @@ fun RegisterScreen(navController: NavController) {
         Spacer(modifier = Modifier.weight(0.1f))
         Row(
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().clickable {
+                    navController.navigate(NavigationScreen.LoginScreen.name)
+                },
                 ) {
                 BodyMedium(
-                    text = "Belum punya Akun?",
+                    text = "Sudah punya Akun?",
                     color = TextColors.grey500,
                     textAlign = TextAlign.Center
                 )
                 Spacer(Modifier.widthIn(5.dp))
                 BodyMedium(
-                    text = "Login",
-                    modifier = Modifier.clickable {  },
+                    text = "Masuk",
                     color = AppColors.linkColor,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
@@ -21,13 +22,23 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,6 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -89,6 +101,69 @@ val profiles = listOf(
         rating = 4.3
     )
 )
+@Preview
+@Composable
+fun ElevatedMiddleButtonNavPreview() {
+    ElevatedMiddleButtonNav()
+}
+
+@Composable
+fun ElevatedMiddleButtonNav() {
+    val items = listOf(
+        NavigationItem("Home", Icons.Default.Home),
+        NavigationItem("Konseling", Icons.Default.Star),
+        NavigationItem("Lorem", Icons.Default.ShoppingCart), // Assuming an icon for "Lorem"
+        NavigationItem("Riwayat", Icons.Default.Check),
+        NavigationItem("Akun", Icons.Default.AccountCircle)
+    )
+
+    BottomNavigation(
+        backgroundColor = Color.White,
+        elevation = 5.dp
+    ) {
+        val navBackStackEntry by remember { mutableStateOf("Lorem") } // Simulating navigation
+
+        items.forEachIndexed { index, item ->
+            if (index == 2) { // For the middle item
+                Box(modifier = Modifier
+                    .padding(0.dp, 0.dp, 0.dp, 10.dp)
+                    .offset(y = (-20).dp) // Move up by 20dp
+                ) {
+                    FloatingActionButton(
+                        onClick = { /* Handle navigation */ },
+                        backgroundColor = Color.Blue,
+                        contentColor = Color.White,
+                        modifier = Modifier
+                            .size(56.dp)
+                            .align(Alignment.TopCenter)
+                    ) {
+                        androidx.compose.material.Icon(item.icon, contentDescription = null)
+                        androidx.compose.material.Text(
+                            text = item.title,
+                            color = Color.White,
+                            fontSize = 12.sp,
+                            modifier = Modifier.align(Alignment.BottomCenter)
+                        )
+                    }
+                }
+            } else {
+                BottomNavigationItem(
+                    icon = { androidx.compose.material.Icon(item.icon, contentDescription = null) },
+                    label = { androidx.compose.material.Text(item.title) },
+                    selected = navBackStackEntry == item.title,
+                    onClick = {
+                        // Handle navigation here
+                    },
+                    alwaysShowLabel = false, // Set true to always show the label
+                    selectedContentColor = Color.Blue,
+                    unselectedContentColor = Color.Gray
+                )
+            }
+        }
+    }
+}
+
+data class NavigationItem(val title: String, val icon: androidx.compose.ui.graphics.vector.ImageVector)
 
 @Composable
 fun ProfileList(profiles: List<Profile>) {
