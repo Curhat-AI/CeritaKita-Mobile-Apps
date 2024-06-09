@@ -52,9 +52,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.texts.BodyLarge
 import com.ceritakita.app._core.presentation.components.texts.HeadingLarge
+import com.ceritakita.app._core.presentation.ui.navigation.NavigationScreen
 import com.ceritakita.app._core.presentation.ui.theme.AppColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.template_feature.data.Profile
@@ -101,69 +103,7 @@ val profiles = listOf(
         rating = 4.3
     )
 )
-@Preview
-@Composable
-fun ElevatedMiddleButtonNavPreview() {
-    ElevatedMiddleButtonNav()
-}
 
-@Composable
-fun ElevatedMiddleButtonNav() {
-    val items = listOf(
-        NavigationItem("Home", Icons.Default.Home),
-        NavigationItem("Konseling", Icons.Default.Star),
-        NavigationItem("Lorem", Icons.Default.ShoppingCart), // Assuming an icon for "Lorem"
-        NavigationItem("Riwayat", Icons.Default.Check),
-        NavigationItem("Akun", Icons.Default.AccountCircle)
-    )
-
-    BottomNavigation(
-        backgroundColor = Color.White,
-        elevation = 5.dp
-    ) {
-        val navBackStackEntry by remember { mutableStateOf("Lorem") } // Simulating navigation
-
-        items.forEachIndexed { index, item ->
-            if (index == 2) { // For the middle item
-                Box(modifier = Modifier
-                    .padding(0.dp, 0.dp, 0.dp, 10.dp)
-                    .offset(y = (-20).dp) // Move up by 20dp
-                ) {
-                    FloatingActionButton(
-                        onClick = { /* Handle navigation */ },
-                        backgroundColor = Color.Blue,
-                        contentColor = Color.White,
-                        modifier = Modifier
-                            .size(56.dp)
-                            .align(Alignment.TopCenter)
-                    ) {
-                        androidx.compose.material.Icon(item.icon, contentDescription = null)
-                        androidx.compose.material.Text(
-                            text = item.title,
-                            color = Color.White,
-                            fontSize = 12.sp,
-                            modifier = Modifier.align(Alignment.BottomCenter)
-                        )
-                    }
-                }
-            } else {
-                BottomNavigationItem(
-                    icon = { androidx.compose.material.Icon(item.icon, contentDescription = null) },
-                    label = { androidx.compose.material.Text(item.title) },
-                    selected = navBackStackEntry == item.title,
-                    onClick = {
-                        // Handle navigation here
-                    },
-                    alwaysShowLabel = false, // Set true to always show the label
-                    selectedContentColor = Color.Blue,
-                    unselectedContentColor = Color.Gray
-                )
-            }
-        }
-    }
-}
-
-data class NavigationItem(val title: String, val icon: androidx.compose.ui.graphics.vector.ImageVector)
 
 @Composable
 fun ProfileList(profiles: List<Profile>) {
