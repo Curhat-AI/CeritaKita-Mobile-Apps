@@ -25,6 +25,12 @@ class RegisterPageViewModel @Inject constructor(
                     "roles" to {
                         "counselor" to false
                         "patient" to false
+                    },
+                    "details" to {
+                        "dob" to null
+                        "gender" to null
+                        "phone" to null
+                        "photoUrl" to null
                     }
                 )
                 firestore.collection("users").document(user.uid).set(userData).await()

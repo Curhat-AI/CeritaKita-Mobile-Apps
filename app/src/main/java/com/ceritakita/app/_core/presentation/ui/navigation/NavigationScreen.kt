@@ -11,5 +11,9 @@ RegisterScreen,
     PaymentScreen,
     TextRecognitionScreen,
     CounselorListScreen,
-    RecognitionResultScreen
+    RecognitionResultScreen,
+    HomeScreen,
+    ProfileScreen,
+    MainScreen
+
 }

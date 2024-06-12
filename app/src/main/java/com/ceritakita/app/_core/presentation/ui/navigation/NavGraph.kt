@@ -13,14 +13,26 @@ import com.ceritakita.app.history.presentation.screen.HistoryScreen
 import com.ceritakita.app.counselor.presentation.screen.CounselorDetailScreen
 import com.ceritakita.app.counselor.presentation.screen.CounselorListScreen
 import com.ceritakita.app.counselor.presentation.screen.PaymentScreen
+import com.ceritakita.app.homepage.presentation.screen.HomeScreen
+import com.ceritakita.app.profile.presentation.screen.ProfileScreen
 import com.ceritakita.app.recognition.presentation.screen.RecognitionResultScreen
 import com.ceritakita.app.recognition.presentation.screen.TextRecognitionScreen
+import com.ceritakita.app.template_feature.presentation.screen.MainScreen
 
 
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = NavigationScreen.CounselorListScreen.name) {
+    NavHost(navController = navController, startDestination = NavigationScreen.MainScreen.name) {
+        composable(NavigationScreen.HomeScreen.name) {
+            HomeScreen(navController)
+        }
+        composable(NavigationScreen.MainScreen.name) {
+            MainScreen()
+        }
+        composable(NavigationScreen.ProfileScreen.name) {
+            ProfileScreen(navController)
+        }
         composable(NavigationScreen.RegisterScreen.name) {
             RegisterScreen(navController)
         }
