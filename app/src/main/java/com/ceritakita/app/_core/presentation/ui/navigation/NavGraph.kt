@@ -10,9 +10,9 @@ import com.ceritakita.app.auth.presentation.screen.LoginScreen
 import com.ceritakita.app.auth.presentation.screen.RegisterScreen
 import com.ceritakita.app.history.presentation.screen.CounselingDetailScreen
 import com.ceritakita.app.history.presentation.screen.HistoryScreen
-import com.ceritakita.app.psikolog_flow.presentation.screen.CounselorDetailScreen
-import com.ceritakita.app.psikolog_flow.presentation.screen.CounselorListScreen
-import com.ceritakita.app.psikolog_flow.presentation.screen.PaymentScreen
+import com.ceritakita.app.counselor.presentation.screen.CounselorDetailScreen
+import com.ceritakita.app.counselor.presentation.screen.CounselorListScreen
+import com.ceritakita.app.counselor.presentation.screen.PaymentScreen
 import com.ceritakita.app.recognition.presentation.screen.RecognitionResultScreen
 import com.ceritakita.app.recognition.presentation.screen.TextRecognitionScreen
 
@@ -20,7 +20,7 @@ import com.ceritakita.app.recognition.presentation.screen.TextRecognitionScreen
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = NavigationScreen.RegisterScreen.name) {
+    NavHost(navController = navController, startDestination = NavigationScreen.CounselorListScreen.name) {
         composable(NavigationScreen.RegisterScreen.name) {
             RegisterScreen(navController)
         }
