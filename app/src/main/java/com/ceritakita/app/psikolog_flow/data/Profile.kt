@@ -1,4 +1,4 @@
-package com.ceritakita.app.template_feature.data
+package com.ceritakita.app.psikolog_flow.data
 
 data class Profile(
     val name: String,

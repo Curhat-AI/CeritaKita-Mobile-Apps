@@ -33,7 +33,6 @@ fun AssessmentFormScreen(
                 title = "Preferensi Konseling",
                 onBackClicked = { navController.navigateUp() }
             )
-
         }
     ) { innerPadding ->
         Column(
@@ -51,6 +50,5 @@ fun AssessmentFormScreen(
                 7 -> StepSeven(onNext = { step++ }, onBack = { step-- })
             }
         }
-
     }
 }
