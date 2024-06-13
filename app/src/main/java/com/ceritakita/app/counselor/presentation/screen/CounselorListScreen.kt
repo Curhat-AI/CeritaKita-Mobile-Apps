@@ -17,66 +17,28 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ceritakita.app._core.presentation.components.texts.BodyLarge
 import com.ceritakita.app._core.presentation.components.texts.HeadingSmall
 import com.ceritakita.app._core.presentation.ui.theme.AppColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
-import com.ceritakita.app.counselor.data.Profile
+import com.ceritakita.app.counselor.domain.entities.CounselorProfileEntities
 import com.ceritakita.app.counselor.presentation.component.BigCounselorProfileCard
 import com.ceritakita.app.counselor.presentation.component.MiniCounselorProfileCard
-
-val profiles = listOf(
-    Profile(
-        name = "Yanuar Tri Laksono",
-        degree = "M.Psi",
-        expertise = "keuangan dan karir",
-        imageUrl = "https://example.com/profile1.jpg",
-        yearsExperience = 6,
-        rating = 4.5
-    ),
-    Profile(
-        name = "Aulia Rahmi",
-        degree = "Ph.D.",
-        expertise = "keuangan dan karir",
-        imageUrl = "https://example.com/profile2.jpg",
-        yearsExperience = 4,
-        rating = 4.8
-    ),
-    Profile(
-        name = "Irfan Budi",
-        degree = "M.Tech",
-        expertise = "keuangan dan karir",
-        imageUrl = "https://example.com/profile3.jpg",
-        yearsExperience = 8,
-        rating = 4.7
-    ),
-    Profile(
-        name = "Sari Puspita",
-        degree = "B.Sc",
-        expertise = "keuangan dan karir",
-        imageUrl = "https://example.com/profile4.jpg",
-        yearsExperience = 5,
-        rating = 4.6
-    ),
-    Profile(
-        name = "Tommy Saputra",
-        degree = "M.Com",
-        expertise = "keuangan dan karir",
-        imageUrl = "https://example.com/profile5.jpg",
-        yearsExperience = 3,
-        rating = 4.3
-    )
-)
+import com.ceritakita.app.counselor.presentation.viewmodel.CounselorListViewModel
 
 @Composable
-fun CounselorListScreen(navController: NavController) {
+fun CounselorListScreen(navController: NavController, viewModel: CounselorListViewModel = hiltViewModel()) {
+    val profiles by viewModel.profiles.observeAsState(initial = emptyList())
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -87,7 +49,9 @@ fun CounselorListScreen(navController: NavController) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(top = 16.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .fillMaxWidth()
 
         ) {
             HeadingSmall(
@@ -107,7 +71,7 @@ fun CounselorListScreen(navController: NavController) {
             textAlign = TextAlign.Start,
             color = TextColors.grey600
         )
-        RowProfileList(profiles = profiles)
+        RowProfileList(counselorProfileEntities = profiles)
         Spacer(modifier = Modifier.heightIn(24.dp))
         HeadingSmall(
             text = "Semua Konselor",
@@ -120,13 +84,13 @@ fun CounselorListScreen(navController: NavController) {
 }
 
 @Composable
-fun RowProfileList(profiles: List<Profile>) {
+fun RowProfileList(counselorProfileEntities: List<CounselorProfileEntities>) {
     LazyRow(
         contentPadding = PaddingValues(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        items(profiles) { profile ->
-            MiniCounselorProfileCard(profile = profile)
+        items(counselorProfileEntities) { profile ->
+            MiniCounselorProfileCard(counselorProfileEntities = profile)
         }
     }
 }

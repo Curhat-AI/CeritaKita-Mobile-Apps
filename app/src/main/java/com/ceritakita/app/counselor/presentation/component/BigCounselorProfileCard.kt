@@ -35,11 +35,12 @@ import com.ceritakita.app._core.presentation.components.texts.BodySmall
 import com.ceritakita.app._core.presentation.components.texts.LabelLarge
 import com.ceritakita.app._core.presentation.components.texts.TitleLarge
 import com.ceritakita.app._core.presentation.ui.theme.AppColors
+import com.ceritakita.app._core.presentation.ui.theme.BrandColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
-import com.ceritakita.app.counselor.data.Profile
+import com.ceritakita.app.counselor.domain.entities.CounselorProfileEntities
 
 @Composable
-fun BigCounselorProfileCard(profile: Profile) {
+fun BigCounselorProfileCard(counselorProfileEntities: CounselorProfileEntities) {
     Card(
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
@@ -52,10 +53,10 @@ fun BigCounselorProfileCard(profile: Profile) {
             )
             .border(1.dp, TextColors.grey100, RoundedCornerShape(8.dp)),
         colors = CardColors(
-            disabledContainerColor = Color.White,
-            containerColor = Color.White,
-            disabledContentColor = Color.White,
-            contentColor = Color.White
+            disabledContainerColor = BrandColors.brandPrimary50,
+            containerColor = BrandColors.brandPrimary50,
+            disabledContentColor = BrandColors.brandPrimary50,
+            contentColor = BrandColors.brandPrimary50
         ),
     ) {
         Column(
@@ -74,7 +75,7 @@ fun BigCounselorProfileCard(profile: Profile) {
                     modifier = Modifier.padding(start = 10.dp),
                 ) {
                     TitleLarge(
-                        text = "${profile.name}, ${profile.degree}", fontSize = 20.sp, maxLines = 2,
+                        text = counselorProfileEntities.name, fontSize = 20.sp, maxLines = 2,
                     )
                     Row(
                         modifier = Modifier.padding(top = 8.dp)
@@ -87,7 +88,7 @@ fun BigCounselorProfileCard(profile: Profile) {
                                 tint = AppColors.warningColor
                             )
                             BodySmall(
-                                text = "${profile.yearsExperience} Tahun",
+                                text = "${counselorProfileEntities.experienceYears} Tahun",
                                 modifier = Modifier.padding(start = 4.dp)
                             )
                             Spacer(modifier = Modifier.width(10.dp))
@@ -99,7 +100,7 @@ fun BigCounselorProfileCard(profile: Profile) {
                                     tint = AppColors.warningColor
                                 )
                                 BodySmall(
-                                    text = "${profile.rating}",
+                                    text = "${counselorProfileEntities.experienceYears}",
                                     modifier = Modifier.padding(start = 4.dp)
                                 )
                             }
@@ -111,7 +112,7 @@ fun BigCounselorProfileCard(profile: Profile) {
                 modifier = Modifier
                     .padding(top = 12.dp, end = 16.dp),
                 textAlign = TextAlign.Start,
-                text = "Expert in ${profile.expertise}",
+                text = "Expert in ${counselorProfileEntities.expertise}",
             )
             Row(
                 modifier = Modifier.padding(top = 12.dp),

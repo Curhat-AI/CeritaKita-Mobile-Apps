@@ -29,10 +29,11 @@ import com.ceritakita.app._core.presentation.components.texts.BodyMedium
 import com.ceritakita.app._core.presentation.components.texts.BodySmall
 import com.ceritakita.app._core.presentation.components.texts.TitleLarge
 import com.ceritakita.app._core.presentation.ui.theme.AppColors
-import com.ceritakita.app.counselor.data.Profile
+import com.ceritakita.app._core.presentation.ui.theme.BrandColors
+import com.ceritakita.app.counselor.domain.entities.CounselorProfileEntities
 
 @Composable
-fun MiniCounselorProfileCard(profile: Profile) {
+fun MiniCounselorProfileCard(counselorProfileEntities: CounselorProfileEntities) {
     Card(
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
@@ -44,10 +45,10 @@ fun MiniCounselorProfileCard(profile: Profile) {
                 ambientColor = Color(0x0F000000)
             ),
         colors = CardColors(
-            disabledContainerColor = Color.White,
-            containerColor = Color.White,
-            disabledContentColor = Color.White,
-            contentColor = Color.White
+            disabledContainerColor = BrandColors.brandPrimary50,
+            containerColor = BrandColors.brandPrimary50,
+            disabledContentColor = BrandColors.brandPrimary50,
+            contentColor = BrandColors.brandPrimary50
         ),
     ) {
         Column {
@@ -67,13 +68,13 @@ fun MiniCounselorProfileCard(profile: Profile) {
                     .padding(horizontal = 10.dp)
             ) {
                 TitleLarge(
-                    text = "${profile.name}, ${profile.degree}",
+                    text = counselorProfileEntities.name,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 BodyMedium(
-                    text = "Expert in ${profile.expertise}",
+                    text = "Expert in ${counselorProfileEntities.expertise}",
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -88,7 +89,7 @@ fun MiniCounselorProfileCard(profile: Profile) {
                             tint = AppColors.warningColor
                         )
                         BodySmall(
-                            text = "${profile.yearsExperience} Tahun",
+                            text = "${counselorProfileEntities.experienceYears} Tahun",
                             modifier = Modifier.padding(start = 4.dp)
                         )
                         Spacer(modifier = Modifier.width(10.dp))
@@ -100,7 +101,7 @@ fun MiniCounselorProfileCard(profile: Profile) {
                                 tint = AppColors.warningColor
                             )
                             BodySmall(
-                                text = "${profile.rating}",
+                                text = "${counselorProfileEntities.experienceYears}",
                                 modifier = Modifier.padding(start = 4.dp)
                             )
                         }

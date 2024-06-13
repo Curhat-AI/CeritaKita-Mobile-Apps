@@ -1,1 +1,1 @@
-// Contents for DatabaseModule.kt
+package com.ceritakita.app._core.data.di// Contents for DatabaseModule.kt
