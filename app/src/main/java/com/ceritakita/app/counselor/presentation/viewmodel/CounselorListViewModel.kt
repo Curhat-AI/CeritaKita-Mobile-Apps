@@ -12,11 +12,13 @@ import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
-class CounselorListViewModel @Inject constructor(private val repository: CounselorListRepository) : ViewModel() {
+class CounselorListViewModel @Inject constructor(private val repository: CounselorListRepository) :
+    ViewModel() {
 
     private val _profiles = MutableLiveData<List<CounselorProfileEntities>>()
     val profiles: LiveData<List<CounselorProfileEntities>> = _profiles
-
+    private val _selectedCounselor = MutableLiveData<CounselorProfileEntities>() // Use the complete entity
+    val selectedCounselor: LiveData<CounselorProfileEntities> = _selectedCounselor
     init {
         loadProfiles()
     }
@@ -28,11 +30,14 @@ class CounselorListViewModel @Inject constructor(private val repository: Counsel
             val profilesList = documents.map { document ->
 //                Log.d("CounselorViewModel", "Document Data: ${document.data}")
                 val profile = CounselorProfileEntities(
+                    id = document.id,
                     name = document.getString("counselorDetails.name") ?: "Unknown",
                     bio = document.getString("counselorDetails.bio") ?: "No Bio",
-                    counselorType = document.getString("counselorDetails.counselorType") ?: "No Type",
+                    counselorType = document.getString("counselorDetails.counselorType")
+                        ?: "No Type",
                     expertise = document.getString("counselorDetails.expertise") ?: "No Expertise",
-                    experienceYears = document.getLong("counselorDetails.experienceYears")?.toInt() ?: 0,
+                    experienceYears = document.getLong("counselorDetails.experienceYears")?.toInt()
+                        ?: 0,
                     imageUrl = document.getString("details.photoUrl") ?: "No Image",
                     dob = document.getTimestamp("details.dob")?.let {
                         SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(it.toDate())
@@ -53,4 +58,25 @@ class CounselorListViewModel @Inject constructor(private val repository: Counsel
             Log.e("CounselorViewModel", "Error loading profiles", exception)
         }
     }
+
+    fun getCounselorDetails(counselorId: String) {
+        repository.getCounselorById(counselorId)
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val counselorData = document.toObject(CounselorProfileEntities::class.java)?.apply {
+                        this.id = document.id
+                    }
+                    counselorData?.let {
+                        _selectedCounselor.value = it
+                        Log.d("CounselorViewModel", "Counselor details loaded: $it")
+                    } ?: Log.w("CounselorViewModel", "Failed to deserialize document")
+                } else {
+                    Log.d("CounselorViewModel", "No document found for counselorId: $counselorId")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("CounselorViewModel", "Error fetching counselor details", exception)
+            }
+    }
+
 }

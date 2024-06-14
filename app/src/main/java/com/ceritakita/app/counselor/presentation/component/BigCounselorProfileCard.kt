@@ -2,6 +2,7 @@ package com.ceritakita.app.counselor.presentation.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,12 +41,16 @@ import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.counselor.domain.entities.CounselorProfileEntities
 
 @Composable
-fun BigCounselorProfileCard(counselorProfileEntities: CounselorProfileEntities) {
+fun BigCounselorProfileCard(
+    counselorProfileEntities: CounselorProfileEntities,
+    onClick: (String) -> Unit
+) {
     Card(
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .padding(top = 10.dp)
             .fillMaxWidth()
+            .clickable { onClick(counselorProfileEntities.id) }
             .shadow(
                 elevation = 32.dp,
                 spotColor = Color(0x0F000000),

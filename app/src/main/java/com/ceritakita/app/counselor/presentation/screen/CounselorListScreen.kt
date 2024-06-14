@@ -1,17 +1,15 @@
 package com.ceritakita.app.counselor.presentation.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -39,10 +37,10 @@ import com.ceritakita.app.counselor.presentation.viewmodel.CounselorListViewMode
 @Composable
 fun CounselorListScreen(navController: NavController, viewModel: CounselorListViewModel = hiltViewModel()) {
     val profiles by viewModel.profiles.observeAsState(initial = emptyList())
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(WindowInsets.systemBars.asPaddingValues())
             .padding(horizontal = 16.dp)
             .verticalScroll(rememberScrollState())
     ) {
@@ -71,26 +69,44 @@ fun CounselorListScreen(navController: NavController, viewModel: CounselorListVi
             textAlign = TextAlign.Start,
             color = TextColors.grey600
         )
-        RowProfileList(counselorProfileEntities = profiles)
+        RowProfileList(
+            counselorProfileEntities = profiles,
+            onCounselorClick = { counselorId ->
+                Log.d("CounselorListScreen", "Navigating to counselorDetail with ID: $counselorId")
+                navController.navigate("counselorDetailScreen/$counselorId")
+            }
+        )
+//        Button(onClick = { navController.navigate("paymentScreen") }) {
+//
+//        }
         Spacer(modifier = Modifier.heightIn(24.dp))
         HeadingSmall(
             text = "Semua Konselor",
             fontSize = 22.sp,
         )
         profiles.forEach { profile ->
-            BigCounselorProfileCard(profile)
+            BigCounselorProfileCard(profile) { counselorId ->
+                Log.d("CounselorListScreen", "Navigating to counselorDetail with ID: $counselorId")
+                navController.navigate("counselorDetailScreen/$counselorId")
+            }
         }
     }
 }
 
 @Composable
-fun RowProfileList(counselorProfileEntities: List<CounselorProfileEntities>) {
+fun RowProfileList(
+    counselorProfileEntities: List<CounselorProfileEntities>,
+    onCounselorClick: (String) -> Unit // Add the callback function for counselor clicks
+) {
     LazyRow(
         contentPadding = PaddingValues(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(counselorProfileEntities) { profile ->
-            MiniCounselorProfileCard(counselorProfileEntities = profile)
+            MiniCounselorProfileCard(
+                counselorProfileEntities = profile,
+                onClick = { onCounselorClick(profile.id) }  // Pass the onClick to the card
+            )
         }
     }
 }

@@ -1,16 +1,17 @@
 package com.ceritakita.app.counselor.domain.entities
 
 data class CounselorProfileEntities(
-    val name: String,
-    val bio: String,
-    val counselorType: String,
-    val expertise: String,
-    val experienceYears: Int,
-    val imageUrl: String,
-    val dob: String,
-    val gender: String,
-    val phone: String,
-    val email: String,
-    val counselor: Boolean,
-    val patient: Boolean
+    var id: String = "",
+    var name: String = "",
+    var bio: String = "",
+    var counselorType: String = "",
+    var expertise: String = "",
+    var experienceYears: Int = 0,
+    var imageUrl: String = "",
+    var dob: String = "",
+    var gender: String = "",
+    var phone: String = "",
+    var email: String = "",
+    var counselor: Boolean = true,
+    var patient: Boolean = false
 )
