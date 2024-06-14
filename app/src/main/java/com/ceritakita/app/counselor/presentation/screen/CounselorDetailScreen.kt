@@ -106,6 +106,7 @@ fun CounselorDetailScreen(
     ) {
         counselor?.let { counselorData ->
             Log.d("CounselorDetailScreen", "Displaying data for counselor: ${counselorData.name}")
+            Log.d("CounselorDetailScreen", "Displaying data for counselor: ${counselorData}")
             Image(
                 painter = painterResource(id = R.drawable.sample_image),
                 contentDescription = "Profile Image",
@@ -138,7 +139,7 @@ fun CounselorDetailScreen(
                                 tint = AppColors.warningColor
                             )
                             Spacer(modifier = Modifier.width(4.dp))
-                            BodyMedium(text = "5 Tahun")
+                            BodyMedium(text = "${counselorData.experienceYears} Tahun")
                         }
                     }
                     Spacer(modifier = Modifier.width(10.dp))
@@ -155,13 +156,13 @@ fun CounselorDetailScreen(
                                 tint = AppColors.warningColor
                             )
                             Spacer(modifier = Modifier.width(4.dp))
-                            BodyMedium(text = "4.5 (120)")
+                            BodyMedium(text = "${counselorData.experienceYears}")
                         }
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 BodyLarge(
-                    text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                    text = counselorData.bio,
                     color = TextColors.grey600,
                 )
                 Divider(
@@ -174,7 +175,7 @@ fun CounselorDetailScreen(
                 )
                 Spacer(modifier = Modifier.padding(vertical = 4.dp))
                 BodyLarge(
-                    text = "Pekerjaan, Percintaan, Positif Psikologi, Karir, Mindfulness, Person Center Therapy (PCT)",
+                    text = counselorData.expertise,
                     color = TextColors.grey600,
                 )
                 Divider(

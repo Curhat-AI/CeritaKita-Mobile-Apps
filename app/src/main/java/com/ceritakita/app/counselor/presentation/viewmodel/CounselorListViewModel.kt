@@ -17,8 +17,10 @@ class CounselorListViewModel @Inject constructor(private val repository: Counsel
 
     private val _profiles = MutableLiveData<List<CounselorProfileEntities>>()
     val profiles: LiveData<List<CounselorProfileEntities>> = _profiles
-    private val _selectedCounselor = MutableLiveData<CounselorProfileEntities>() // Use the complete entity
+    private val _selectedCounselor =
+        MutableLiveData<CounselorProfileEntities>() // Use the complete entity
     val selectedCounselor: LiveData<CounselorProfileEntities> = _selectedCounselor
+
     init {
         loadProfiles()
     }
@@ -63,13 +65,28 @@ class CounselorListViewModel @Inject constructor(private val repository: Counsel
         repository.getCounselorById(counselorId)
             .addOnSuccessListener { document ->
                 if (document.exists()) {
-                    val counselorData = document.toObject(CounselorProfileEntities::class.java)?.apply {
-                        this.id = document.id
-                    }
-                    counselorData?.let {
-                        _selectedCounselor.value = it
-                        Log.d("CounselorViewModel", "Counselor details loaded: $it")
-                    } ?: Log.w("CounselorViewModel", "Failed to deserialize document")
+                    val counselorData = CounselorProfileEntities(
+                        id = document.id,
+                        name = document.getString("counselorDetails.name") ?: "Unknown",
+                        bio = document.getString("counselorDetails.bio") ?: "No Bio",
+                        counselorType = document.getString("counselorDetails.counselorType")
+                            ?: "No Type",
+                        expertise = document.getString("counselorDetails.expertise")
+                            ?: "No Expertise",
+                        experienceYears = document.getLong("counselorDetails.experienceYears")
+                            ?.toInt() ?: 0,
+                        imageUrl = document.getString("details.photoUrl") ?: "No Image",
+                        dob = document.getTimestamp("details.dob")?.toDate()?.let {
+                            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(it)
+                        } ?: "No DOB",
+                        gender = document.getString("details.gender") ?: "No Gender",
+                        phone = document.getLong("details.phone")?.toString() ?: "No Phone",
+                        email = document.getString("email") ?: "No Email",
+                        counselor = document.getBoolean("roles.counselor") ?: false,
+                        patient = document.getBoolean("roles.patient") ?: false
+                    )
+                    _selectedCounselor.value = counselorData
+                    Log.d("CounselorViewModel", "Counselor details loaded: $counselorData")
                 } else {
                     Log.d("CounselorViewModel", "No document found for counselorId: $counselorId")
                 }
@@ -78,5 +95,4 @@ class CounselorListViewModel @Inject constructor(private val repository: Counsel
                 Log.e("CounselorViewModel", "Error fetching counselor details", exception)
             }
     }
-
 }
