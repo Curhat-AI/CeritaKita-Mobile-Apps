@@ -15,11 +15,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,7 +30,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ceritakita.app._core.presentation.components.texts.BodyMedium
 import com.ceritakita.app._core.presentation.components.texts.LabelLarge
 import com.ceritakita.app._core.presentation.components.texts.LabelMedium
 import com.ceritakita.app._core.presentation.components.texts.LabelSmall
@@ -57,8 +54,8 @@ fun KonselingHistoryCard(
         "Selesai" -> AppColors.successColor
         else -> TextColors.grey700
     }
-
     Card(
+        elevation = 0.dp,
         modifier = Modifier
             .border(1.dp, TextColors.grey200, RoundedCornerShape(8.dp))
             .shadow(
@@ -68,13 +65,12 @@ fun KonselingHistoryCard(
                 clip = true
             ),
         shape = RoundedCornerShape(8.dp),
-
+        backgroundColor = BrandColors.brandPrimary50
     ) {
         Column(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
-
             ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically

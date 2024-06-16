@@ -109,17 +109,15 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation (libs.firebase.firestore)
-        implementation("androidx.compose.ui:ui:1.4.3")
-        implementation("androidx.compose.material:material:1.4.3")
-        implementation("androidx.compose.ui:ui-tooling-preview:1.4.3")
-        implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-        implementation("androidx.activity:activity-compose:1.7.1")
-        implementation("androidx.camera:camera-camera2:1.1.0")
-        implementation("androidx.camera:camera-lifecycle:1.1.0")
-        implementation("androidx.camera:camera-view:1.0.0-alpha30")
-        implementation("androidx.camera:camera-extensions:1.0.0-alpha30")
-    implementation("com.google.guava:guava:31.0.1-android") // Tambahkan dependency ini
-
-
-
+    implementation("androidx.compose.ui:ui:1.4.3")
+    implementation("androidx.compose.material:material:1.4.3")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.4.3")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation("androidx.activity:activity-compose:1.7.1")
+    implementation("androidx.camera:camera-camera2:1.1.0")
+    implementation("androidx.camera:camera-lifecycle:1.1.0")
+    implementation("androidx.camera:camera-view:1.0.0-alpha30")
+    implementation("androidx.camera:camera-extensions:1.0.0-alpha30")
+    implementation("com.google.guava:guava:31.0.1-android")
+    implementation(libs.accompanist.systemuicontroller)
 }

@@ -8,49 +8,39 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ceritakita.app.R
-import com.ceritakita.app._core.presentation.components.texts.BodyMedium
 import com.ceritakita.app._core.presentation.components.texts.BodySmall
-import com.ceritakita.app._core.presentation.components.texts.LabelMedium
 import com.ceritakita.app._core.presentation.components.texts.LabelSmall
 import com.ceritakita.app._core.presentation.ui.theme.BrandColors
-import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.auth.presentation.screen.EmailVerificationScreen
 import com.ceritakita.app.auth.presentation.screen.EmailVerificationSuccessScreen
 import com.ceritakita.app.auth.presentation.screen.LoginScreen
@@ -71,7 +61,6 @@ import com.ceritakita.app.recognition.presentation.screen.TextRecognitionScreen
 fun Navigation() {
     val navController = rememberNavController()
     val currentRoute = currentRoute(navController)
-
     Scaffold(
         bottomBar = {
             if (currentRoute != "cameraScreen") {
@@ -131,11 +120,9 @@ fun Navigation() {
     }
 }
 
-
 @Composable
 fun ElevatedMiddleButtonNav(navController: NavController) {
     val bottomBarState = rememberSaveable { mutableStateOf(true) }
-
     val items = listOf(
         NavigationItem(
             "Home",
@@ -180,11 +167,16 @@ fun ElevatedMiddleButtonNav(navController: NavController) {
         enter = slideInVertically(initialOffsetY = { it }),
         exit = slideOutVertically(targetOffsetY = { it })
     ) {
-        Box {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .navigationBarsPadding()
+        ) {
             BottomNavigation(
                 backgroundColor = Color.White,
                 elevation = 10.dp,
-                modifier = Modifier.height(72.dp)
+                modifier = Modifier
+                    .padding(bottom = 0.dp)
             ) {
                 val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
                 Log.d("NavDebug", "Current Route: $currentRoute")
@@ -195,6 +187,7 @@ fun ElevatedMiddleButtonNav(navController: NavController) {
                     val isDisabled = item.title.isEmpty()
 
                     BottomNavigationItem(
+                        modifier = Modifier.background(Color.White).height(72.dp),
                         icon = {
                             Icon(
                                 imageVector = if (isSelected && !isDisabled) item.activeIcon else item.icon,
@@ -207,10 +200,15 @@ fun ElevatedMiddleButtonNav(navController: NavController) {
                                 LabelSmall(
                                     item.title,
                                     fontSize = 12.sp,
-                                    fontWeight = FontWeight.SemiBold
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier.padding(top = 0.dp, bottom = 0.dp)
                                 )
                             } else {
-                                BodySmall(item.title, fontSize = 12.sp)
+                                BodySmall(
+                                    item.title,
+                                    fontSize = 12.sp,
+                                    modifier = Modifier.padding(top = 0.dp, bottom = 0.dp)
+                                )
                             }
                         },
                         selected = isSelected,
@@ -236,7 +234,7 @@ fun ElevatedMiddleButtonNav(navController: NavController) {
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .offset(y = (-20).dp)
+                    .offset(y = (-10).dp)
                     .background(Color.Transparent)
             ) {
                 FloatingActionButton(
