@@ -120,4 +120,5 @@ dependencies {
     implementation("androidx.camera:camera-extensions:1.0.0-alpha30")
     implementation("com.google.guava:guava:31.0.1-android")
     implementation(libs.accompanist.systemuicontroller)
+    implementation (libs.glide)
 }
