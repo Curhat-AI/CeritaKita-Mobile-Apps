@@ -55,128 +55,47 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 
 import java.text.SimpleDateFormat
 import java.util.*
 @Composable
-fun CameraCaptureScreen(navController: NavController) {
+fun CameraCaptureScreen(navController: NavHostController) {
     val context = LocalContext.current
-    var imageCapture: ImageCapture? by remember { mutableStateOf(null) }
-    var previewView: PreviewView? by remember { mutableStateOf(null) }
     var capturedImageUri by remember { mutableStateOf<Uri?>(null) }
-    val cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
-
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-        if (isGranted) {
-            // Start camera
-            Log.d("CameraCaptureScreen", "Permission granted")
-            startCamera(context, previewView) { capture ->
-                imageCapture = capture
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            capturedImageUri?.let { uri ->
+                // Handle the saved image URI here
+                Log.d("CameraCaptureScreen", "Image saved successfully: $uri")
             }
         } else {
-            // Permission denied
-            Log.e("CameraCaptureScreen", "Permission denied")
+            Log.e("CameraCaptureScreen", "Image capture failed")
         }
     }
 
     LaunchedEffect(Unit) {
-        launcher.launch(Manifest.permission.CAMERA)
-    }
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Box(modifier = Modifier.weight(1f)) {
-            AndroidView(
-                factory = { ctx ->
-                    val view = PreviewView(ctx)
-                    previewView = view
-                    view
-                },
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-        Button(onClick = {
-            val uri = createImageFileUri(context)
-            capturedImageUri = uri
-            val outputOptions = ImageCapture.OutputFileOptions.Builder(
-                context.contentResolver,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                createImageContentValues()
-            ).build()
-            imageCapture?.takePicture(outputOptions, ContextCompat.getMainExecutor(context), object : ImageCapture.OnImageSavedCallback {
-                override fun onError(exception: ImageCaptureException) {
-                    // Handle error
-                    Log.e("CameraCaptureScreen", "Image capture failed: ${exception.message}", exception)
-                }
-                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    // Handle success
-                    Log.d("CameraCaptureScreen", "Image saved successfully: ${uri?.path}")
-                    uri?.let {
-                        // Lakukan sesuatu dengan uri, misalnya mengirim ke server
-                    }
-                }
-            })
-        }) {
-            Text(text = "Capture Image")
-        }
-
-        capturedImageUri?.let { uri ->
-            Text(text = "Image saved at: $uri")
+        val uri = createImageFileUri(context)
+        capturedImageUri = uri
+        if (uri != null) {
+            launcher.launch(uri)
         }
     }
 
-    DisposableEffect(Unit) {
-        onDispose {
-            cameraExecutor.shutdown()
-        }
-    }
+
 }
 
-fun startCamera(context: android.content.Context, previewView: PreviewView?, onImageCapture: (ImageCapture) -> Unit) {
-    val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-    cameraProviderFuture.addListener({
-        val cameraProvider = cameraProviderFuture.get()
-        val preview = Preview.Builder().build()
-        val imageCapture = ImageCapture.Builder().build()
-
-        val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
-
-        previewView?.let {
-            preview.setSurfaceProvider(it.surfaceProvider)
-        } ?: run {
-            Log.e("startCamera", "PreviewView is null")
-            return@addListener
-        }
-
-        try {
-            cameraProvider.unbindAll()
-            cameraProvider.bindToLifecycle(context as ComponentActivity, cameraSelector, preview, imageCapture)
-            onImageCapture(imageCapture)
-            Log.d("startCamera", "Camera started successfully")
-        } catch (exc: Exception) {
-            Log.e("startCamera", "Failed to bind camera use cases", exc)
-        }
-
-    }, ContextCompat.getMainExecutor(context))
-}
-
-fun createImageContentValues(): ContentValues {
-    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-    val imageFileName = "JPEG_${timeStamp}_"
-    return ContentValues().apply {
+fun createImageFileUri(context: Context): Uri? {
+    val contentResolver = context.contentResolver
+    val contentValues = ContentValues().apply {
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val imageFileName = "JPEG_${timeStamp}_"
         put(MediaStore.MediaColumns.DISPLAY_NAME, "$imageFileName.jpg")
         put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
         put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
     }
-}
-
-fun createImageFileUri(context: android.content.Context): Uri? {
-    val contentResolver = context.contentResolver
-    val contentValues = createImageContentValues()
     return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
 }
+
 
 

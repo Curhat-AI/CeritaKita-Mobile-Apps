@@ -1,6 +1,12 @@
 package com.ceritakita.app._core.presentation.ui.navigation
 
+import android.content.ContentValues
+import android.content.Context
+import android.net.Uri
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -23,11 +29,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -46,6 +55,7 @@ import com.ceritakita.app.auth.presentation.screen.EmailVerificationSuccessScree
 import com.ceritakita.app.auth.presentation.screen.LoginScreen
 import com.ceritakita.app.auth.presentation.screen.RegisterScreen
 import com.ceritakita.app.camera.CameraCaptureScreen
+import com.ceritakita.app.camera.createImageFileUri
 import com.ceritakita.app.counselor.presentation.screen.CounselorDetailScreen
 import com.ceritakita.app.counselor.presentation.screen.CounselorListScreen
 import com.ceritakita.app.counselor.presentation.screen.PaymentScreen
@@ -55,7 +65,12 @@ import com.ceritakita.app.homepage.presentation.screen.HomeScreen
 import com.ceritakita.app.profile.presentation.screen.ProfileScreen
 import com.ceritakita.app.recognition.presentation.screen.RecognitionResultScreen
 import com.ceritakita.app.recognition.presentation.screen.TextRecognitionScreen
-
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun Navigation() {
@@ -122,6 +137,18 @@ fun Navigation() {
 
 @Composable
 fun ElevatedMiddleButtonNav(navController: NavController) {
+    val context = LocalContext.current
+    var capturedImageUri by remember { mutableStateOf<Uri?>(null) }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            capturedImageUri?.let { uri ->
+                // Handle the saved image URI here
+                Log.d("CameraCaptureScreen", "Image saved successfully: $uri")
+            }
+        } else {
+            Log.e("CameraCaptureScreen", "Image capture failed")
+        }
+    }
     val bottomBarState = rememberSaveable { mutableStateOf(true) }
     val items = listOf(
         NavigationItem(
@@ -239,7 +266,13 @@ fun ElevatedMiddleButtonNav(navController: NavController) {
             ) {
                 FloatingActionButton(
                     onClick = {
-                        navController.navigate("cameraScreen")
+
+                        val uri = createImageFileUri(context)
+                        capturedImageUri = uri
+                        if (uri != null) {
+                            launcher.launch(uri)
+                        }
+
                     },
                     backgroundColor = BrandColors.brandPrimary600,
                     contentColor = Color.White,
@@ -268,6 +301,17 @@ fun currentRoute(navController: NavController): String? {
 }
 
 
+fun createImageFileUri(context: Context): Uri? {
+    val contentResolver = context.contentResolver
+    val contentValues = ContentValues().apply {
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val imageFileName = "JPEG_${timeStamp}_"
+        put(MediaStore.MediaColumns.DISPLAY_NAME, "$imageFileName.jpg")
+        put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+        put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+    }
+    return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+}
 
 
 
