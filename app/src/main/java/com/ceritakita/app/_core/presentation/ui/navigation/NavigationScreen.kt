@@ -14,6 +14,7 @@ RegisterScreen,
     RecognitionResultScreen,
     HomeScreen,
     ProfileScreen,
-    MainScreen
+    MainScreen,
+    CameraScreen
 
 }

@@ -1,6 +1,9 @@
 package com.ceritakita.app._core.presentation.ui.navigation
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,9 +23,11 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -49,6 +55,7 @@ import com.ceritakita.app.auth.presentation.screen.EmailVerificationScreen
 import com.ceritakita.app.auth.presentation.screen.EmailVerificationSuccessScreen
 import com.ceritakita.app.auth.presentation.screen.LoginScreen
 import com.ceritakita.app.auth.presentation.screen.RegisterScreen
+import com.ceritakita.app.camera.CameraCaptureScreen
 import com.ceritakita.app.counselor.presentation.screen.CounselorDetailScreen
 import com.ceritakita.app.counselor.presentation.screen.CounselorListScreen
 import com.ceritakita.app.counselor.presentation.screen.PaymentScreen
@@ -61,15 +68,20 @@ import com.ceritakita.app.recognition.presentation.screen.TextRecognitionScreen
 
 
 @Composable
-fun Navigation(
-) {
+fun Navigation() {
     val navController = rememberNavController()
+    val currentRoute = currentRoute(navController)
+
     Scaffold(
-        bottomBar = { ElevatedMiddleButtonNav(navController = navController) }
+        bottomBar = {
+            if (currentRoute != "cameraScreen") {
+                ElevatedMiddleButtonNav(navController = navController)
+            }
+        }
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = NavigationScreen.HomeScreen.toString(),
+            startDestination = "homeScreen",
             modifier = Modifier.padding(padding)
         ) {
             composable("homeScreen") {
@@ -97,8 +109,7 @@ fun Navigation(
                 CounselingDetailScreen(navController)
             }
             composable("counselorDetailScreen/{counselorId}") { backStackEntry ->
-                val counselorId =
-                    backStackEntry.arguments?.getString("counselorId") ?: return@composable
+                val counselorId = backStackEntry.arguments?.getString("counselorId") ?: return@composable
                 CounselorDetailScreen(navController, counselorId)
             }
             composable("paymentScreen") {
@@ -113,12 +124,18 @@ fun Navigation(
             composable("recognitionResultScreen") {
                 RecognitionResultScreen(navController)
             }
+            composable("cameraScreen") {
+                CameraCaptureScreen(navController)
+            }
         }
     }
 }
 
+
 @Composable
 fun ElevatedMiddleButtonNav(navController: NavController) {
+    val bottomBarState = rememberSaveable { mutableStateOf(true) }
+
     val items = listOf(
         NavigationItem(
             "Home",
@@ -136,7 +153,7 @@ fun ElevatedMiddleButtonNav(navController: NavController) {
             "",
             ImageVector.vectorResource(id = R.drawable.ic_nav_history),
             ImageVector.vectorResource(id = R.drawable.ic_nav_history),
-            NavigationScreen.HistoryScreen.toString()
+            "historyScreen"
         ),
         NavigationItem(
             "Riwayat",
@@ -152,90 +169,108 @@ fun ElevatedMiddleButtonNav(navController: NavController) {
         )
     )
 
-    Box {
-        BottomNavigation(
-            backgroundColor = Color.White,
-            elevation = 10.dp,
-            modifier = Modifier.height(72.dp)
-        ) {
-            val currentRoute =
-                navController.currentBackStackEntryAsState().value?.destination?.route
-            Log.d("NavDebug", "Current Route: $currentRoute")
-            items.forEach { item ->
-                val isSelected = currentRoute == item.route
-                Log.d("NavDebug", "Item: ${item.title}, isSelected: $isSelected")
-                BottomNavigationItem(
-                    icon = {
-                        Icon(
-                            imageVector = if (isSelected) item.activeIcon else item.icon,
-                            contentDescription = null,
-                            modifier = Modifier.padding(bottom = 4.dp)
-                        )
-                    },
-                    label = {
-                        if (isSelected) {
-                            LabelSmall(
-                                item.title,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        } else {
-                            BodySmall(item.title, fontSize = 12.sp)
-                        }
-                    },
-                    selected = isSelected,
-                    onClick = {
-                        navController.navigate(item.route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    alwaysShowLabel = true,
-                    selectedContentColor = Color.Black,
-                    unselectedContentColor = Color.Gray
-                )
-            }
-        }
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(y = (-20).dp)
-                .background(Color.Transparent)
-        ) {
-            FloatingActionButton(
-                onClick = {
-                    navController.navigate(NavigationScreen.CounselorListScreen.toString()) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
-                backgroundColor = BrandColors.brandPrimary600,
-                contentColor = Color.White,
-                modifier = Modifier.size(72.dp)
+    val currentRoute = currentRoute(navController = navController)
+
+    LaunchedEffect(currentRoute) {
+        bottomBarState.value = currentRoute != "cameraScreen"
+    }
+
+    AnimatedVisibility(
+        visible = bottomBarState.value,
+        enter = slideInVertically(initialOffsetY = { it }),
+        exit = slideOutVertically(targetOffsetY = { it })
+    ) {
+        Box {
+            BottomNavigation(
+                backgroundColor = Color.White,
+                elevation = 10.dp,
+                modifier = Modifier.height(72.dp)
             ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+                val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+                Log.d("NavDebug", "Current Route: $currentRoute")
+                items.forEach { item ->
+                    val isSelected = currentRoute == item.route
+                    Log.d("NavDebug", "Item: ${item.title}, isSelected: $isSelected")
 
-                    Icon(
-                        ImageVector.vectorResource(id = R.drawable.ic_nav_scan),
-                        contentDescription = null,
+                    val isDisabled = item.title.isEmpty()
+
+                    BottomNavigationItem(
+                        icon = {
+                            Icon(
+                                imageVector = if (isSelected && !isDisabled) item.activeIcon else item.icon,
+                                contentDescription = null,
+                                modifier = Modifier.padding(bottom = 4.dp)
+                            )
+                        },
+                        label = {
+                            if (isSelected && !isDisabled) {
+                                LabelSmall(
+                                    item.title,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            } else {
+                                BodySmall(item.title, fontSize = 12.sp)
+                            }
+                        },
+                        selected = isSelected,
+                        onClick = {
+                            if (!isDisabled) {
+                                navController.navigate(item.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        },
+                        alwaysShowLabel = true,
+                        selectedContentColor = if (isDisabled) Color.Gray else Color.Black,
+                        unselectedContentColor = Color.Gray,
+                        enabled = !isDisabled
                     )
-                    LabelSmall("Scan", color = Color.White)
                 }
-
+            }
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(y = (-20).dp)
+                    .background(Color.Transparent)
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        navController.navigate("cameraScreen")
+                    },
+                    backgroundColor = BrandColors.brandPrimary600,
+                    contentColor = Color.White,
+                    modifier = Modifier.size(72.dp)
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            ImageVector.vectorResource(id = R.drawable.ic_nav_scan),
+                            contentDescription = null,
+                        )
+                        LabelSmall("Scan", color = Color.White)
+                    }
+                }
             }
         }
     }
 }
+
+@Composable
+fun currentRoute(navController: NavController): String? {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    return navBackStackEntry?.destination?.route
+}
+
+
+
 
 
 data class NavigationItem(
@@ -245,128 +280,3 @@ data class NavigationItem(
     val route: String
 )
 
-@Composable
-fun BottomBar(modifier: Modifier = Modifier) {
-    var navNum by remember {
-        mutableStateOf(0)
-    }
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(
-            modifier = Modifier
-                .weight(1f)
-                .padding(end = 36.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            if (navNum == 0) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_nav_home_active),
-                        contentDescription = "home",
-                        tint = TextColors.grey700,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    LabelMedium(text = "Home")
-                }
-            } else {
-                IconButton(onClick = { navNum = 0 }) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_nav_home),
-                            contentDescription = "home",
-                            tint = TextColors.grey400,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        BodyMedium(text = "Home")
-                    }
-                }
-            }
-            if (navNum == 1) {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_nav_counseling_active),
-                            contentDescription = "home",
-                            tint = TextColors.grey700,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        LabelMedium(text = "Konseling")
-                    }
-                }
-            } else {
-                IconButton(onClick = { navNum = 1 }) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_nav_counseling),
-                            contentDescription = "home",
-                            tint = TextColors.grey400,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        BodyMedium(text = "Konseling")
-                    }
-                }
-            }
-        }
-        Row(
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 36.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            if (navNum == 2) {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_nav_history),
-                        contentDescription = "home",
-                        tint = Color.Green,
-                        modifier = Modifier.size(25.dp)
-                    )
-                }
-            } else {
-                IconButton(onClick = { navNum = 2 }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_nav_history_active),
-                        contentDescription = "home",
-                        tint = Color.Blue,
-                        modifier = Modifier.size(25.dp)
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            if (navNum == 3) {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_nav_profile),
-                        contentDescription = "home",
-                        tint = Color.Blue,
-                        modifier = Modifier.size(25.dp)
-                    )
-                }
-            } else {
-                IconButton(onClick = { navNum = 3 }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_nav_profile_active),
-                        contentDescription = "home",
-                        tint = Color.Blue,
-                        modifier = Modifier.size(25.dp)
-                    )
-                }
-            }
-        }
-    }
-}
