@@ -29,20 +29,24 @@ import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.tabBar.CustomTabBar
 import com.ceritakita.app.history.presentation.components.DeteksiHistoryCard
 import com.ceritakita.app.history.presentation.components.KonselingHistoryCard
+import com.ceritakita.app.history.presentation.viewmodel.CounselingHistoryViewModel
 import com.ceritakita.app.history.presentation.viewmodel.EmotionDetectionHistoryViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
 fun HistoryScreen(
-    navController: NavController
+    navController: NavController,
+    emotionViewModel: EmotionDetectionHistoryViewModel = hiltViewModel(),
+    counselingViewModel: CounselingHistoryViewModel = hiltViewModel()
 ) {
-    val viewModel: EmotionDetectionHistoryViewModel = hiltViewModel()
+//    val viewModel: EmotionDetectionHistoryViewModel = hiltViewModel()
     val userId = "CdURxrK7LYOdRD8nrm3273U7O5E2"
     val tabs = listOf("Deteksi", "Konseling")
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     LaunchedEffect(key1 = userId) {
-        viewModel.loadEmotionHistories(userId) // Corrected function name
+        emotionViewModel.loadEmotionHistories(userId) // Loading emotional histories
+        counselingViewModel.loadCounselingHistories(userId) // Loading counseling histories
     }
 
     Column(
@@ -52,20 +56,20 @@ fun HistoryScreen(
             tabs = tabs,
             selectedTabIndex = selectedTabIndex,
             onTabSelected = { selectedTabIndex = it })
-        TabContent(index = selectedTabIndex, viewModel = viewModel)
+        TabContent(index = selectedTabIndex, emotionViewModel = emotionViewModel, counselingViewModel = counselingViewModel)
     }
 }
 
 @Composable
-fun TabContent(index: Int, viewModel: EmotionDetectionHistoryViewModel) {
+fun TabContent(index: Int, emotionViewModel: EmotionDetectionHistoryViewModel, counselingViewModel: CounselingHistoryViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 16.dp, start = 16.dp, end = 16.dp)
     ) {
         when (index) {
-            0 -> TabOneContent(viewModel)
-            1 -> TabTwoContent()
+            0 -> TabOneContent(emotionViewModel)
+            1 -> TabTwoContent(counselingViewModel)
         }
     }
 }
@@ -97,17 +101,22 @@ fun TabOneContent(viewModel: EmotionDetectionHistoryViewModel) {
     }
 }
 
-
 @Composable
-fun TabTwoContent() {
+fun TabTwoContent(viewModel: CounselingHistoryViewModel) {
+    val counselingHistories by viewModel.counselingHistories.observeAsState(emptyList())
+    val counselors by viewModel.counselors.observeAsState(emptyMap())
+
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        repeat(30) {
+        counselingHistories.forEach { history ->
+            val counselor = counselors[history.counselorId]
             KonselingHistoryCard(
                 imagePainter = painterResource(id = R.drawable.sample_image),
-                textDate = "18 Mei 2024 • 14:00",
-                textName = "Yanuar Tri Laksono, M.Psi, Psikolog",
-                textStatus = "Berlangsung",
-                textPrice = "Rp 50.000"
+                textDate = history.startTime?.let {
+                    SimpleDateFormat("dd MMM yyyy • HH:mm", Locale.getDefault()).format(it)
+                } ?: "Unknown date",
+                textName = counselor?.name ?: "Loading counselor...",
+                textStatus = history.status,
+                textPrice = "Rp 50.000"  // Placeholder for actual pricing
             )
             Spacer(modifier = Modifier.height(10.dp))
         }
