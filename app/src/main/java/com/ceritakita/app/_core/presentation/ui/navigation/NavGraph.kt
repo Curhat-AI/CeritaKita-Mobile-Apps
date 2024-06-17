@@ -7,6 +7,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -41,6 +42,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -63,13 +65,9 @@ import com.ceritakita.app.history.presentation.screen.CounselingDetailScreen
 import com.ceritakita.app.history.presentation.screen.HistoryScreen
 import com.ceritakita.app.homepage.presentation.screen.HomeScreen
 import com.ceritakita.app.profile.presentation.screen.ProfileScreen
+import com.ceritakita.app.recognition.presentation.presentation.viewmodel.PredictViewModel
 import com.ceritakita.app.recognition.presentation.screen.RecognitionResultScreen
 import com.ceritakita.app.recognition.presentation.screen.TextRecognitionScreen
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.ceritakita.app.recognition.presentation.presentation.viewmodel.PredictViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -111,8 +109,9 @@ fun Navigation() {
             composable("historyScreen") {
                 HistoryScreen(navController)
             }
-            composable("counselingDetailScreen") {
-                CounselingDetailScreen(navController)
+            composable("counselingDetailScreen/{sessionId}") { backStackEntry ->
+                val sessionId = backStackEntry.arguments?.getString("sessionId") ?: return@composable
+                CounselingDetailScreen(navController, sessionId)
             }
             composable("counselorDetailScreen/{counselorId}") { backStackEntry ->
                 val counselorId = backStackEntry.arguments?.getString("counselorId") ?: return@composable

@@ -20,7 +20,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,11 +31,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.texts.TitleMedium
 import com.ceritakita.app._core.presentation.components.texts.TitleSmall
@@ -43,9 +44,19 @@ import com.ceritakita.app.history.presentation.components.KonselorDetailCard
 import com.ceritakita.app.history.presentation.components.RatingReviewCard
 import com.ceritakita.app.history.presentation.components.ReviewFormBottomSheet
 import com.ceritakita.app.history.presentation.components.RingkasanPembayaranCard
+import com.ceritakita.app.history.presentation.viewmodel.CounselingSessionDetailViewModel
 
 @Composable
-fun CounselingDetailScreen(navController: NavController) {
+fun CounselingDetailScreen(
+    navController: NavController,
+    sessionId: String,  // Assuming you pass sessionId to this screen
+    viewModel: CounselingSessionDetailViewModel = hiltViewModel()
+) {
+    val sessionDetail by viewModel.sessionDetail.observeAsState()
+    val counselorDetail by viewModel.counselorDetail.observeAsState()
+    LaunchedEffect(sessionId) {
+        viewModel.loadSessionAndCounselorDetails(sessionId)
+    }
     // State untuk menampilkan bottom sheet
     var showReviewForm by remember { mutableStateOf(false) }
 
@@ -91,17 +102,17 @@ fun CounselingDetailScreen(navController: NavController) {
         }
         Spacer(modifier = Modifier.heightIn(10.dp))
         KonselorDetailCard(
-            counselorName = "Dr. John Doe",
-            counselorDetails = "Speciality: Psychology",
-            counselorExpertise = "Psychology",
-            counselorExperience = "10 years"
+            counselorName = counselorDetail?.name ?: "Loading...",
+            counselorDetails = counselorDetail?.bio ?: "No details available",
+            counselorExpertise = counselorDetail?.expertise ?: "No expertise",
+            counselorExperience = counselorDetail?.experienceYears.toString() + " years"
         )
         Spacer(modifier = Modifier.heightIn(24.dp))
         TitleMedium(text = "Detail Konseling")
         Spacer(modifier = Modifier.heightIn(10.dp))
         KonselingDetailCard(
-            counselingSchedule = "Senin, 20 Mei • 14:00 - 14:30 WIB",
-            counselingMedia = "Voice Call"
+            counselingSchedule = (sessionDetail?.endTime ?: "Loading...").toString(),
+            counselingMedia = sessionDetail?.communicationPreference ?:"Loading...",
         )
         Spacer(modifier = Modifier.heightIn(24.dp))
         TitleMedium(text = "Ringkasan Biaya")
@@ -122,9 +133,9 @@ fun CounselingDetailScreen(navController: NavController) {
         }
     }
 }
-
-@Preview(showSystemUi = false, showBackground = true)
-@Composable
-fun CounselingDetailScreenPreview() {
-    CounselingDetailScreen(navController = rememberNavController())
-}
+//
+//@Preview(showSystemUi = false, showBackground = true)
+//@Composable
+//fun CounselingDetailScreenPreview() {
+//    CounselingDetailScreen(navController = rememberNavController())
+//}

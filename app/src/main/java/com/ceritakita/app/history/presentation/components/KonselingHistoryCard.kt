@@ -46,6 +46,7 @@ fun KonselingHistoryCard(
     textName: String,
     textStatus: String,
     textPrice: String,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -106,7 +107,7 @@ fun KonselingHistoryCard(
             ) {
                 TitleLarge(text = textPrice, color = BrandColors.brandPrimary600)
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = onClick,
                     colors = ButtonDefaults.buttonColors(
                         contentColor = TextColors.grey700,
                         containerColor = Color.Transparent

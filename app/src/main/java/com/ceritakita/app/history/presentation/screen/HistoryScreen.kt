@@ -40,13 +40,12 @@ fun HistoryScreen(
     emotionViewModel: EmotionDetectionHistoryViewModel = hiltViewModel(),
     counselingViewModel: CounselingHistoryViewModel = hiltViewModel()
 ) {
-//    val viewModel: EmotionDetectionHistoryViewModel = hiltViewModel()
     val userId = "CdURxrK7LYOdRD8nrm3273U7O5E2"
     val tabs = listOf("Deteksi", "Konseling")
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     LaunchedEffect(key1 = userId) {
-        emotionViewModel.loadEmotionHistories(userId) // Loading emotional histories
-        counselingViewModel.loadCounselingHistories(userId) // Loading counseling histories
+        emotionViewModel.loadEmotionHistories(userId)
+        counselingViewModel.loadCounselingHistories(userId)
     }
 
     Column(
@@ -56,12 +55,12 @@ fun HistoryScreen(
             tabs = tabs,
             selectedTabIndex = selectedTabIndex,
             onTabSelected = { selectedTabIndex = it })
-        TabContent(index = selectedTabIndex, emotionViewModel = emotionViewModel, counselingViewModel = counselingViewModel)
+        TabContent(index = selectedTabIndex, emotionViewModel = emotionViewModel, counselingViewModel = counselingViewModel, navController)
     }
 }
 
 @Composable
-fun TabContent(index: Int, emotionViewModel: EmotionDetectionHistoryViewModel, counselingViewModel: CounselingHistoryViewModel) {
+fun TabContent(index: Int, emotionViewModel: EmotionDetectionHistoryViewModel, counselingViewModel: CounselingHistoryViewModel, navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -69,7 +68,7 @@ fun TabContent(index: Int, emotionViewModel: EmotionDetectionHistoryViewModel, c
     ) {
         when (index) {
             0 -> TabOneContent(emotionViewModel)
-            1 -> TabTwoContent(counselingViewModel)
+            1 -> TabTwoContent(counselingViewModel, navController)
         }
     }
 }
@@ -102,7 +101,7 @@ fun TabOneContent(viewModel: EmotionDetectionHistoryViewModel) {
 }
 
 @Composable
-fun TabTwoContent(viewModel: CounselingHistoryViewModel) {
+fun TabTwoContent(viewModel: CounselingHistoryViewModel, navController: NavController) {
     val counselingHistories by viewModel.counselingHistories.observeAsState(emptyList())
     val counselors by viewModel.counselors.observeAsState(emptyMap())
 
@@ -116,7 +115,8 @@ fun TabTwoContent(viewModel: CounselingHistoryViewModel) {
                 } ?: "Unknown date",
                 textName = counselor?.name ?: "Loading counselor...",
                 textStatus = history.status,
-                textPrice = "Rp 50.000"  // Placeholder for actual pricing
+                textPrice = "Rp 50.000", // Placeholder for actual pricing
+                onClick = { navController.navigate("counselingDetailScreen/${history.sessionId}") }
             )
             Spacer(modifier = Modifier.height(10.dp))
         }

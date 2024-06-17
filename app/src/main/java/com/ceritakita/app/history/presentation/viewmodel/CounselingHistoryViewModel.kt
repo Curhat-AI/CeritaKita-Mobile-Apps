@@ -31,7 +31,7 @@ class CounselingHistoryViewModel @Inject constructor(
                 val sessionsList = documents.map { document ->
                     val details = document.get("counselingDetails") as? Map<*, *>
                     CounselingHistoryEntity(
-                        sessionId = document.getString("sessionId") ?: "",
+                        sessionId = document.id,
                         counselorId = document.getString("counselorId") ?: "",
                         patientId = document.getString("patientId") ?: "",
                         startTime = document.getDate("startTime"),
