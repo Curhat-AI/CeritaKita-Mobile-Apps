@@ -71,15 +71,22 @@ import com.ceritakita.app.recognition.presentation.screen.TextRecognitionScreen
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.Manifest
+import android.content.pm.PackageManager
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.ceritakita.app.recognition.presentation.screen.self_help.SelfHelpScreen
 
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
     val currentRoute = currentRoute(navController)
+var  predictViewModel: PredictViewModel = hiltViewModel()
     Scaffold(
         bottomBar = {
             if (currentRoute != "cameraScreen") {
-                ElevatedMiddleButtonNav(navController = navController)
+                ElevatedMiddleButtonNav(navController = navController,viewModel = predictViewModel)
             }
         }
     ) { padding ->
@@ -120,26 +127,35 @@ fun Navigation() {
             composable("paymentScreen") {
                 PaymentScreen(navController)
             }
-            composable("textRecognitionScreen") {
-                TextRecognitionScreen(navController)
+            composable("textRecognitionScreen",) {
+                TextRecognitionScreen(navController, viewModel = predictViewModel)
             }
             composable("counselorListScreen") {
                 CounselorListScreen(navController)
             }
             composable("recognitionResultScreen") {
-                RecognitionResultScreen(navController)
+                RecognitionResultScreen(navController, viewModel = predictViewModel)
             }
             composable("cameraScreen") {
-                CameraCaptureScreen(navController)
+                CameraCaptureScreen(navController, viewModel = predictViewModel)
+            }
+            composable("selfHelpScreen") {
+                SelfHelpScreen(navController, viewModel = predictViewModel)
             }
         }
     }
 }
+private val REQUEST_CAMERA_PERMISSION = 100
+
+
+
 
 @Composable
 fun ElevatedMiddleButtonNav(navController: NavController,viewModel: PredictViewModel = hiltViewModel()) {
     val context = LocalContext.current
     var capturedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    // RememberLauncher for taking a picture
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
             capturedImageUri?.let { uri ->
@@ -152,15 +168,23 @@ fun ElevatedMiddleButtonNav(navController: NavController,viewModel: PredictViewM
         }
     }
 
-    LaunchedEffect(Unit) {
-        val uri = createImageFileUri(context)
-        capturedImageUri = uri
-        if (uri != null) {
-            launcher.launch(uri)
+    // RememberLauncher for requesting camera permission
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            val uri = createImageFileUri(context)
+            capturedImageUri = uri
+            if (uri != null) {
+                launcher.launch(uri)
+            }
         } else {
-            Log.e("CameraCaptureScreen", "Failed to create image file URI")
+            Toast.makeText(context, "Camera permission denied", Toast.LENGTH_SHORT).show()
         }
     }
+
+
+
 
 
     val bottomBarState = rememberSaveable { mutableStateOf(true) }
@@ -280,11 +304,19 @@ fun ElevatedMiddleButtonNav(navController: NavController,viewModel: PredictViewM
             ) {
                 FloatingActionButton(
                     onClick = {
-
-                        val uri = createImageFileUri(context)
-                        capturedImageUri = uri
-                        if (uri != null) {
-                            launcher.launch(uri)
+                        when (PackageManager.PERMISSION_GRANTED) {
+                            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) -> {
+                                // Permission is already granted, open camera
+                                val uri = createImageFileUri(context)
+                                capturedImageUri = uri
+                                if (uri != null) {
+                                    launcher.launch(uri)
+                                }
+                            }
+                            else -> {
+                                // Request camera permission
+                                permissionLauncher.launch(Manifest.permission.CAMERA)
+                            }
                         }
 
                     },
@@ -318,14 +350,12 @@ fun currentRoute(navController: NavController): String? {
 fun createImageFileUri(context: Context): Uri? {
     val contentResolver = context.contentResolver
     val contentValues = ContentValues().apply {
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val imageFileName = "JPEG_${timeStamp}_"
-        put(MediaStore.MediaColumns.DISPLAY_NAME, "$imageFileName.jpg")
+        put(MediaStore.MediaColumns.DISPLAY_NAME, "captured_image_${System.currentTimeMillis()}.jpg")
         put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-        put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
     }
     return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
 }
+
 
 
 

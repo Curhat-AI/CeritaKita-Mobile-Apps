@@ -78,6 +78,7 @@ fun RecognitionResultScreen(
                     rememberScrollState()
                 )
         ) {
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -94,18 +95,13 @@ fun RecognitionResultScreen(
                 Spacer(modifier = Modifier.width(14.dp))
                 Column {
                     TitleLarge(text = "Kamu membutuhkan bantuan profesional!")
-                    textPrediction?.let {
-                        Text(text = it, style = MaterialTheme.typography.bodyLarge)
-                    } ?: Text(text = "No text prediction available", style = MaterialTheme.typography.bodyLarge)
 
                     Spacer(modifier = Modifier.height(8.dp))
                     BodyLarge(
                         text = "Kami menyarankan untuk segera berkonsultasi dengan psikolog",
                         color = TextColors.grey600
                     )
-                    imagePrediction?.let {
-                        Text(text = it, style = MaterialTheme.typography.bodyMedium)
-                    } ?: Text(text = "No image prediction available", style = MaterialTheme.typography.bodyMedium)
+
                 }
 
             }
@@ -168,6 +164,7 @@ fun RecognitionResultScreen(
                         text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
                         color = TextColors.grey600
                     )
+
                 }
             }
             Spacer(modifier = Modifier.height(24.dp))

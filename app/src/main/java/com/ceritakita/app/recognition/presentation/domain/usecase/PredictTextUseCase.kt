@@ -15,3 +15,4 @@ class PredictImageUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(file: MultipartBody.Part) = repository.predictImage(file)
 }
+

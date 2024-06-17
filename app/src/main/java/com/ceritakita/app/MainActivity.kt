@@ -28,7 +28,6 @@ class MainActivity : ComponentActivity() {
 fun SetupSystemBars() {
     val systemUiController = rememberSystemUiController()
     val isDarkTheme = isSystemInDarkTheme()
-
     SideEffect {
         systemUiController.setNavigationBarColor(
             color = if (isDarkTheme) Color.Black else Color.White,

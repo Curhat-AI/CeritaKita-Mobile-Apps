@@ -1,5 +1,6 @@
 package com.ceritakita.app.recognition.presentation.screen
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -43,6 +45,7 @@ import com.ceritakita.app._core.presentation.ui.theme.dmSansFontFamily
 import com.ceritakita.app.recognition.presentation.presentation.screens.loading.StatusDialog
 import com.ceritakita.app.recognition.presentation.presentation.viewmodel.PredictViewModel
 import com.ceritakita.app.recognition.presentation.presentation.viewmodel.PredictionStatus
+import com.ceritakita.app.recognition.presentation.screen.self_help.SelfHelpScreen
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -50,13 +53,11 @@ import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TextRecognitionScreen(
-    navController: NavHostController,
-    viewModel: PredictViewModel = hiltViewModel()
-) {
+fun TextRecognitionScreen(navController: NavController, viewModel: PredictViewModel = hiltViewModel()) {
 
     var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
-    val imageUri = viewModel.imageUri.collectAsState().value
+    val imageUri by viewModel.imageUri.collectAsState()
+    val context = LocalContext.current
 
     LaunchedEffect(imageUri) {
         Log.d("TextRecognitionScreen", "imageUri: $imageUri")
@@ -68,10 +69,12 @@ fun TextRecognitionScreen(
     StatusDialog(status = predictionStatus, onDismiss = { viewModel.clearStatus() })
 
     LaunchedEffect(predictionStatus) {
+        Log.d("TextRecognitionScreen", "Prediction status changed: $predictionStatus")
         if (predictionStatus == PredictionStatus.SUCCESS) {
-            navController.navigate(NavigationScreen.RecognitionResultScreen.name)
+            navController.navigate("selfHelpScreen")
         }
     }
+
 
     Scaffold(
         containerColor = Color.White
@@ -123,30 +126,34 @@ fun TextRecognitionScreen(
                 text = "Selanjutnya",
                 onClick = {
                     Log.d("TextRecognitionScreen", "Button clicked")
-                    imageUri?.let {
-                        Log.d("TextRecognitionScreen", "Image URI: $it")
-                        val file = File(Uri.parse(it).path!!)
-                        if (file.exists()) {
-                            Log.d("TextRecognitionScreen", "File exists")
-                        } else {
-                            Log.e("TextRecognitionScreen", "File does not exist")
-                        }
+                    val uri = Uri.parse(imageUri)
+                    Log.d("TextRecognitionScreen", "Image URI: $uri")
+                    val file = getFileFromUri(context, uri)
+                    if (file != null && file.exists()) {
+                        Log.d("TextRecognitionScreen", "File exists: ${file.path}")
                         val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
                         val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
                         viewModel.predictText(textFieldValue.text)
                         viewModel.predictImage(body)
+                    } else {
+                        Log.e("TextRecognitionScreen", "File does not exist")
                     }
-
                 },
+
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-            textPrediction?.let {
-                Text(text = "Text Prediction: $it", modifier = Modifier.padding(vertical = 8.dp))
-            }
-            imagePrediction?.let {
-                Text(text = "Image Prediction: $it", modifier = Modifier.padding(vertical = 8.dp))
-            }
+
 
         }
     }
+}
+fun getFileFromUri(context: Context, uri: Uri): File? {
+    val contentResolver = context.contentResolver
+    val tempFile = File.createTempFile("temp_image", ".jpg", context.cacheDir).apply { deleteOnExit() }
+    contentResolver.openInputStream(uri)?.use { inputStream ->
+        tempFile.outputStream().use { outputStream ->
+            inputStream.copyTo(outputStream)
+        }
+    }
+    return tempFile
 }
