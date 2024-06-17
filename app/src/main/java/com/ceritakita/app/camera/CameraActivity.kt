@@ -54,19 +54,24 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.ceritakita.app.recognition.presentation.presentation.viewmodel.PredictViewModel
 
 import java.text.SimpleDateFormat
 import java.util.*
 @Composable
-fun CameraCaptureScreen(navController: NavHostController) {
+fun CameraCaptureScreen(navController: NavHostController, viewModel: PredictViewModel = hiltViewModel()) {
     val context = LocalContext.current
     var capturedImageUri by remember { mutableStateOf<Uri?>(null) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
             capturedImageUri?.let { uri ->
                 // Handle the saved image URI here
+                viewModel.setImageUri(uri.toString())
+                // Navigasi ke TextRecognitionScreen tanpa perlu mengirim URI gambar
+                navController.navigate("text_recognition_screen")
                 Log.d("CameraCaptureScreen", "Image saved successfully: $uri")
             }
         } else {
@@ -81,8 +86,6 @@ fun CameraCaptureScreen(navController: NavHostController) {
             launcher.launch(uri)
         }
     }
-
-
 }
 
 fun createImageFileUri(context: Context): Uri? {

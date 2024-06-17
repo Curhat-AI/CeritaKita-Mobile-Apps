@@ -68,6 +68,8 @@ import com.ceritakita.app.recognition.presentation.screen.TextRecognitionScreen
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.ceritakita.app.recognition.presentation.presentation.viewmodel.PredictViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -136,19 +138,32 @@ fun Navigation() {
 }
 
 @Composable
-fun ElevatedMiddleButtonNav(navController: NavController) {
+fun ElevatedMiddleButtonNav(navController: NavController,viewModel: PredictViewModel = hiltViewModel()) {
     val context = LocalContext.current
     var capturedImageUri by remember { mutableStateOf<Uri?>(null) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
             capturedImageUri?.let { uri ->
-                // Handle the saved image URI here
                 Log.d("CameraCaptureScreen", "Image saved successfully: $uri")
+                viewModel.setImageUri(uri.toString())
+                navController.navigate("textRecognitionScreen")
             }
         } else {
             Log.e("CameraCaptureScreen", "Image capture failed")
         }
     }
+
+    LaunchedEffect(Unit) {
+        val uri = createImageFileUri(context)
+        capturedImageUri = uri
+        if (uri != null) {
+            launcher.launch(uri)
+        } else {
+            Log.e("CameraCaptureScreen", "Failed to create image file URI")
+        }
+    }
+
+
     val bottomBarState = rememberSaveable { mutableStateOf(true) }
     val items = listOf(
         NavigationItem(

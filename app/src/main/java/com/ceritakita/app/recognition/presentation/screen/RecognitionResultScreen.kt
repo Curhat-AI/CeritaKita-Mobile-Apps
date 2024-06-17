@@ -21,8 +21,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +38,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.texts.BodyLarge
@@ -43,12 +47,18 @@ import com.ceritakita.app._core.presentation.components.texts.HeadingMedium
 import com.ceritakita.app._core.presentation.components.texts.TitleLarge
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.history.presentation.components.SelfHelpCard
+import com.ceritakita.app.recognition.presentation.presentation.viewmodel.PredictViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecognitionResultScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: PredictViewModel = hiltViewModel()
 ) {
+    val textPrediction = viewModel.textPrediction.collectAsState().value
+    val imagePrediction = viewModel.imagePrediction.collectAsState().value
+
+
     var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
     Scaffold(
         containerColor = Color.White,
@@ -84,12 +94,21 @@ fun RecognitionResultScreen(
                 Spacer(modifier = Modifier.width(14.dp))
                 Column {
                     TitleLarge(text = "Kamu membutuhkan bantuan profesional!")
+                    textPrediction?.let {
+                        Text(text = it, style = MaterialTheme.typography.bodyLarge)
+                    } ?: Text(text = "No text prediction available", style = MaterialTheme.typography.bodyLarge)
+
                     Spacer(modifier = Modifier.height(8.dp))
                     BodyLarge(
                         text = "Kami menyarankan untuk segera berkonsultasi dengan psikolog",
                         color = TextColors.grey600
                     )
+                    imagePrediction?.let {
+                        Text(text = it, style = MaterialTheme.typography.bodyMedium)
+                    } ?: Text(text = "No image prediction available", style = MaterialTheme.typography.bodyMedium)
                 }
+
+            }
             }
             Spacer(modifier = Modifier.height(20.dp))
             Box(
@@ -163,4 +182,3 @@ fun RecognitionResultScreen(
             }
         }
     }
-}
