@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -35,17 +34,14 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.ceritakita.app._core.presentation.components.buttons.CustomButton
 import com.ceritakita.app._core.presentation.components.texts.BodyLarge
 import com.ceritakita.app._core.presentation.components.texts.TitleLarge
-import com.ceritakita.app._core.presentation.ui.navigation.NavigationScreen
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app._core.presentation.ui.theme.dmSansFontFamily
 import com.ceritakita.app.recognition.presentation.presentation.screens.loading.StatusDialog
 import com.ceritakita.app.recognition.presentation.presentation.viewmodel.PredictViewModel
 import com.ceritakita.app.recognition.presentation.presentation.viewmodel.PredictionStatus
-import com.ceritakita.app.recognition.presentation.screen.self_help.SelfHelpScreen
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -74,7 +70,6 @@ fun TextRecognitionScreen(navController: NavController, viewModel: PredictViewMo
             navController.navigate("selfHelpScreen")
         }
     }
-
 
     Scaffold(
         containerColor = Color.White

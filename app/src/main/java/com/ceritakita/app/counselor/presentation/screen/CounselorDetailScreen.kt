@@ -51,15 +51,20 @@ import com.ceritakita.app.counselor.presentation.component.DateChipRow
 import com.ceritakita.app.counselor.presentation.component.ScheduleBottomSheet
 import com.ceritakita.app.counselor.presentation.component.TimeChipRow
 import com.ceritakita.app.counselor.presentation.viewmodel.CounselorListViewModel
+import com.ceritakita.app.counselor.presentation.viewmodel.CounselorScheduleViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun CounselorDetailScreen(
     navController: NavController,
     counselorId: String,
-    viewModel: CounselorListViewModel = hiltViewModel()
+    viewModel: CounselorListViewModel = hiltViewModel(),
+    scheduleViewModel: CounselorScheduleViewModel = hiltViewModel()
 ) {
     var showReviewForm by remember { mutableStateOf(false) }
     val counselor by viewModel.selectedCounselor.observeAsState()
+    val schedules by scheduleViewModel.schedules.observeAsState(emptyList())
     // Function to handle the submission from the bottom sheet
     val onReviewSubmit = { review: String, rating: Int ->
         // Placeholder for what to do on review submit, e.g., navigate or show a toast
@@ -72,16 +77,12 @@ fun CounselorDetailScreen(
     // Function to close the bottom sheet
     val closeReviewForm = { showReviewForm = false }
 
-    val days = listOf("Senin", "Selasa", "Rabu")
-    val dates = listOf("19 Mei", "20 Mei", "21 Mei")
-    var selectedIndex by remember { mutableStateOf(-1) }
+    var selectedDateIndex by remember { mutableStateOf(0) }
+    var selectedTimeIndex by remember { mutableStateOf(0) }
 
     val handleDateClick = { index: Int ->
-        selectedIndex = index
+        selectedDateIndex = index
     }
-
-    val times = listOf("09:00 WIB", "12:00 WIB", "15:00 WIB", "18:00 WIB")
-    var selectedTimeIndex by remember { mutableStateOf(-1) }
 
     val handleTimeClick = { index: Int ->
         selectedTimeIndex = index
@@ -90,13 +91,13 @@ fun CounselorDetailScreen(
     LaunchedEffect(key1 = counselorId) {
         Log.d("CounselorDetailScreen", "Counselor ID received: $counselorId")
         viewModel.getCounselorDetails(counselorId)
+        scheduleViewModel.loadSchedules(counselorId)
     }
 
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
     Log.d("CurrentRoute", "Current Route: ${currentBackStackEntry?.destination?.route}")
     Log.d("CurrentRoute", "Current Arguments: ${currentBackStackEntry?.arguments}")
-
 
     Column(
         Modifier
@@ -188,9 +189,18 @@ fun CounselorDetailScreen(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 DateChipRow(
-                    days = days,
-                    dates = dates,
-                    selectedIndex = selectedIndex,
+                    days = schedules.map {
+                        SimpleDateFormat(
+                            "EEEE",
+                            Locale.getDefault()
+                        ).format(it.availableDate!!)
+                    },
+                    dates = schedules.map {
+                        SimpleDateFormat("dd MMM", Locale.getDefault()).format(
+                            it.availableDate!!
+                        )
+                    },
+                    selectedIndex = selectedDateIndex,
                     onDateClick = handleDateClick
                 )
                 Divider(
@@ -202,11 +212,23 @@ fun CounselorDetailScreen(
                     text = "Waktu Tersedia",
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                TimeChipRow(
-                    times = times,
-                    selectedIndex = selectedTimeIndex,
-                    onTimeClick = handleTimeClick
-                )
+                if (selectedDateIndex >= 0 && selectedDateIndex < schedules.size) {
+                    val timeSlots = schedules[selectedDateIndex].timeSlots
+                    Log.d("CounselorDetailScreen", "Displaying TimeSlots: ${timeSlots.size}")
+                    timeSlots.forEach { slot ->
+                        Log.d("CounselorDetailScreen", "TimeSlot Start Time: ${slot.startTime}")
+                    }
+
+                    TimeChipRow(
+                        times = timeSlots.map {
+                            SimpleDateFormat("HH:mm", Locale.getDefault()).format(it.startTime!!) + " WIB"
+                        },
+                        selectedIndex = selectedTimeIndex,
+                        onTimeClick = handleTimeClick
+                    )
+                } else {
+                    Log.d("CounselorDetailScreen", "No TimeSlots to display or invalid selectedDateIndex: $selectedDateIndex")
+                }
                 Spacer(modifier = Modifier.height(32.dp))
                 CustomButton(
                     text = "Pilih Psikolog",

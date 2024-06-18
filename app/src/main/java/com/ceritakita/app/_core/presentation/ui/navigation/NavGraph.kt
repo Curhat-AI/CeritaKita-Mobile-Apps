@@ -1,11 +1,13 @@
 package com.ceritakita.app._core.presentation.ui.navigation
 
+import android.Manifest
 import android.content.ContentValues
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -42,6 +44,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -68,14 +71,6 @@ import com.ceritakita.app.profile.presentation.screen.ProfileScreen
 import com.ceritakita.app.recognition.presentation.presentation.viewmodel.PredictViewModel
 import com.ceritakita.app.recognition.presentation.screen.RecognitionResultScreen
 import com.ceritakita.app.recognition.presentation.screen.TextRecognitionScreen
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import android.Manifest
-import android.content.pm.PackageManager
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.ceritakita.app.recognition.presentation.screen.self_help.SelfHelpScreen
 
 @Composable
@@ -182,10 +177,6 @@ fun ElevatedMiddleButtonNav(navController: NavController,viewModel: PredictViewM
             Toast.makeText(context, "Camera permission denied", Toast.LENGTH_SHORT).show()
         }
     }
-
-
-
-
 
     val bottomBarState = rememberSaveable { mutableStateOf(true) }
     val items = listOf(

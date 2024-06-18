@@ -40,21 +40,21 @@ fun ScheduleBottomSheet(
 
     val days = listOf("Senin", "Selasa", "Rabu")
     val dates = listOf("19 Mei", "20 Mei", "21 Mei")
-    var selectedIndex by remember { mutableStateOf(-1) }  // Initialise with -1 if no initial selection
+    var selectedIndex by remember { mutableStateOf(-1) }
 
     val handleDateClick = { index: Int ->
         selectedIndex = index
     }
 
     val times = listOf("09:00 WIB", "12:00 WIB", "09:00 WIB", "12:00 WIB")
-    var selectedTimeIndex by remember { mutableStateOf(-1) }  // Initialise with -1 or any invalid index if no initial selection
+    var selectedTimeIndex by remember { mutableStateOf(-1) }
 
     val handleTimeClick = { index: Int ->
         selectedTimeIndex = index
     }
 
     val durations = listOf("30 Menit", "1 Jam")
-    var selectedDurationIndex by remember { mutableStateOf(-1) }  // Initialise with -1 or any invalid index if no initial selection
+    var selectedDurationIndex by remember { mutableStateOf(-1) }
 
     val handleDurationClick = { index: Int ->
         selectedDurationIndex = index
