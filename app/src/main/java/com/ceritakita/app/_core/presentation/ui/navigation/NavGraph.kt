@@ -47,10 +47,12 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.texts.BodySmall
 import com.ceritakita.app._core.presentation.components.texts.LabelSmall
@@ -119,8 +121,28 @@ var  predictViewModel: PredictViewModel = hiltViewModel()
                 val counselorId = backStackEntry.arguments?.getString("counselorId") ?: return@composable
                 CounselorDetailScreen(navController, counselorId)
             }
-            composable("paymentScreen") {
-                PaymentScreen(navController)
+            composable(
+                "paymentScreen/{counselorId}/{patientId}/{scheduleId}/{startTime}/{endTime}/{communicationPreference}/{counselingFee}",
+                arguments = listOf(
+                    navArgument("counselorId") { type = NavType.StringType },
+                    navArgument("patientId") { type = NavType.StringType },
+                    navArgument("scheduleId") { type = NavType.StringType },
+                    navArgument("startTime") { type = NavType.StringType },
+                    navArgument("endTime") { type = NavType.StringType },
+                    navArgument("communicationPreference") { type = NavType.StringType },
+                    navArgument("counselingFee") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                PaymentScreen(
+                    navController = navController,
+                    counselorId = backStackEntry.arguments?.getString("counselorId") ?: "",
+                    patientId = backStackEntry.arguments?.getString("patientId") ?: "",
+                    scheduleId = backStackEntry.arguments?.getString("scheduleId") ?: "",
+                    startTime = backStackEntry.arguments?.getString("startTime") ?: "",
+                    endTime = backStackEntry.arguments?.getString("endTime") ?: "",
+                    communicationPreference = backStackEntry.arguments?.getString("communicationPreference") ?: "",
+                    counselingFee = backStackEntry.arguments?.getInt("counselingFee") ?: 0
+                )
             }
             composable("textRecognitionScreen",) {
                 TextRecognitionScreen(navController, viewModel = predictViewModel)

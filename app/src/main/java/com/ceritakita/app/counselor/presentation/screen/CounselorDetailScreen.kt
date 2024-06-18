@@ -50,6 +50,7 @@ import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.counselor.presentation.component.DateChipRow
 import com.ceritakita.app.counselor.presentation.component.ScheduleBottomSheet
 import com.ceritakita.app.counselor.presentation.component.TimeChipRow
+import com.ceritakita.app.counselor.presentation.viewmodel.BookingViewModel
 import com.ceritakita.app.counselor.presentation.viewmodel.CounselorListViewModel
 import com.ceritakita.app.counselor.presentation.viewmodel.CounselorScheduleViewModel
 import java.text.SimpleDateFormat
@@ -60,13 +61,14 @@ fun CounselorDetailScreen(
     navController: NavController,
     counselorId: String,
     viewModel: CounselorListViewModel = hiltViewModel(),
-    scheduleViewModel: CounselorScheduleViewModel = hiltViewModel()
+    scheduleViewModel: CounselorScheduleViewModel = hiltViewModel(),
+    bookingViewModel: BookingViewModel = hiltViewModel()
 ) {
     var showReviewForm by remember { mutableStateOf(false) }
     val counselor by viewModel.selectedCounselor.observeAsState()
     val schedules by scheduleViewModel.schedules.observeAsState(emptyList())
     val onReviewSubmit = { review: String, rating: Int ->
-        navController.navigate("NextScreenRoute") {
+        navController.navigate("paymentScreen") {
         }
         showReviewForm = false
     }
@@ -244,7 +246,22 @@ fun CounselorDetailScreen(
 
                 if (showReviewForm) {
                     ScheduleBottomSheet(
-                        onReviewSubmit = onReviewSubmit,
+                        onReviewSubmit = { startTime, endTime, communicationPreference, counselingFee ->
+                            bookingViewModel.bookCounselingSession(
+                                counselorId = counselorData.id,
+                                patientId = "HardcodedPatientId", // Replace with actual patient ID
+                                scheduleId = schedules[selectedDateIndex].id,
+                                startTime = startTime,
+                                endTime = endTime,
+                                communicationPreference = communicationPreference,
+                                counselingFee = counselingFee
+                            ).addOnSuccessListener {
+                                val route = "paymentScreen/${counselorData.id}/HardcodedPatientId/${schedules[selectedDateIndex].id}/$startTime/$endTime/$communicationPreference/$counselingFee"
+                                navController.navigate(route) {
+                                    popUpTo("counselorDetailScreen") { inclusive = true }
+                                }
+                            }
+                        },
                         onDismiss = closeReviewForm,
                         selectedDateIndex = selectedDateIndex,
                         selectedTimeIndex = selectedTimeIndex,

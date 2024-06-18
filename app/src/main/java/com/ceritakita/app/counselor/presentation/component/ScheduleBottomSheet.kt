@@ -34,12 +34,13 @@ import com.ceritakita.app.counselor.presentation.viewmodel.BookingViewModel
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleBottomSheet(
-    onReviewSubmit: (String, Int) -> Unit,
+    onReviewSubmit: (Date, Date, String, Int) -> Unit,
     onDismiss: () -> Unit,
     selectedDateIndex: Int,
     selectedTimeIndex: Int,
@@ -184,7 +185,8 @@ fun ScheduleBottomSheet(
                             val endTime = calendar.time
 
                             // Get communication preference
-                            val communicationPreference = if (selectedMediaIndex == 0) "WhatsApp" else "Google Meet"
+                            val communicationPreference =
+                                if (selectedMediaIndex == 0) "WhatsApp" else "Google Meet"
                             // Calculate counseling fee
                             val counselingFee = calculatePrice()
                             // Call the booking function
@@ -196,7 +198,15 @@ fun ScheduleBottomSheet(
                                 endTime = endTime,
                                 communicationPreference = communicationPreference,
                                 counselingFee = counselingFee
-                            )
+                            ).addOnSuccessListener {
+                                onReviewSubmit(
+                                    startTime,
+                                    endTime,
+                                    communicationPreference,
+                                    counselingFee
+                                )
+                            }
+
                         },
                         modifier = Modifier.weight(1f)
                     )

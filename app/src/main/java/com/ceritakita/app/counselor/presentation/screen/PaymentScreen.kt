@@ -34,10 +34,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.buttons.CustomButton
 import com.ceritakita.app._core.presentation.components.texts.BodyMedium
@@ -47,13 +45,22 @@ import com.ceritakita.app._core.presentation.components.texts.TitleMedium
 import com.ceritakita.app._core.presentation.ui.theme.AppColors
 import com.ceritakita.app._core.presentation.ui.theme.BrandColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
-import com.ceritakita.app.history.presentation.components.KonselingDetailCard
-import com.ceritakita.app.history.presentation.components.RingkasanPembayaranCard
 import com.ceritakita.app.counselor.presentation.component.PaymentMethodBottomSheet
 import com.ceritakita.app.counselor.presentation.component.PaymentOption
+import com.ceritakita.app.history.presentation.components.KonselingDetailCard
+import com.ceritakita.app.history.presentation.components.RingkasanPembayaranCard
 
 @Composable
-fun PaymentScreen(navController: NavController) {
+fun PaymentScreen(
+    navController: NavController,
+    counselorId: String,
+    patientId: String,
+    scheduleId: String,
+    startTime: String,
+    endTime: String,
+    communicationPreference: String,
+    counselingFee: Int
+) {
     var selectedPaymentOption by remember { mutableStateOf<PaymentOption?>(null) }
     var showPaymentMethodSheet by remember { mutableStateOf(false) }
 
@@ -189,10 +196,4 @@ fun PaymentScreen(navController: NavController) {
 
         }
     }
-}
-
-@Preview(showSystemUi = false, showBackground = true)
-@Composable
-fun PreviewPaymentScreen() {
-    PaymentScreen(navController = rememberNavController())
 }
