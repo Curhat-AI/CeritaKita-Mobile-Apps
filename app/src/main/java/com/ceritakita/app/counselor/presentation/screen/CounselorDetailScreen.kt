@@ -262,6 +262,7 @@ fun CounselorDetailScreen(
                         times = timeSlots.value,
                         counselorType = counselorData.counselorType,
                         counselorId = counselorData.id,
+                        scheduleId = schedules[selectedDateIndex].id,
                     )
                 }
             }

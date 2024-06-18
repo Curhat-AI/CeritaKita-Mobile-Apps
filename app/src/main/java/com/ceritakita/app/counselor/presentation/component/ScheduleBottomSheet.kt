@@ -12,6 +12,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ceritakita.app._core.presentation.components.buttons.CustomButton
 import com.ceritakita.app._core.presentation.components.texts.BodyLarge
 import com.ceritakita.app._core.presentation.components.texts.BodySmall
@@ -28,7 +30,10 @@ import com.ceritakita.app._core.presentation.components.texts.LabelLarge
 import com.ceritakita.app._core.presentation.ui.theme.BrandColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.counselor.data.constant.PricingConstants
+import com.ceritakita.app.counselor.presentation.viewmodel.BookingViewModel
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,6 +48,8 @@ fun ScheduleBottomSheet(
     times: List<String>,
     counselorType: String,
     counselorId: String,
+    scheduleId: String,
+    bookingViewModel: BookingViewModel = hiltViewModel()
 ) {
     val reviewState = remember { mutableStateOf("") }
     var showBottomSheet by remember { mutableStateOf(true) }
@@ -67,8 +74,9 @@ fun ScheduleBottomSheet(
     }
 
     var selectedMediaIndex by remember { mutableStateOf(0) }
+    val isLoading by bookingViewModel.isLoading.observeAsState(false)
 
-    fun calculatePrice(): String {
+    fun calculatePrice(): Int {
         val hourlyRate = when (counselorType) {
             "professional" -> PricingConstants.PROFESSIONAL_COUNSELING_HOUR_RATE
             "peer" -> PricingConstants.PEER_COUNSELING_HOUR_RATE
@@ -79,11 +87,7 @@ fun ScheduleBottomSheet(
             1 -> 1.0 // 1 Jam
             else -> 0.0
         }
-        val price = (hourlyRate * durationFactor).toInt()
-
-        // Format price to include thousand separators
-        val formatter = NumberFormat.getInstance(Locale("in", "ID"))
-        return formatter.format(price)
+        return (hourlyRate * durationFactor).toInt()
     }
 
     if (showBottomSheet) {
@@ -149,7 +153,7 @@ fun ScheduleBottomSheet(
                         BodySmall(text = "Total bayar")
                         Spacer(modifier = Modifier.height(4.dp))
                         HeadingSmall(
-                            text = "RP ${calculatePrice()}",
+                            text = "RP ${formatCurrency(calculatePrice())}",
                             color = BrandColors.brandPrimary600,
                             fontWeight = FontWeight.ExtraBold
                         )
@@ -157,24 +161,42 @@ fun ScheduleBottomSheet(
                     CustomButton(
                         text = "Konfirmasi",
                         onClick = {
-                            // Retrieve selections
-                            val selectedDate =
-                                if (selectedIndex >= 0) "${days[selectedIndex]} ${dates[selectedIndex]}" else "None"
-                            val selectedTime =
-                                if (selectedTimeIndexState >= 0) times[selectedTimeIndexState] else "None"
-                            val selectedDuration =
-                                if (selectedDurationIndex >= 0) durations[selectedDurationIndex] else "None"
-                            val selectedMedia =
-                                if (selectedMediaIndex == 0) "Voice Call" else "Video Call"
+                            // Combine date and time with current year
+                            val calendar = Calendar.getInstance()
+                            val currentYear = calendar.get(Calendar.YEAR)
+                            val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+                            val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                            val dateString = "${dates[selectedIndex]} $currentYear"
+                            val timeString = times[selectedTimeIndexState]
 
-                            // Do something with these selections, e.g., submitting to a server
-                            onReviewSubmit(
-                                "Selected Date: $selectedDate, Time: $selectedTime, Duration: $selectedDuration, Media: $selectedMedia",
-                                rating
+                            val selectedDate = dateFormat.parse(dateString)
+                            val selectedTime = timeFormat.parse(timeString)
+
+                            // Set the selectedDate to the selectedTime
+                            calendar.time = selectedDate
+                            calendar.set(Calendar.HOUR_OF_DAY, selectedTime.hours)
+                            calendar.set(Calendar.MINUTE, selectedTime.minutes)
+                            val startTime = calendar.time
+
+                            // Calculate end time based on selected duration
+                            val durationMinutes = if (selectedDurationIndex == 0) 30 else 60
+                            calendar.add(Calendar.MINUTE, durationMinutes)
+                            val endTime = calendar.time
+
+                            // Get communication preference
+                            val communicationPreference = if (selectedMediaIndex == 0) "WhatsApp" else "Google Meet"
+                            // Calculate counseling fee
+                            val counselingFee = calculatePrice()
+                            // Call the booking function
+                            bookingViewModel.bookCounselingSession(
+                                counselorId = counselorId,
+                                patientId = "HardcodedPatientId", // Replace with actual patient ID
+                                scheduleId = scheduleId,
+                                startTime = startTime,
+                                endTime = endTime,
+                                communicationPreference = communicationPreference,
+                                counselingFee = counselingFee
                             )
-
-                            // Close the bottom sheet
-                            showBottomSheet = false
                         },
                         modifier = Modifier.weight(1f)
                     )
@@ -182,4 +204,9 @@ fun ScheduleBottomSheet(
             }
         }
     }
+}
+
+fun formatCurrency(amount: Int): String {
+    val format = NumberFormat.getNumberInstance(Locale("id", "ID"))
+    return format.format(amount)
 }
