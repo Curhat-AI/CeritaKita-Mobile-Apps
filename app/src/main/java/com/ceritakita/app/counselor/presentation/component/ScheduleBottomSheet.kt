@@ -27,40 +27,64 @@ import com.ceritakita.app._core.presentation.components.texts.HeadingSmall
 import com.ceritakita.app._core.presentation.components.texts.LabelLarge
 import com.ceritakita.app._core.presentation.ui.theme.BrandColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
+import com.ceritakita.app.counselor.data.constant.PricingConstants
+import java.text.NumberFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleBottomSheet(
     onReviewSubmit: (String, Int) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    selectedDateIndex: Int,
+    selectedTimeIndex: Int,
+    days: List<String>,
+    dates: List<String>,
+    times: List<String>,
+    counselorType: String,
+    counselorId: String,
 ) {
     val reviewState = remember { mutableStateOf("") }
     var showBottomSheet by remember { mutableStateOf(true) }
     var rating by remember { mutableIntStateOf(0) }
 
-    val days = listOf("Senin", "Selasa", "Rabu")
-    val dates = listOf("19 Mei", "20 Mei", "21 Mei")
-    var selectedIndex by remember { mutableStateOf(-1) }
-
+    var selectedIndex by remember { mutableStateOf(selectedDateIndex) }
     val handleDateClick = { index: Int ->
         selectedIndex = index
+        // Update times when date changes
+        // Here, you might need additional logic to update times based on the new selected index
     }
 
-    val times = listOf("09:00 WIB", "12:00 WIB", "09:00 WIB", "12:00 WIB")
-    var selectedTimeIndex by remember { mutableStateOf(-1) }
-
+    var selectedTimeIndexState by remember { mutableStateOf(selectedTimeIndex) }
     val handleTimeClick = { index: Int ->
-        selectedTimeIndex = index
+        selectedTimeIndexState = index
     }
 
     val durations = listOf("30 Menit", "1 Jam")
     var selectedDurationIndex by remember { mutableStateOf(-1) }
-
     val handleDurationClick = { index: Int ->
         selectedDurationIndex = index
     }
 
     var selectedMediaIndex by remember { mutableStateOf(0) }
+
+    fun calculatePrice(): String {
+        val hourlyRate = when (counselorType) {
+            "professional" -> PricingConstants.PROFESSIONAL_COUNSELING_HOUR_RATE
+            "peer" -> PricingConstants.PEER_COUNSELING_HOUR_RATE
+            else -> 0
+        }
+        val durationFactor = when (selectedDurationIndex) {
+            0 -> 0.5 // 30 Menit
+            1 -> 1.0 // 1 Jam
+            else -> 0.0
+        }
+        val price = (hourlyRate * durationFactor).toInt()
+
+        // Format price to include thousand separators
+        val formatter = NumberFormat.getInstance(Locale("in", "ID"))
+        return formatter.format(price)
+    }
 
     if (showBottomSheet) {
         ModalBottomSheet(
@@ -92,7 +116,7 @@ fun ScheduleBottomSheet(
                 Spacer(modifier = Modifier.height(10.dp))
                 TimeChipRow(
                     times = times,
-                    selectedIndex = selectedTimeIndex,
+                    selectedIndex = selectedTimeIndexState,
                     onTimeClick = handleTimeClick
                 )
                 Spacer(modifier = Modifier.height(20.dp))
@@ -125,7 +149,7 @@ fun ScheduleBottomSheet(
                         BodySmall(text = "Total bayar")
                         Spacer(modifier = Modifier.height(4.dp))
                         HeadingSmall(
-                            text = "RP 329.000",
+                            text = "RP ${calculatePrice()}",
                             color = BrandColors.brandPrimary600,
                             fontWeight = FontWeight.ExtraBold
                         )
@@ -137,7 +161,7 @@ fun ScheduleBottomSheet(
                             val selectedDate =
                                 if (selectedIndex >= 0) "${days[selectedIndex]} ${dates[selectedIndex]}" else "None"
                             val selectedTime =
-                                if (selectedTimeIndex >= 0) times[selectedTimeIndex] else "None"
+                                if (selectedTimeIndexState >= 0) times[selectedTimeIndexState] else "None"
                             val selectedDuration =
                                 if (selectedDurationIndex >= 0) durations[selectedDurationIndex] else "None"
                             val selectedMedia =

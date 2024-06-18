@@ -65,25 +65,25 @@ fun CounselorDetailScreen(
     var showReviewForm by remember { mutableStateOf(false) }
     val counselor by viewModel.selectedCounselor.observeAsState()
     val schedules by scheduleViewModel.schedules.observeAsState(emptyList())
-    // Function to handle the submission from the bottom sheet
     val onReviewSubmit = { review: String, rating: Int ->
-        // Placeholder for what to do on review submit, e.g., navigate or show a toast
         navController.navigate("NextScreenRoute") {
-            // Pass the review and rating as arguments or set them somewhere they can be used
         }
-        showReviewForm = false // Close the bottom sheet after submitting
+        showReviewForm = false
     }
-
-    // Function to close the bottom sheet
     val closeReviewForm = { showReviewForm = false }
-
     var selectedDateIndex by remember { mutableStateOf(0) }
     var selectedTimeIndex by remember { mutableStateOf(0) }
-
+    val timeSlots = remember { mutableStateOf(listOf<String>()) }
     val handleDateClick = { index: Int ->
         selectedDateIndex = index
+        if (selectedDateIndex >= 0 && selectedDateIndex < schedules.size) {
+            timeSlots.value = schedules[selectedDateIndex].timeSlots
+                .filter { it.status == "Tersedia" }
+                .map { SimpleDateFormat("HH:mm", Locale.getDefault()).format(it.startTime) + " WIB" }
+        } else {
+            timeSlots.value = emptyList()
+        }
     }
-
     val handleTimeClick = { index: Int ->
         selectedTimeIndex = index
     }
@@ -221,13 +221,19 @@ fun CounselorDetailScreen(
 
                     TimeChipRow(
                         times = timeSlots.map {
-                            SimpleDateFormat("HH:mm", Locale.getDefault()).format(it.startTime!!) + " WIB"
+                            SimpleDateFormat(
+                                "HH:mm",
+                                Locale.getDefault()
+                            ).format(it.startTime!!) + " WIB"
                         },
                         selectedIndex = selectedTimeIndex,
                         onTimeClick = handleTimeClick
                     )
                 } else {
-                    Log.d("CounselorDetailScreen", "No TimeSlots to display or invalid selectedDateIndex: $selectedDateIndex")
+                    Log.d(
+                        "CounselorDetailScreen",
+                        "No TimeSlots to display or invalid selectedDateIndex: $selectedDateIndex"
+                    )
                 }
                 Spacer(modifier = Modifier.height(32.dp))
                 CustomButton(
@@ -239,7 +245,23 @@ fun CounselorDetailScreen(
                 if (showReviewForm) {
                     ScheduleBottomSheet(
                         onReviewSubmit = onReviewSubmit,
-                        onDismiss = closeReviewForm
+                        onDismiss = closeReviewForm,
+                        selectedDateIndex = selectedDateIndex,
+                        selectedTimeIndex = selectedTimeIndex,
+                        days = schedules.map {
+                            SimpleDateFormat(
+                                "EEEE",
+                                Locale.getDefault()
+                            ).format(it.availableDate!!)
+                        },
+                        dates = schedules.map {
+                            SimpleDateFormat("dd MMM", Locale.getDefault()).format(
+                                it.availableDate!!
+                            )
+                        },
+                        times = timeSlots.value,
+                        counselorType = counselorData.counselorType,
+                        counselorId = counselorData.id,
                     )
                 }
             }
