@@ -54,6 +54,7 @@ import com.ceritakita.app.counselor.presentation.viewmodel.BookingViewModel
 import com.ceritakita.app.counselor.presentation.viewmodel.CounselorListViewModel
 import com.ceritakita.app.counselor.presentation.viewmodel.CounselorScheduleViewModel
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 @Composable
@@ -65,17 +66,33 @@ fun CounselorDetailScreen(
     bookingViewModel: BookingViewModel = hiltViewModel()
 ) {
     var showReviewForm by remember { mutableStateOf(false) }
-    val counselor by viewModel.selectedCounselor.observeAsState()
-    val schedules by scheduleViewModel.schedules.observeAsState(emptyList())
-    val onReviewSubmit = { review: String, rating: Int ->
-        navController.navigate("paymentScreen") {
-        }
-        showReviewForm = false
-    }
-    val closeReviewForm = { showReviewForm = false }
     var selectedDateIndex by remember { mutableStateOf(0) }
     var selectedTimeIndex by remember { mutableStateOf(0) }
     val timeSlots = remember { mutableStateOf(listOf<String>()) }
+
+    val counselor by viewModel.selectedCounselor.observeAsState()
+    val schedules by scheduleViewModel.schedules.observeAsState(emptyList())
+
+    val onReviewSubmit = { startTime: Date, endTime: Date, communicationPreference: String, counselingFee: Int ->
+        bookingViewModel.bookCounselingSession(
+            counselorId = counselorId,
+            patientId = "HardcodedPatientId", // Replace with actual patient ID
+            scheduleId = schedules[selectedDateIndex].id,
+            startTime = startTime,
+            endTime = endTime,
+            communicationPreference = communicationPreference,
+            counselingFee = counselingFee
+        ).addOnSuccessListener { documentReference ->
+            val route = "paymentScreen/${documentReference.id}/${counselorId}/HardcodedPatientId/${schedules[selectedDateIndex].id}/$startTime/$endTime/$communicationPreference/$counselingFee"
+            navController.navigate(route) {
+                popUpTo("counselorDetailScreen") { inclusive = true }
+            }
+        }
+        showReviewForm = false
+    }
+
+    val closeReviewForm = { showReviewForm = false }
+
     val handleDateClick = { index: Int ->
         selectedDateIndex = index
         if (selectedDateIndex >= 0 && selectedDateIndex < schedules.size) {
@@ -86,6 +103,7 @@ fun CounselorDetailScreen(
             timeSlots.value = emptyList()
         }
     }
+
     val handleTimeClick = { index: Int ->
         selectedTimeIndex = index
     }
@@ -246,22 +264,7 @@ fun CounselorDetailScreen(
 
                 if (showReviewForm) {
                     ScheduleBottomSheet(
-                        onReviewSubmit = { startTime, endTime, communicationPreference, counselingFee ->
-                            bookingViewModel.bookCounselingSession(
-                                counselorId = counselorData.id,
-                                patientId = "HardcodedPatientId", // Replace with actual patient ID
-                                scheduleId = schedules[selectedDateIndex].id,
-                                startTime = startTime,
-                                endTime = endTime,
-                                communicationPreference = communicationPreference,
-                                counselingFee = counselingFee
-                            ).addOnSuccessListener {
-                                val route = "paymentScreen/${counselorData.id}/HardcodedPatientId/${schedules[selectedDateIndex].id}/$startTime/$endTime/$communicationPreference/$counselingFee"
-                                navController.navigate(route) {
-                                    popUpTo("counselorDetailScreen") { inclusive = true }
-                                }
-                            }
-                        },
+                        onReviewSubmit = onReviewSubmit,
                         onDismiss = closeReviewForm,
                         selectedDateIndex = selectedDateIndex,
                         selectedTimeIndex = selectedTimeIndex,

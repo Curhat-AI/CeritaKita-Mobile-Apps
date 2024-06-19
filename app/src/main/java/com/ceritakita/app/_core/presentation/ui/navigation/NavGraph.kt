@@ -66,6 +66,7 @@ import com.ceritakita.app.camera.createImageFileUri
 import com.ceritakita.app.counselor.presentation.screen.CounselorDetailScreen
 import com.ceritakita.app.counselor.presentation.screen.CounselorListScreen
 import com.ceritakita.app.counselor.presentation.screen.PaymentScreen
+import com.ceritakita.app.counselor.presentation.screen.PaymentSuccessScreen
 import com.ceritakita.app.history.presentation.screen.CounselingDetailScreen
 import com.ceritakita.app.history.presentation.screen.HistoryScreen
 import com.ceritakita.app.homepage.presentation.screen.HomeScreen
@@ -122,8 +123,9 @@ var  predictViewModel: PredictViewModel = hiltViewModel()
                 CounselorDetailScreen(navController, counselorId)
             }
             composable(
-                "paymentScreen/{counselorId}/{patientId}/{scheduleId}/{startTime}/{endTime}/{communicationPreference}/{counselingFee}",
+                "paymentScreen/{sessionId}/{counselorId}/{patientId}/{scheduleId}/{startTime}/{endTime}/{communicationPreference}/{counselingFee}",
                 arguments = listOf(
+                    navArgument("sessionId") { type = NavType.StringType },
                     navArgument("counselorId") { type = NavType.StringType },
                     navArgument("patientId") { type = NavType.StringType },
                     navArgument("scheduleId") { type = NavType.StringType },
@@ -135,6 +137,7 @@ var  predictViewModel: PredictViewModel = hiltViewModel()
             ) { backStackEntry ->
                 PaymentScreen(
                     navController = navController,
+                    sessionId = backStackEntry.arguments?.getString("sessionId") ?: "",
                     counselorId = backStackEntry.arguments?.getString("counselorId") ?: "",
                     patientId = backStackEntry.arguments?.getString("patientId") ?: "",
                     scheduleId = backStackEntry.arguments?.getString("scheduleId") ?: "",
@@ -158,6 +161,9 @@ var  predictViewModel: PredictViewModel = hiltViewModel()
             }
             composable("selfHelpScreen") {
                 SelfHelpScreen(navController, viewModel = predictViewModel)
+            }
+            composable("paymentSuccessScreen") {
+                PaymentSuccessScreen(navController)
             }
         }
     }

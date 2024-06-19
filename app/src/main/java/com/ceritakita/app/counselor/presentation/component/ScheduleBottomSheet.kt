@@ -189,24 +189,8 @@ fun ScheduleBottomSheet(
                                 if (selectedMediaIndex == 0) "WhatsApp" else "Google Meet"
                             // Calculate counseling fee
                             val counselingFee = calculatePrice()
-                            // Call the booking function
-                            bookingViewModel.bookCounselingSession(
-                                counselorId = counselorId,
-                                patientId = "HardcodedPatientId", // Replace with actual patient ID
-                                scheduleId = scheduleId,
-                                startTime = startTime,
-                                endTime = endTime,
-                                communicationPreference = communicationPreference,
-                                counselingFee = counselingFee
-                            ).addOnSuccessListener {
-                                onReviewSubmit(
-                                    startTime,
-                                    endTime,
-                                    communicationPreference,
-                                    counselingFee
-                                )
-                            }
-
+                            // Call the onReviewSubmit callback
+                            onReviewSubmit(startTime, endTime, communicationPreference, counselingFee)
                         },
                         modifier = Modifier.weight(1f)
                     )

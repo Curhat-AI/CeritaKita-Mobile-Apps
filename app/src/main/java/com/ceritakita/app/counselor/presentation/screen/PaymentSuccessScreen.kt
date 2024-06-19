@@ -13,13 +13,13 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.buttons.CustomButton
@@ -56,7 +56,11 @@ fun PaymentSuccessScreen(navController: NavController) {
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.heightIn(40.dp))
-        CustomButton(text = "Kembali ke Beranda", onClick = { /*TODO*/ })
+        CustomButton(text = "Kembali ke Beranda", onClick = {
+            navController.navigate("homeScreen") {
+                popUpTo("homeScreen") { inclusive = false }
+            }
+        })
     }
 }
 

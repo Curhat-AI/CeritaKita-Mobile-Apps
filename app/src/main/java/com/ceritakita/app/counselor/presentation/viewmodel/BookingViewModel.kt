@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Date
@@ -54,6 +55,28 @@ class BookingViewModel @Inject constructor(
 
         return firestore.collection("counselingSessions")
             .add(bookingData)
+            .addOnSuccessListener {
+                _isLoading.value = false
+            }
+            .addOnFailureListener {
+                _isLoading.value = false
+            }
+    }
+
+    fun updatePaymentDetails(
+        sessionId: String,
+        paymentMethod: String
+    ): Task<Void> {
+        _isLoading.value = true
+        val paymentUpdate = hashMapOf(
+            "paymentDetails.paymentMethod" to paymentMethod,
+            "paymentDetails.paymentStatus" to "Dibayar",
+            "paymentDetails.paymentDate" to FieldValue.serverTimestamp()
+        )
+
+        return firestore.collection("counselingSessions")
+            .document(sessionId)
+            .update(paymentUpdate)
             .addOnSuccessListener {
                 _isLoading.value = false
             }
