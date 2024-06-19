@@ -11,7 +11,12 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -77,21 +82,54 @@ import com.ceritakita.app.recognition.presentation.screen.TextRecognitionScreen
 import com.ceritakita.app.recognition.presentation.screen.self_help.SelfHelpScreen
 
 @Composable
-fun Navigation() {
+fun AnimatedNavHost() {
     val navController = rememberNavController()
     val currentRoute = currentRoute(navController)
-var  predictViewModel: PredictViewModel = hiltViewModel()
+    var predictViewModel: PredictViewModel = hiltViewModel()
+
+    val bottomNavRoutes = listOf(
+        "homeScreen",
+        "profileScreen",
+        "cameraScreen",
+        "historyScreen",
+        "counselorListScreen"
+    )
+
     Scaffold(
         bottomBar = {
-            if (currentRoute != "cameraScreen") {
-                ElevatedMiddleButtonNav(navController = navController,viewModel = predictViewModel)
+            if (currentRoute in bottomNavRoutes) {
+                ElevatedMiddleButtonNav(navController = navController, viewModel = predictViewModel)
             }
         }
     ) { padding ->
         NavHost(
             navController = navController,
             startDestination = "homeScreen",
-            modifier = Modifier.padding(padding)
+            modifier = Modifier.padding(padding),
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { fullWidth -> fullWidth },
+                    animationSpec = tween(durationMillis = 300)
+                ) + fadeIn(animationSpec = tween(300))
+            },
+            exitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { fullWidth -> -fullWidth },
+                    animationSpec = tween(durationMillis = 300)
+                ) + fadeOut(animationSpec = tween(300))
+            },
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { fullWidth -> -fullWidth },
+                    animationSpec = tween(durationMillis = 300)
+                ) + fadeIn(animationSpec = tween(300))
+            },
+            popExitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { fullWidth -> fullWidth },
+                    animationSpec = tween(durationMillis = 300)
+                ) + fadeOut(animationSpec = tween(300))
+            }
         ) {
             composable("homeScreen") {
                 HomeScreen(navController)
@@ -115,11 +153,13 @@ var  predictViewModel: PredictViewModel = hiltViewModel()
                 HistoryScreen(navController)
             }
             composable("counselingDetailScreen/{sessionId}") { backStackEntry ->
-                val sessionId = backStackEntry.arguments?.getString("sessionId") ?: return@composable
+                val sessionId =
+                    backStackEntry.arguments?.getString("sessionId") ?: return@composable
                 CounselingDetailScreen(navController, sessionId)
             }
             composable("counselorDetailScreen/{counselorId}") { backStackEntry ->
-                val counselorId = backStackEntry.arguments?.getString("counselorId") ?: return@composable
+                val counselorId =
+                    backStackEntry.arguments?.getString("counselorId") ?: return@composable
                 CounselorDetailScreen(navController, counselorId)
             }
             composable(
@@ -143,11 +183,12 @@ var  predictViewModel: PredictViewModel = hiltViewModel()
                     scheduleId = backStackEntry.arguments?.getString("scheduleId") ?: "",
                     startTime = backStackEntry.arguments?.getString("startTime") ?: "",
                     endTime = backStackEntry.arguments?.getString("endTime") ?: "",
-                    communicationPreference = backStackEntry.arguments?.getString("communicationPreference") ?: "",
+                    communicationPreference = backStackEntry.arguments?.getString("communicationPreference")
+                        ?: "",
                     counselingFee = backStackEntry.arguments?.getInt("counselingFee") ?: 0
                 )
             }
-            composable("textRecognitionScreen",) {
+            composable("textRecognitionScreen") {
                 TextRecognitionScreen(navController, viewModel = predictViewModel)
             }
             composable("counselorListScreen") {
@@ -168,28 +209,30 @@ var  predictViewModel: PredictViewModel = hiltViewModel()
         }
     }
 }
+
 private val REQUEST_CAMERA_PERMISSION = 100
 
-
-
-
 @Composable
-fun ElevatedMiddleButtonNav(navController: NavController,viewModel: PredictViewModel = hiltViewModel()) {
+fun ElevatedMiddleButtonNav(
+    navController: NavController,
+    viewModel: PredictViewModel = hiltViewModel()
+) {
     val context = LocalContext.current
     var capturedImageUri by remember { mutableStateOf<Uri?>(null) }
 
     // RememberLauncher for taking a picture
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-        if (success) {
-            capturedImageUri?.let { uri ->
-                Log.d("CameraCaptureScreen", "Image saved successfully: $uri")
-                viewModel.setImageUri(uri.toString())
-                navController.navigate("textRecognitionScreen")
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success) {
+                capturedImageUri?.let { uri ->
+                    Log.d("CameraCaptureScreen", "Image saved successfully: $uri")
+                    viewModel.setImageUri(uri.toString())
+                    navController.navigate("textRecognitionScreen")
+                }
+            } else {
+                Log.e("CameraCaptureScreen", "Image capture failed")
             }
-        } else {
-            Log.e("CameraCaptureScreen", "Image capture failed")
         }
-    }
 
     // RememberLauncher for requesting camera permission
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -262,7 +305,8 @@ fun ElevatedMiddleButtonNav(navController: NavController,viewModel: PredictViewM
                 modifier = Modifier
                     .padding(bottom = 0.dp)
             ) {
-                val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+                val currentRoute =
+                    navController.currentBackStackEntryAsState().value?.destination?.route
                 Log.d("NavDebug", "Current Route: $currentRoute")
                 items.forEach { item ->
                     val isSelected = currentRoute == item.route
@@ -271,7 +315,9 @@ fun ElevatedMiddleButtonNav(navController: NavController,viewModel: PredictViewM
                     val isDisabled = item.title.isEmpty()
 
                     BottomNavigationItem(
-                        modifier = Modifier.background(Color.White).height(72.dp),
+                        modifier = Modifier
+                            .background(Color.White)
+                            .height(72.dp),
                         icon = {
                             Icon(
                                 imageVector = if (isSelected && !isDisabled) item.activeIcon else item.icon,
@@ -324,7 +370,10 @@ fun ElevatedMiddleButtonNav(navController: NavController,viewModel: PredictViewM
                 FloatingActionButton(
                     onClick = {
                         when (PackageManager.PERMISSION_GRANTED) {
-                            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) -> {
+                            ContextCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.CAMERA
+                            ) -> {
                                 // Permission is already granted, open camera
                                 val uri = createImageFileUri(context)
                                 capturedImageUri = uri
@@ -332,6 +381,7 @@ fun ElevatedMiddleButtonNav(navController: NavController,viewModel: PredictViewM
                                     launcher.launch(uri)
                                 }
                             }
+
                             else -> {
                                 // Request camera permission
                                 permissionLauncher.launch(Manifest.permission.CAMERA)
@@ -365,18 +415,17 @@ fun currentRoute(navController: NavController): String? {
     return navBackStackEntry?.destination?.route
 }
 
-
 fun createImageFileUri(context: Context): Uri? {
     val contentResolver = context.contentResolver
     val contentValues = ContentValues().apply {
-        put(MediaStore.MediaColumns.DISPLAY_NAME, "captured_image_${System.currentTimeMillis()}.jpg")
+        put(
+            MediaStore.MediaColumns.DISPLAY_NAME,
+            "captured_image_${System.currentTimeMillis()}.jpg"
+        )
         put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
     }
     return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
 }
-
-
-
 
 data class NavigationItem(
     val title: String,
@@ -384,4 +433,3 @@ data class NavigationItem(
     val activeIcon: ImageVector,
     val route: String
 )
-
