@@ -26,7 +26,9 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -62,11 +64,13 @@ import com.ceritakita.app._core.presentation.ui.theme.AppColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.auth.presentation.viewmodel.RegisterPageViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
@@ -86,21 +90,39 @@ fun RegisterScreen(navController: NavController) {
     var user by remember { mutableStateOf(Firebase.auth.currentUser) }
     val token = stringResource(id = R.string.web_client)
     val coroutineScope = rememberCoroutineScope()
+    var googleAccount by remember { mutableStateOf<FirebaseUser?>(null) }
+    val registerSuccess by viewModel.registerSuccess.observeAsState()
 
     val launcher = rememberFirebaseAuthLauncher(
-        onAuthComplete = { result ->
-            user = result.user
+        onAuthComplete = { authResult ->
+            googleAccount = authResult.user
         },
-        onAuthError = {
-            user = null
+        onAuthError = { exception ->
+            Toast.makeText(context, "Authentication failed: ${exception.message}", Toast.LENGTH_SHORT).show()
         }
     )
+
+    LaunchedEffect(googleAccount) {
+        googleAccount?.let {
+            viewModel.registerUserWithGoogle(it)
+        }
+    }
+
+    val loginSuccess by viewModel.loginSuccess.observeAsState()
+    LaunchedEffect(loginSuccess) {
+        loginSuccess?.let {
+            if (it) {
+                navController.navigate("HomeScreen") {
+                    popUpTo("RegisterScreen") { inclusive = true }
+                }
+            }
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(WindowInsets.systemBars.asPaddingValues())
             .padding(horizontal = 20.dp, vertical = 20.dp)
-
     ) {
         Spacer(modifier = Modifier.heightIn(15.dp))
 
@@ -164,7 +186,7 @@ fun RegisterScreen(navController: NavController) {
         CustomButton(text = "Daftar", onClick = {
             if (passwordState.value == passwordRepeatState.value) {
                 coroutineScope.launch {
-                    viewModel.registerUser(namaState.value, emailState.value, passwordState.value)
+                    viewModel.registerUser(namaState.value.trim(), emailState.value.trim(), passwordState.value.trim())
 //                    navController.navigate("nextScreen")
                 }
             } else {
@@ -189,8 +211,21 @@ fun RegisterScreen(navController: NavController) {
                     .build()
             val googleSignInClient = GoogleSignIn
                 .getClient(context, gso)
+
             launcher
                 .launch(googleSignInClient.signInIntent)
+            registerSuccess?.let {
+                if (it) {
+                    Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
+                    // Navigate to another screen if needed
+                    navController.navigate("HomeScreen") {
+                        popUpTo("RegisterScreen") { inclusive = true }
+                    }
+                } else {
+                    Toast.makeText(context, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show()
+                }
+            }
+
         }, buttonType = ButtonType.Secondary,
             icon = ImageVector.vectorResource(id = R.drawable.ic_google_sign_in),
             textButtonColor = Color.Black,

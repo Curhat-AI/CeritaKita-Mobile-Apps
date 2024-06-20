@@ -47,8 +47,8 @@ import com.ceritakita.app.homepage.presentation.viewmodel.UserViewModel
 @Composable
 fun HomeScreen(navController: NavController, viewModel: CounselorListViewModel = hiltViewModel()) {
     val profiles by viewModel.profiles.observeAsState(initial = emptyList())
-    val viewModelData: UserViewModel = hiltViewModel()
-    val userData by viewModelData.userData.observeAsState()
+    val viewModelUser: UserViewModel = hiltViewModel()
+    val userData by viewModelUser.userData.observeAsState()
 
     Column(
         modifier = Modifier
