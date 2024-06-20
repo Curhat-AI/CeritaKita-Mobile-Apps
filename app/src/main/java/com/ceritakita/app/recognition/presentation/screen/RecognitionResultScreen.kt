@@ -34,6 +34,7 @@ import com.ceritakita.app._core.presentation.components.texts.HeadingMedium
 import com.ceritakita.app._core.presentation.components.texts.TitleLarge
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.history.presentation.components.SelfHelpCard
+import com.ceritakita.app.recognition.presentation.data.constant.SelfHelpData
 import com.ceritakita.app.recognition.presentation.presentation.viewmodel.PredictViewModel
 
 @Composable
@@ -41,16 +42,18 @@ fun RecognitionResultScreen(
     navController: NavController,
     viewModel: PredictViewModel = hiltViewModel()
 ) {
+    val emotion = "Kecemasan"
     val textPrediction = viewModel.textPrediction.collectAsState().value
     val imagePrediction = viewModel.imagePrediction.collectAsState().value
     val predictionStatus = viewModel.predictionStatus.collectAsState().value
+    val material = SelfHelpData.selfHelpMaterials[emotion]
 
     Scaffold(
         containerColor = Color.White,
         topBar = {
             CustomAppBar(
                 title = "Hasil Analisa",
-                onBackClicked = { navController.navigateUp() }
+                onBackClicked = { navController.navigate("homeScreen") }
             )
         }
     ) { innerPadding ->
@@ -142,7 +145,14 @@ fun RecognitionResultScreen(
                 Spacer(modifier = Modifier.height(2.dp))
                 BodyMedium(text = "Aktivitas mandiri yang bisa bantu kamu")
                 Spacer(modifier = Modifier.height(16.dp))
-                SelfHelpCard()
+                SelfHelpCard(
+                    mainTitle = material?.mainTitle ?: "Lorem Ipsum Dolor Sit Amet",
+                    mainDescription = material?.mainDescription ?: "Default description",
+                    session = material?.sessions?.firstOrNull(),
+                    remainingSessionsCount = (material?.sessions?.size ?: 1) - 1,
+                    imageResId = material?.imageResId ?: R.drawable.sample_image,
+                    onSeeMoreClick = { navController.navigate("selfHelpScreen/$emotion") }
+                )
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
