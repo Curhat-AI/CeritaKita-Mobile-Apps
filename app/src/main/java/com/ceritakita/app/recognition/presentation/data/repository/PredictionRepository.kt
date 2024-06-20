@@ -2,6 +2,8 @@ package com.ceritakita.app.recognition.presentation.data.repository
 
 
 import com.ceritakita.app.recognition.presentation.data.remote.ApiService
+import com.ceritakita.app.recognition.presentation.data.remote.CounselourRecommendationRequest
+import com.ceritakita.app.recognition.presentation.data.remote.CounselourRecommendationResponse
 import com.ceritakita.app.recognition.presentation.data.remote.ImagePredictionResponse
 import com.ceritakita.app.recognition.presentation.data.remote.MentalIssuePredictionResponse
 import com.ceritakita.app.recognition.presentation.data.remote.MentalIssueRequest
@@ -23,6 +25,10 @@ class PredictionRepository @Inject constructor(
 
     suspend fun predictMentalIssue(text: String): MentalIssuePredictionResponse {
         return apiService.predictMentalIssue(MentalIssueRequest(text))
+    }
+
+    suspend fun recommendCounselour(request: CounselourRecommendationRequest): CounselourRecommendationResponse {
+        return apiService.recommendCounselour(request)
     }
 }
 

@@ -4,9 +4,11 @@ package com.ceritakita.app.recognition.presentation.presentation.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ceritakita.app.recognition.presentation.data.remote.CounselourRecommendationRequest
 import com.ceritakita.app.recognition.presentation.domain.usecase.PredictImageUseCase
 import com.ceritakita.app.recognition.presentation.domain.usecase.PredictMentalIssueUseCase
 import com.ceritakita.app.recognition.presentation.domain.usecase.PredictTextUseCase
+import com.ceritakita.app.recognition.presentation.domain.usecase.RecommendCounselourUseCase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import javax.inject.Inject
+
 enum class PredictionStatus {
     SUCCESS,
     LOADING,
@@ -25,7 +28,9 @@ enum class PredictionStatus {
 class PredictViewModel @Inject constructor(
     private val predictTextUseCase: PredictTextUseCase,
     private val predictImageUseCase: PredictImageUseCase,
-    private val predictMentalIssueUseCase: PredictMentalIssueUseCase
+    private val predictMentalIssueUseCase: PredictMentalIssueUseCase,
+    private val recommendCounselourUseCase: RecommendCounselourUseCase
+
 ) : ViewModel() {
     private val _textPrediction = MutableStateFlow<List<String>?>(null)
     val textPrediction: StateFlow<List<String>?> get() = _textPrediction
@@ -37,6 +42,9 @@ class PredictViewModel @Inject constructor(
     val predictionStatus: StateFlow<PredictionStatus?> get() = _predictionStatus
     private val _imageUri = MutableStateFlow<String?>(null)
     val imageUri: StateFlow<String?> get() = _imageUri
+
+    private val _counselourRecommendations = MutableStateFlow<List<String>?>(null)
+    val counselourRecommendations: StateFlow<List<String>?> get() = _counselourRecommendations
 
     fun setImageUri(uri: String) {
         Log.d("PredictViewModel", "Setting imageUri to: $uri")
@@ -94,11 +102,33 @@ class PredictViewModel @Inject constructor(
         }
     }
 
+    fun recommendCounselour(request: CounselourRecommendationRequest) {
+        viewModelScope.launch {
+            _predictionStatus.value = PredictionStatus.LOADING
+            try {
+                val result = recommendCounselourUseCase(request)
+                _counselourRecommendations.value = result.recommendations
+                _predictionStatus.value = PredictionStatus.SUCCESS
+                Log.d("PredictViewModel", "Recommendations fetched: ${result.recommendations}")
+            } catch (e: Exception) {
+                Log.e("PredictViewModel", "Counselour recommendation error", e)
+                _predictionStatus.value = PredictionStatus.ERROR
+            }
+        }
+    }
+
+
     fun clearStatus() {
         _predictionStatus.value = null
     }
 
-    fun saveDetectionResults(userId: String, emotionFromText: String?, emotionFromImage: String?, issueResult: String, storyFromUser: String) {
+    fun saveDetectionResults(
+        userId: String,
+        emotionFromText: String?,
+        emotionFromImage: String?,
+        issueResult: String,
+        storyFromUser: String
+    ) {
         viewModelScope.launch {
             val detectionData = hashMapOf(
                 "userId" to userId,

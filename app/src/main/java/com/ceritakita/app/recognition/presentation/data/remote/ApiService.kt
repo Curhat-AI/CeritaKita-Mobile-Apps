@@ -1,5 +1,6 @@
 package com.ceritakita.app.recognition.presentation.data.remote
 
+import com.google.gson.annotations.SerializedName
 import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.Headers
@@ -19,6 +20,10 @@ interface ApiService {
     @POST("predict/mental-issue")
     @Headers("Content-Type: application/json")
     suspend fun predictMentalIssue(@Body request: MentalIssueRequest): MentalIssuePredictionResponse
+
+    @POST("recommendation/counselour")
+    @Headers("Content-Type: application/json")
+    suspend fun recommendCounselour(@Body request: CounselourRecommendationRequest): CounselourRecommendationResponse
 }
 
 data class TextRequest(
@@ -38,4 +43,17 @@ data class MentalIssuePredictionResponse(
 
 data class ImagePredictionResponse(
     val predicted_class: List<String>
+)
+
+data class CounselourRecommendationRequest(
+    val gender: String,
+    val counselourType: String,
+    val dateUp: String,
+    val dateDown: String,
+    val timeUp: Double,
+    val timeDown: Double
+)
+
+data class CounselourRecommendationResponse(
+    @SerializedName("id_counselor_recommendation") val recommendations: List<String>
 )
