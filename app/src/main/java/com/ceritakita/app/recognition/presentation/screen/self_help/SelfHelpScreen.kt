@@ -4,6 +4,7 @@ import CustomAppBar
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,18 +21,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.texts.BodyLarge
 import com.ceritakita.app._core.presentation.components.texts.HeadingSmall
 import com.ceritakita.app._core.presentation.components.texts.LabelLarge
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
+import com.ceritakita.app.recognition.presentation.data.constant.SelfHelpData
 
 @Composable
 fun SelfHelpScreen(
     navController: NavController,
+    emotion: String
 ) {
+    val material = SelfHelpData.selfHelpMaterials[emotion]
     Scaffold(
         contentColor = Color.White,
         topBar = {
@@ -49,89 +54,56 @@ fun SelfHelpScreen(
                     rememberScrollState()
                 )
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.sample_image),
-                contentDescription = "Profile Image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                HeadingSmall(text = "Lorem Ipsum Dolor Sit Amet")
-                Spacer(modifier = Modifier.height(4.dp))
-                BodyLarge(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.")
-                Spacer(modifier = Modifier.height(16.dp))
-                Box(
+            material?.let {
+                Image(
+                    painter = painterResource(id = it.imageResId),
+                    contentDescription = "Profile Image",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(
-                            border = BorderStroke(1.dp, color = TextColors.grey200),
-                            shape = RoundedCornerShape(8.dp)
-                        )
+                        .height(200.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+                Column(
+                    modifier = Modifier.padding(16.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        LabelLarge(text = "Sesi 1 • Kenalan dengan Stress")
-                        Spacer(modifier = Modifier.height(4.dp))
-                        BodyLarge(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor")
+                    HeadingSmall(text = it.mainTitle)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    BodyLarge(text = it.mainDescription)
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    it.sessions.forEachIndexed { index, session ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 10.dp)
+                                .border(
+                                    border = BorderStroke(1.dp, color = TextColors.grey200),
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .clickable {
+                                    navController.navigate("selfHelpDetailScreen/$emotion/$index")
+                                }
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                LabelLarge(
+                                    text = "Sesi ${index + 1} • ${session.title}",
+                                    fontSize = 17.sp
+                                )
+                                Spacer(modifier = Modifier.height(6.dp))
+                                BodyLarge(
+                                    text = session.description,
+                                    maxLines = 3,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
                     }
                 }
-                Spacer(modifier = Modifier.height(10.dp))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(
-                            border = BorderStroke(1.dp, color = TextColors.grey200),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        LabelLarge(text = "Sesi 2 • Mengenali Reaksi dan Pola Stressmu")
-                        Spacer(modifier = Modifier.height(4.dp))
-                        BodyLarge(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor")
-                    }
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(
-                            border = BorderStroke(1.dp, color = TextColors.grey200),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        LabelLarge(text = "Sesi 3 • Lorem Ipsum Aja Gak Sih Soalnya Bingung")
-                        Spacer(modifier = Modifier.height(4.dp))
-                        BodyLarge(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor")
-                    }
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(
-                            border = BorderStroke(1.dp, color = TextColors.grey200),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        LabelLarge(text = "Sesi 4 • Bang Udah Bang Aku Juga Mau Istirahat")
-                        Spacer(modifier = Modifier.height(4.dp))
-                        BodyLarge(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor")
-                    }
-                }
+            } ?: run {
+                BodyLarge(text = "No data available for this emotion.")
             }
         }
     }

@@ -42,17 +42,18 @@ fun RecognitionResultScreen(
     navController: NavController,
     viewModel: PredictViewModel = hiltViewModel()
 ) {
+    val emotion = "Kecemasan"
     val textPrediction = viewModel.textPrediction.collectAsState().value
     val imagePrediction = viewModel.imagePrediction.collectAsState().value
     val predictionStatus = viewModel.predictionStatus.collectAsState().value
-    val material = SelfHelpData.selfHelpMaterials["Kecemasan"]
+    val material = SelfHelpData.selfHelpMaterials[emotion]
 
     Scaffold(
         containerColor = Color.White,
         topBar = {
             CustomAppBar(
                 title = "Hasil Analisa",
-                onBackClicked = { navController.navigateUp() }
+                onBackClicked = { navController.navigate("homeScreen") }
             )
         }
     ) { innerPadding ->
@@ -150,7 +151,7 @@ fun RecognitionResultScreen(
                     session = material?.sessions?.firstOrNull(),
                     remainingSessionsCount = (material?.sessions?.size ?: 1) - 1,
                     imageResId = material?.imageResId ?: R.drawable.sample_image,
-                    onSeeMoreClick = { /* Handle navigation or expansion */ }
+                    onSeeMoreClick = { navController.navigate("selfHelpScreen/$emotion") }
                 )
                 Spacer(modifier = Modifier.height(24.dp))
             }

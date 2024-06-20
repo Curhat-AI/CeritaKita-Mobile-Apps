@@ -272,6 +272,7 @@ fun BodyLarge(
     modifier: Modifier = Modifier,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
+    lineHeight: TextUnit = 16.sp * 1.4,
     textAlign: androidx.compose.ui.text.style.TextAlign? = null  // Optional text alignment
 ) {
     Text(
@@ -286,7 +287,7 @@ fun BodyLarge(
         maxLines = maxLines,
         overflow = overflow,
         textAlign = textAlign,
-        lineHeight = 16.sp * 1.4
+        lineHeight = lineHeight
     )
 }
 

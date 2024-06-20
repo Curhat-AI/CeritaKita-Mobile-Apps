@@ -79,6 +79,7 @@ import com.ceritakita.app.profile.presentation.screen.ProfileScreen
 import com.ceritakita.app.recognition.presentation.presentation.viewmodel.PredictViewModel
 import com.ceritakita.app.recognition.presentation.screen.RecognitionResultScreen
 import com.ceritakita.app.recognition.presentation.screen.TextRecognitionScreen
+import com.ceritakita.app.recognition.presentation.screen.self_help.SelfHelpDetailScreen
 import com.ceritakita.app.recognition.presentation.screen.self_help.SelfHelpScreen
 
 @Composable
@@ -200,8 +201,23 @@ fun AnimatedNavHost() {
             composable("cameraScreen") {
                 CameraCaptureScreen(navController, viewModel = predictViewModel)
             }
-            composable("selfHelpScreen") {
-                SelfHelpScreen(navController)
+            composable(
+                "selfHelpScreen/{emotion}",
+                arguments = listOf(navArgument("emotion") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val emotion = backStackEntry.arguments?.getString("emotion") ?: ""
+                SelfHelpScreen(navController = navController, emotion = emotion)
+            }
+            composable(
+                "selfHelpDetailScreen/{emotion}/{sessionIndex}",
+                arguments = listOf(
+                    navArgument("emotion") { type = NavType.StringType },
+                    navArgument("sessionIndex") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val emotion = backStackEntry.arguments?.getString("emotion") ?: ""
+                val sessionIndex = backStackEntry.arguments?.getInt("sessionIndex") ?: 0
+                SelfHelpDetailScreen(navController = navController, emotion = emotion, sessionIndex = sessionIndex)
             }
             composable("paymentSuccessScreen") {
                 PaymentSuccessScreen(navController)
