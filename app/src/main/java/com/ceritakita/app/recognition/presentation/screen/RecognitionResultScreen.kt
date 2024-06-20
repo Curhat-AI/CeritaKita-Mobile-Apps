@@ -24,15 +24,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ceritakita.app.R
-import com.ceritakita.app._core.presentation.components.texts.BodyLarge
 import com.ceritakita.app._core.presentation.components.texts.BodyMedium
 import com.ceritakita.app._core.presentation.components.texts.HeadingMedium
-import com.ceritakita.app._core.presentation.components.texts.TitleLarge
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
+import com.ceritakita.app._core.presentation.ui.theme.dmSansFontFamily
 import com.ceritakita.app.history.presentation.components.SelfHelpCard
 import com.ceritakita.app.recognition.presentation.data.constant.SelfHelpData
 import com.ceritakita.app.recognition.presentation.presentation.viewmodel.PredictViewModel
@@ -42,11 +47,13 @@ fun RecognitionResultScreen(
     navController: NavController,
     viewModel: PredictViewModel = hiltViewModel()
 ) {
-    val emotion = "Kecemasan"
+    val mentalIssuePrediction = viewModel.mentalIssuePrediction.collectAsState().value
+    val emotion = mentalIssuePrediction?.firstOrNull()
     val textPrediction = viewModel.textPrediction.collectAsState().value
     val imagePrediction = viewModel.imagePrediction.collectAsState().value
     val predictionStatus = viewModel.predictionStatus.collectAsState().value
-    val material = SelfHelpData.selfHelpMaterials[emotion]
+
+    val material = emotion.let { SelfHelpData.selfHelpMaterials[it] }
 
     Scaffold(
         containerColor = Color.White,
@@ -66,20 +73,6 @@ fun RecognitionResultScreen(
                     rememberScrollState()
                 )
         ) {
-            textPrediction?.let {
-                Text(text = "Text Prediction: $it", modifier = Modifier.padding(vertical = 8.dp))
-            }
-            imagePrediction?.let {
-                Text(text = "Image Prediction: $it", modifier = Modifier.padding(vertical = 8.dp))
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-            TitleLarge(text = "Kamu membutuhkan bantuan profesional!")
-            Spacer(modifier = Modifier.height(8.dp))
-            BodyLarge(
-                text = "Kami menyarankan untuk segera berkonsultasi dengan psikolog",
-                color = TextColors.grey600
-            )
             Spacer(modifier = Modifier.height(20.dp))
             Box(
                 modifier = Modifier
@@ -103,9 +96,36 @@ fun RecognitionResultScreen(
                         BodyMedium(text = "Status Mental Kamu")
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    BodyLarge(
-                        text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna",
-                        color = TextColors.grey600
+                    Text(
+                        text = buildAnnotatedString {
+                            append("Berdasarkan hasil sistem AI kami, kamu mungkin merasakan emosi ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append(textPrediction?.getOrNull(0).orEmpty())
+                            }
+                            append(" dan ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append(textPrediction?.getOrNull(1).orEmpty())
+                            }
+                            append(" dari ceritamu, serta ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append(imagePrediction?.getOrNull(0).orEmpty())
+                            }
+                            append(" dan ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append(imagePrediction?.getOrNull(1).orEmpty())
+                            }
+                            append(". Sistem kami juga menunjukkan kemungkinan kamu memiliki masalah psikologi ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append(emotion.orEmpty())
+                            }
+                            append(". Jika kamu merasa sedih, cemas, marah, atau kekosongan yang mendalam dan berkepanjangan, mungkin kamu memiliki gangguan mental dan membutuhkan bantuan profesional.")
+                        },
+                        color = TextColors.grey600,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Normal,
+                        fontFamily = dmSansFontFamily,
+                        lineHeight = 16.sp * 1.5,
+                        textAlign = TextAlign.Start
                     )
                 }
             }
@@ -132,11 +152,25 @@ fun RecognitionResultScreen(
                         BodyMedium(text = "Hasil Analisa")
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    BodyLarge(
-                        text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-                        color = TextColors.grey600
+                    Text(
+                        text = buildAnnotatedString {
+                            append("Dari emosi ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append(textPrediction?.getOrNull(0).orEmpty())
+                            }
+                            append(" dan ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append(textPrediction?.getOrNull(1).orEmpty())
+                            }
+                            append(", refleksikan mengapa kamu merasakan hal tersebut. Pertimbangkan apakah ada faktor lain yang memengaruhinya. Cermati cerita yang telah kamu tuliskan untuk memahami penyebab emosimu. Setelah memahami, pikirkan tindakan yang lebih baik berdasarkan perasaan tersebut. Jika emosi membuatmu melakukan hal A, tetapi sebenarnya kamu ingin melakukan hal B, renungkan hal B dan cara terbaik untuk merespons ceritamu. Terapkan pemahaman ini untuk kehidupan yang lebih baik. Semoga sukses!")
+                        },
+                        color = TextColors.grey600,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Normal,
+                        fontFamily = dmSansFontFamily,
+                        lineHeight = 16.sp * 1.5,
+                        textAlign = TextAlign.Start
                     )
-
                 }
             }
             Spacer(modifier = Modifier.height(24.dp))

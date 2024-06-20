@@ -71,7 +71,6 @@ fun SelfHelpScreen(
                     Spacer(modifier = Modifier.height(4.dp))
                     BodyLarge(text = it.mainDescription)
                     Spacer(modifier = Modifier.height(16.dp))
-
                     it.sessions.forEachIndexed { index, session ->
                         Box(
                             modifier = Modifier
@@ -101,6 +100,7 @@ fun SelfHelpScreen(
                             }
                         }
                     }
+                    Spacer(modifier = Modifier.height(40.dp))
                 }
             } ?: run {
                 BodyLarge(text = "No data available for this emotion.")

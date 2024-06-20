@@ -4,7 +4,7 @@ import com.ceritakita.app.R
 
 object SelfHelpData {
     val selfHelpMaterials = mapOf(
-        "Kecemasan" to SelfHelpMaterial(
+        "Cemas" to SelfHelpMaterial(
             imageResId = R.drawable.sample_image,
             mainTitle = "Memahami dan Mengelola Kecemasan",
             mainDescription = "Kecemasan adalah bagian alami dari kehidupan manusia, namun terkadang bisa menjadi berlebihan dan mengganggu. Pelajari apa itu kecemasan, fungsinya, dan bagaimana CeritaKita dapat membantu Anda memahami dan mengelolanya dengan lebih baik.",
@@ -23,7 +23,7 @@ object SelfHelpData {
                 )
             )
         ),
-        "Stres" to SelfHelpMaterial(
+        "Stress" to SelfHelpMaterial(
             imageResId = R.drawable.sample_image,
             mainTitle = "Memahami dan Mengelola Stres",
             mainDescription = "Stres adalah respons alami tubuh terhadap tantangan atau tuntutan. Meskipun sering dianggap negatif, stres sebenarnya memiliki fungsi adaptif yang penting dalam mekanisme bertahan hidup kita. Melalui sesi-sesi ini, Anda akan memahami apa itu stres, bagaimana stres berfungsi dalam kehidupan sehari-hari, serta bagaimana platform CeritaKita dapat membantu Anda mengelola stres secara efektif.",

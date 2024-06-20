@@ -67,12 +67,13 @@ fun TextRecognitionScreen(
     LaunchedEffect(predictionStatus) {
         if (predictionStatus == PredictionStatus.SUCCESS) {
             val userId = "hardcodedUserId"
-            val issueResult = "hardcodedIssueResult"
+            val issueResult = viewModel.mentalIssuePrediction.value?.joinToString() ?: "hardcodedIssueResult"
             val storyFromUser = textFieldValue.text
             val emotionFromText = viewModel.textPrediction.value?.joinToString()
             val emotionFromImage = viewModel.imagePrediction.value?.joinToString()
             Log.d("DetectionResult", "Emotion from Text: $emotionFromText")
             Log.d("DetectionResult", "Emotion from Image: $emotionFromImage")
+            Log.d("DetectionResult", "Issue Result: $issueResult")
             viewModel.saveDetectionResults(userId, emotionFromText, emotionFromImage, issueResult, storyFromUser)
             navController.navigate("recognitionResultScreen")
         }
@@ -131,7 +132,7 @@ fun TextRecognitionScreen(
                     val file = getFileFromUri(context, uri)
                     val requestFile = file?.asRequestBody("image/*".toMediaTypeOrNull())
                     val body = MultipartBody.Part.createFormData("file", file?.name ?: "", requestFile ?: return@CustomButton)
-
+                    viewModel.predictMentalIssue(textFieldValue.text)
                     viewModel.predictText(textFieldValue.text)
                     viewModel.predictImage(body)
                 },

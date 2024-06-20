@@ -24,7 +24,7 @@ object RetrofitInstance {
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
-        .baseUrl("https://ml-rg5jiezg5q-et.a.run.app/")
+        .baseUrl("https://ml-dev-rg5jiezg5q-et.a.run.app/")
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()

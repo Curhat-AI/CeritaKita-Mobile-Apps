@@ -15,13 +15,24 @@ interface ApiService {
     @Multipart
     @POST("predict/image")
     suspend fun predictImage(@Part file: MultipartBody.Part): ImagePredictionResponse
-}
 
+    @POST("predict/mental-issue")
+    @Headers("Content-Type: application/json")
+    suspend fun predictMentalIssue(@Body request: MentalIssueRequest): MentalIssuePredictionResponse
+}
 
 data class TextRequest(
     val text: String
 )
 data class TextPredictionResponse(
+    val predictions: List<String>
+)
+
+data class MentalIssueRequest(
+    val text: String
+)
+
+data class MentalIssuePredictionResponse(
     val predictions: List<String>
 )
 

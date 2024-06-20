@@ -16,3 +16,8 @@ class PredictImageUseCase @Inject constructor(
     suspend operator fun invoke(file: MultipartBody.Part) = repository.predictImage(file)
 }
 
+class PredictMentalIssueUseCase @Inject constructor(
+    private val repository: PredictionRepository
+) {
+    suspend operator fun invoke(text: String) = repository.predictMentalIssue(text)
+}

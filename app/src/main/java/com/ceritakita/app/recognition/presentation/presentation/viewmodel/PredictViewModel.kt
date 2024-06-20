@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ceritakita.app.recognition.presentation.domain.usecase.PredictImageUseCase
+import com.ceritakita.app.recognition.presentation.domain.usecase.PredictMentalIssueUseCase
 import com.ceritakita.app.recognition.presentation.domain.usecase.PredictTextUseCase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -23,12 +24,15 @@ enum class PredictionStatus {
 @HiltViewModel
 class PredictViewModel @Inject constructor(
     private val predictTextUseCase: PredictTextUseCase,
-    private val predictImageUseCase: PredictImageUseCase
+    private val predictImageUseCase: PredictImageUseCase,
+    private val predictMentalIssueUseCase: PredictMentalIssueUseCase
 ) : ViewModel() {
     private val _textPrediction = MutableStateFlow<List<String>?>(null)
     val textPrediction: StateFlow<List<String>?> get() = _textPrediction
     private val _imagePrediction = MutableStateFlow<List<String>?>(null)
     val imagePrediction: StateFlow<List<String>?> get() = _imagePrediction
+    private val _mentalIssuePrediction = MutableStateFlow<List<String>?>(null)
+    val mentalIssuePrediction: StateFlow<List<String>?> get() = _mentalIssuePrediction
     private val _predictionStatus = MutableStateFlow<PredictionStatus?>(null)
     val predictionStatus: StateFlow<PredictionStatus?> get() = _predictionStatus
     private val _imageUri = MutableStateFlow<String?>(null)
@@ -73,6 +77,22 @@ class PredictViewModel @Inject constructor(
         }
     }
 
+    fun predictMentalIssue(text: String) {
+        viewModelScope.launch {
+            _predictionStatus.value = PredictionStatus.LOADING
+            try {
+                val result = predictMentalIssueUseCase(text)
+                _mentalIssuePrediction.value = result.predictions
+                if (_textPrediction.value != null && _imagePrediction.value != null) {
+                    _predictionStatus.value = PredictionStatus.SUCCESS
+                }
+                Log.d("PredictViewModel", "Mental issue prediction success")
+            } catch (e: Exception) {
+                Log.e("PredictViewModel", "Mental issue prediction error", e)
+                _predictionStatus.value = PredictionStatus.ERROR
+            }
+        }
+    }
 
     fun clearStatus() {
         _predictionStatus.value = null
@@ -95,5 +115,4 @@ class PredictViewModel @Inject constructor(
                 .addOnFailureListener { e -> Log.e("PredictViewModel", "Error saving data", e) }
         }
     }
-
 }

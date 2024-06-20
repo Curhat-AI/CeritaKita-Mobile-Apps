@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -23,7 +24,6 @@ import com.ceritakita.app._core.presentation.components.buttons.CustomButton
 import com.ceritakita.app._core.presentation.components.texts.BodyLarge
 import com.ceritakita.app._core.presentation.components.texts.HeadingSmall
 import com.ceritakita.app._core.presentation.components.texts.LabelLarge
-import com.ceritakita.app._core.presentation.ui.theme.BrandColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.recognition.presentation.data.constant.SelfHelpData
 
@@ -83,12 +83,12 @@ fun SelfHelpCard(
             }
 
             if (remainingSessionsCount > 0) {
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 CustomButton(
                     text = "Lihat $remainingSessionsCount+ Sesi Lainnya",
-                    buttonType = ButtonType.Secondary,
+                    buttonType = ButtonType.Primary,
                     onClick = onSeeMoreClick,
-                    textButtonColor = BrandColors.brandPrimary600,
+                    textButtonColor = Color.White,
                     shape = RoundedCornerShape(100.dp)
                 )
             }
