@@ -137,7 +137,6 @@ fun TextRecognitionScreen(
                 },
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-
         }
     }
 }
