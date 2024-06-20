@@ -16,21 +16,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.ceritakita.app.R
+import com.ceritakita.app._core.presentation.components.buttons.ButtonType
+import com.ceritakita.app._core.presentation.components.buttons.CustomButton
 import com.ceritakita.app._core.presentation.components.texts.BodyLarge
-import com.ceritakita.app._core.presentation.components.texts.LabelMedium
-import com.ceritakita.app._core.presentation.components.texts.TitleLarge
+import com.ceritakita.app._core.presentation.components.texts.HeadingSmall
+import com.ceritakita.app._core.presentation.components.texts.LabelLarge
+import com.ceritakita.app._core.presentation.ui.theme.BrandColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
+import com.ceritakita.app.recognition.presentation.data.constant.SelfHelpData
 
 @Composable
-fun SelfHelpCard (
-
+fun SelfHelpCard(
+    mainTitle: String,
+    mainDescription: String,
+    session: SelfHelpData.SelfHelpSession?,
+    remainingSessionsCount: Int,
+    imageResId: Int,
+    onSeeMoreClick: () -> Unit
 ) {
     Box {
         Column {
             Image(
-                painter = painterResource(id = R.drawable.sample_image),
+                painter = painterResource(id = imageResId),
                 contentDescription = "Self Help Image",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -39,59 +48,49 @@ fun SelfHelpCard (
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.height(24.dp))
-            TitleLarge(text = "Lorem Ipsum Dolor Sit Amet")
+            HeadingSmall(
+                text = mainTitle,
+                color = TextColors.grey700
+            )
             Spacer(modifier = Modifier.height(4.dp))
-            BodyLarge(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua")
+            BodyLarge(
+                text = mainDescription,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+                color = TextColors.grey600
+            )
             Spacer(modifier = Modifier.height(12.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        border = BorderStroke(1.dp, color = TextColors.grey200),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
+
+            session?.let { sess ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(
+                            border = BorderStroke(1.dp, color = TextColors.grey200),
+                            shape = RoundedCornerShape(8.dp)
+                        )
                 ) {
-                    LabelMedium(text = "Sesi 1")
-                    Spacer(modifier = Modifier.height(4.dp))
-                    BodyLarge(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor")
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        LabelLarge(text = "Sesi 1 • " + sess.title)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        BodyLarge(
+                            text = sess.description,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
             }
-            Spacer(modifier = Modifier.height(10.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        border = BorderStroke(1.dp, color = TextColors.grey200),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    LabelMedium(text = "Sesi 1")
-                    Spacer(modifier = Modifier.height(4.dp))
-                    BodyLarge(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor")
-                }
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        border = BorderStroke(1.dp, color = TextColors.grey200),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    LabelMedium(text = "Sesi 1")
-                    Spacer(modifier = Modifier.height(4.dp))
-                    BodyLarge(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor")
-                }
+
+            if (remainingSessionsCount > 0) {
+                Spacer(modifier = Modifier.height(10.dp))
+                CustomButton(
+                    text = "Lihat $remainingSessionsCount+ Sesi Lainnya",
+                    buttonType = ButtonType.Secondary,
+                    onClick = onSeeMoreClick,
+                    textButtonColor = BrandColors.brandPrimary600,
+                    shape = RoundedCornerShape(100.dp)
+                )
             }
         }
     }
