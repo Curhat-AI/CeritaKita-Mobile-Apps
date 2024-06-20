@@ -1,6 +1,9 @@
 package com.ceritakita.app.auth.presentation.viewmodel
 
+import android.content.SharedPreferences
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -11,8 +14,58 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterPageViewModel @Inject constructor(
     private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val sharedPreferences: SharedPreferences
+
 ) : ViewModel() {
+    private val _loginSuccess = MutableLiveData<Boolean>()
+    val loginSuccess: LiveData<Boolean> = _loginSuccess
+    suspend fun loginUser(email: String, password: String) {
+        try {
+            val user = auth.signInWithEmailAndPassword(email, password).await().user
+            user?.let {
+                // Mengambil data dari Firestore
+                val docRef = firestore.collection("users").document(it.uid)
+                val docSnapshot = docRef.get().await()
+                if (docSnapshot.exists()) {
+                    val userData = docSnapshot.data
+                    // Menyimpan data ke SharedPreferences
+                    saveUserDetailsToSharedPref(userData)
+                }
+                _loginSuccess.postValue(true)
+            }
+        } catch (e: Exception) {
+            _loginSuccess.postValue(false)
+            Log.e("LoginPageViewModel", "Login failed: ${e.localizedMessage}")
+        }
+    }
+
+    private fun saveUserDetailsToSharedPref(userData: Map<String, Any>?) {
+        val detailsMap = userData?.get("details") as? Map<String, Any?>
+        sharedPreferences.edit().apply {
+            putString("userId", userData?.get("userId") as? String)
+            putString("displayName", userData?.get("displayName") as? String)
+            putString("email", userData?.get("email") as? String)
+            putBoolean("isCounselor", (userData?.get("roles") as? Map<String, Boolean>)?.get("counselor") ?: false)
+            putBoolean("isPatient", (userData?.get("roles") as? Map<String, Boolean>)?.get("patient") ?: false)
+            putString("dob", detailsMap?.get("dob") as? String)
+            putString("gender", detailsMap?.get("gender") as? String)
+            putString("phone", detailsMap?.get("phone") as? String)
+            putString("photoUrl", detailsMap?.get("photoUrl") as? String)
+            apply()
+        }
+        // Logging the saved values
+        Log.i("SharedPreferences", "userId: ${sharedPreferences.getString("userId", "No ID")}")
+        Log.i("SharedPreferences", "displayName: ${sharedPreferences.getString("displayName", "No Name")}")
+        Log.i("SharedPreferences", "email: ${sharedPreferences.getString("email", "No Email")}")
+        Log.i("SharedPreferences", "isCounselor: ${sharedPreferences.getBoolean("isCounselor", false)}")
+        Log.i("SharedPreferences", "isPatient: ${sharedPreferences.getBoolean("isPatient", false)}")
+        Log.i("SharedPreferences", "dob: ${sharedPreferences.getString("dob", "No DOB")}")
+        Log.i("SharedPreferences", "gender: ${sharedPreferences.getString("gender", "No Gender")}")
+        Log.i("SharedPreferences", "phone: ${sharedPreferences.getString("phone", "No Phone")}")
+        Log.i("SharedPreferences", "photoUrl: ${sharedPreferences.getString("photoUrl", "No Photo")}")
+    }
+
 
     suspend fun registerUser(nama: String, email: String, password: String) {
         try {

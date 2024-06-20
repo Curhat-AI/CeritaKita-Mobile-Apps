@@ -42,10 +42,14 @@ import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.counselor.presentation.screen.RowProfileList
 import com.ceritakita.app.counselor.presentation.viewmodel.CounselorListViewModel
 import com.ceritakita.app.homepage.presentation.component.TestActionCard
+import com.ceritakita.app.homepage.presentation.viewmodel.UserViewModel
 
 @Composable
 fun HomeScreen(navController: NavController, viewModel: CounselorListViewModel = hiltViewModel()) {
     val profiles by viewModel.profiles.observeAsState(initial = emptyList())
+    val viewModelData: UserViewModel = hiltViewModel()
+    val userData by viewModelData.userData.observeAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,10 +74,14 @@ fun HomeScreen(navController: NavController, viewModel: CounselorListViewModel =
                     .size(56.dp)
             )
             Spacer(modifier = Modifier.width(10.dp))
-            Column {
-                TitleLarge(text = "Alexander Kahfi")
-                BodyMedium(text = "Gimana harimu berjalan, Kahfi?")
+            userData?.let {
+                Column {
+                    TitleLarge(text = "${it.displayName}")
+                    BodyMedium(text = "Gimana harimu berjalan, Kahfi?")
+                }
             }
+
+
         }
         Spacer(modifier = Modifier.heightIn(20.dp))
         TitleLarge(

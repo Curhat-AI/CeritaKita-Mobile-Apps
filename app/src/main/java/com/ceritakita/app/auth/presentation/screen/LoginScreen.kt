@@ -2,11 +2,13 @@ package com.ceritakita.app.auth.presentation.screen
 
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,7 +37,9 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,12 +47,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.ceritakita.app.R
@@ -64,6 +70,7 @@ import com.ceritakita.app._core.presentation.components.texts.HeadingSmall
 import com.ceritakita.app._core.presentation.ui.navigation.NavigationScreen
 import com.ceritakita.app._core.presentation.ui.theme.AppColors
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
+import com.ceritakita.app.auth.presentation.viewmodel.RegisterPageViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.Firebase
@@ -77,9 +84,32 @@ data class EmojiDataPoint(val value: Float, val emoji: String)
 
 @Composable
 fun LoginScreen(navController: NavController) {
+    val viewModel: RegisterPageViewModel = hiltViewModel()
+    val loginSuccess by viewModel.loginSuccess.observeAsState()
 
     val emailState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    // Observe the login result
+    loginSuccess?.let { success ->
+        if (success) {
+            // Navigate to homeScreen if login is successful
+            Toast.makeText(context, "Successfully logged in", Toast.LENGTH_SHORT).show()
+            LaunchedEffect(success) {
+                navController.navigate("homeScreen") {
+                    popUpTo("loginScreen") { inclusive = true } // Clears back stack
+                }
+            }
+        } else {
+            // Handle login failure
+            LaunchedEffect(success) {
+                Toast.makeText(context, "Login failed. Please try again.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 
     Column(
         modifier = Modifier
@@ -140,7 +170,10 @@ fun LoginScreen(navController: NavController) {
         )
         Spacer(modifier = Modifier.heightIn(40.dp))
         CustomButton(text = "Masuk", onClick = {
-            navController.navigate(NavigationScreen.CounselorListScreen.name)
+            coroutineScope.launch {
+                viewModel.loginUser(emailState.value,passwordState.value)
+            }
+
 
         }, buttonType = ButtonType.Primary)
 //        BodyMedium(
@@ -159,7 +192,9 @@ fun LoginScreen(navController: NavController) {
             contentAlignment = Alignment.BottomCenter
         ) {
             Row(
-
+                modifier = Modifier.clickable {
+                    navController.navigate(NavigationScreen.RegisterScreen.name)
+                },
             ) {
                 BodyMedium(
                     text = "Belum punya Akun?",

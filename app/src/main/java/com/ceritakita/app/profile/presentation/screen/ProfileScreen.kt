@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -45,6 +47,7 @@ import com.ceritakita.app._core.presentation.components.texts.HeadingSmall
 import com.ceritakita.app._core.presentation.components.texts.LabelLarge
 import com.ceritakita.app._core.presentation.ui.theme.AppColors
 import com.ceritakita.app._core.presentation.ui.theme.BrandColors
+import com.ceritakita.app.homepage.presentation.viewmodel.UserViewModel
 import com.ceritakita.app.profile.presentation.component.SettingSectionComponent
 import kotlinx.coroutines.launch
 
@@ -52,6 +55,9 @@ import kotlinx.coroutines.launch
 fun ProfileScreen(navController: NavController) {
     val scope = rememberCoroutineScope()
     var showLogoutDialog by remember { mutableStateOf(false) }
+    val viewModelData: UserViewModel = hiltViewModel()
+    val userData by viewModelData.userData.observeAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -74,10 +80,14 @@ fun ProfileScreen(navController: NavController) {
                     .clip(CircleShape)
                     .size(140.dp)
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            HeadingMedium(text = "Alexander Smith")
-            Spacer(modifier = Modifier.height(4.dp))
-            BodyLarge(text = "kahfismith@gmail.com")
+            userData?.let {
+                // Gunakan data user yang dimuat
+                Spacer(modifier = Modifier.height(16.dp))
+                HeadingMedium(text = "${it.displayName}")
+                Spacer(modifier = Modifier.height(4.dp))
+                BodyLarge(text = "${it.email}")
+            }
+
         }
         Spacer(modifier = Modifier.height(32.dp))
         Column {
