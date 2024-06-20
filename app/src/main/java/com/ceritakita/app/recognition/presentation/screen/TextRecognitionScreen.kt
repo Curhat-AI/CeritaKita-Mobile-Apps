@@ -49,8 +49,10 @@ import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TextRecognitionScreen(navController: NavController, viewModel: PredictViewModel = hiltViewModel()) {
-
+fun TextRecognitionScreen(
+    navController: NavController,
+    viewModel: PredictViewModel = hiltViewModel()
+) {
     var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
     val imageUri by viewModel.imageUri.collectAsState()
     val context = LocalContext.current
@@ -58,16 +60,21 @@ fun TextRecognitionScreen(navController: NavController, viewModel: PredictViewMo
     LaunchedEffect(imageUri) {
         Log.d("TextRecognitionScreen", "imageUri: $imageUri")
     }
-    val textPrediction = viewModel.textPrediction.collectAsState().value
-    val imagePrediction = viewModel.imagePrediction.collectAsState().value
     val predictionStatus = viewModel.predictionStatus.collectAsState().value
 
     StatusDialog(status = predictionStatus, onDismiss = { viewModel.clearStatus() })
 
     LaunchedEffect(predictionStatus) {
-        Log.d("TextRecognitionScreen", "Prediction status changed: $predictionStatus")
         if (predictionStatus == PredictionStatus.SUCCESS) {
-            navController.navigate("selfHelpScreen")
+            val userId = "hardcodedUserId"
+            val issueResult = "hardcodedIssueResult"
+            val storyFromUser = textFieldValue.text
+            val emotionFromText = viewModel.textPrediction.value?.joinToString()
+            val emotionFromImage = viewModel.imagePrediction.value?.joinToString()
+            Log.d("DetectionResult", "Emotion from Text: $emotionFromText")
+            Log.d("DetectionResult", "Emotion from Image: $emotionFromImage")
+            viewModel.saveDetectionResults(userId, emotionFromText, emotionFromImage, issueResult, storyFromUser)
+            navController.navigate("recognitionResultScreen")
         }
     }
 
@@ -120,31 +127,25 @@ fun TextRecognitionScreen(navController: NavController, viewModel: PredictViewMo
             CustomButton(
                 text = "Selanjutnya",
                 onClick = {
-                    Log.d("TextRecognitionScreen", "Button clicked")
                     val uri = Uri.parse(imageUri)
-                    Log.d("TextRecognitionScreen", "Image URI: $uri")
                     val file = getFileFromUri(context, uri)
-                    if (file != null && file.exists()) {
-                        Log.d("TextRecognitionScreen", "File exists: ${file.path}")
-                        val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-                        val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
-                        viewModel.predictText(textFieldValue.text)
-                        viewModel.predictImage(body)
-                    } else {
-                        Log.e("TextRecognitionScreen", "File does not exist")
-                    }
-                },
+                    val requestFile = file?.asRequestBody("image/*".toMediaTypeOrNull())
+                    val body = MultipartBody.Part.createFormData("file", file?.name ?: "", requestFile ?: return@CustomButton)
 
+                    viewModel.predictText(textFieldValue.text)
+                    viewModel.predictImage(body)
+                },
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-
 
         }
     }
 }
+
 fun getFileFromUri(context: Context, uri: Uri): File? {
     val contentResolver = context.contentResolver
-    val tempFile = File.createTempFile("temp_image", ".jpg", context.cacheDir).apply { deleteOnExit() }
+    val tempFile =
+        File.createTempFile("temp_image", ".jpg", context.cacheDir).apply { deleteOnExit() }
     contentResolver.openInputStream(uri)?.use { inputStream ->
         tempFile.outputStream().use { outputStream ->
             inputStream.copyTo(outputStream)

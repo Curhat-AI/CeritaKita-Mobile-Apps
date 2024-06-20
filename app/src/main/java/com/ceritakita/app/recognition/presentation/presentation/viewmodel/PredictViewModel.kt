@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ceritakita.app.recognition.presentation.domain.usecase.PredictImageUseCase
 import com.ceritakita.app.recognition.presentation.domain.usecase.PredictTextUseCase
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,32 +40,15 @@ class PredictViewModel @Inject constructor(
         Log.d("PredictViewModel", "imageUri is now: ${_imageUri.value}")
     }
 
-    fun predictText(text: String) {
-        viewModelScope.launch {
-            _predictionStatus.value = PredictionStatus.LOADING
-            Log.d("PredictViewModel", "Predicting text...")
-            try {
-                val result = predictTextUseCase(text)
-                Log.d("PredictViewModel", "Received text prediction result: $result")
-                _textPrediction.value = result.predictions
-                _predictionStatus.value = PredictionStatus.SUCCESS
-                Log.d("PredictViewModel", "Text prediction success")
-            } catch (e: Exception) {
-                Log.e("PredictViewModel", "Text prediction error", e)
-                _predictionStatus.value = PredictionStatus.ERROR
-            }
-        }
-    }
-
     fun predictImage(file: MultipartBody.Part) {
         viewModelScope.launch {
             _predictionStatus.value = PredictionStatus.LOADING
-            Log.d("PredictViewModel", "Predicting image...")
             try {
                 val result = predictImageUseCase(file)
-                Log.d("PredictViewModel", "Received image prediction result: $result")
                 _imagePrediction.value = result.predicted_class
-                _predictionStatus.value = PredictionStatus.SUCCESS
+                if (_textPrediction.value != null) {  // Assuming text prediction is done or does not matter
+                    _predictionStatus.value = PredictionStatus.SUCCESS
+                }
                 Log.d("PredictViewModel", "Image prediction success")
             } catch (e: Exception) {
                 Log.e("PredictViewModel", "Image prediction error", e)
@@ -72,9 +57,43 @@ class PredictViewModel @Inject constructor(
         }
     }
 
+    fun predictText(text: String) {
+        viewModelScope.launch {
+            try {
+                val result = predictTextUseCase(text)
+                _textPrediction.value = result.predictions
+                if (_imagePrediction.value != null) {  // Check if image prediction is done
+                    _predictionStatus.value = PredictionStatus.SUCCESS
+                }
+                Log.d("PredictViewModel", "Text prediction success")
+            } catch (e: Exception) {
+                Log.e("PredictViewModel", "Text prediction error", e)
+                _predictionStatus.value = PredictionStatus.ERROR
+            }
+        }
+    }
+
+
     fun clearStatus() {
         _predictionStatus.value = null
     }
+
+    fun saveDetectionResults(userId: String, emotionFromText: String?, emotionFromImage: String?, issueResult: String, storyFromUser: String) {
+        viewModelScope.launch {
+            val detectionData = hashMapOf(
+                "userId" to userId,
+                "detectionTime" to FieldValue.serverTimestamp(),
+                "emotionFromText" to emotionFromText,
+                "emotionFromImage" to emotionFromImage,
+                "issueResult" to issueResult,
+                "storyFromUser" to storyFromUser
+            )
+
+            FirebaseFirestore.getInstance().collection("emotionDetection")
+                .add(detectionData)
+                .addOnSuccessListener { Log.d("PredictViewModel", "Data saved successfully!") }
+                .addOnFailureListener { e -> Log.e("PredictViewModel", "Error saving data", e) }
+        }
+    }
+
 }
-
-

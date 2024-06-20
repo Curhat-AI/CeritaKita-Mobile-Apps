@@ -201,7 +201,7 @@ fun AnimatedNavHost() {
                 CameraCaptureScreen(navController, viewModel = predictViewModel)
             }
             composable("selfHelpScreen") {
-                SelfHelpScreen(navController, viewModel = predictViewModel)
+                SelfHelpScreen(navController)
             }
             composable("paymentSuccessScreen") {
                 PaymentSuccessScreen(navController)

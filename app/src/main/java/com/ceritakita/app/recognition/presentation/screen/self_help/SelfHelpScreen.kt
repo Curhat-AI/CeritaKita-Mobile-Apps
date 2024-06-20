@@ -14,32 +14,24 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.texts.BodyLarge
 import com.ceritakita.app._core.presentation.components.texts.HeadingSmall
 import com.ceritakita.app._core.presentation.components.texts.LabelLarge
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
-import com.ceritakita.app.recognition.presentation.presentation.viewmodel.PredictViewModel
 
 @Composable
 fun SelfHelpScreen(
     navController: NavController,
-    viewModel: PredictViewModel = hiltViewModel()
 ) {
-    val textPrediction = viewModel.textPrediction.collectAsState().value
-    val imagePrediction = viewModel.imagePrediction.collectAsState().value
-    val predictionStatus = viewModel.predictionStatus.collectAsState().value
     Scaffold(
         contentColor = Color.White,
         topBar = {
@@ -57,12 +49,6 @@ fun SelfHelpScreen(
                     rememberScrollState()
                 )
         ) {
-            textPrediction?.let {
-                Text(text = "Text Prediction: $it", modifier = Modifier.padding(vertical = 8.dp))
-            }
-            imagePrediction?.let {
-                Text(text = "Image Prediction: $it", modifier = Modifier.padding(vertical = 8.dp))
-            }
             Image(
                 painter = painterResource(id = R.drawable.sample_image),
                 contentDescription = "Profile Image",
