@@ -9,10 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -24,16 +20,17 @@ import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.counselor.presentation.component.AssessmentButtonComponent
 import com.ceritakita.app.counselor.presentation.component.ButtonType
 import com.ceritakita.app.counselor.presentation.component.CheckboxComponent
+import com.ceritakita.app.counselor.presentation.viewmodel.AssessmentViewModel
 
 @Composable
-fun StepSix(onNext: () -> Unit, onBack: () -> Unit) {
-    var senin by remember { mutableStateOf(false) }
-    var selasa by remember { mutableStateOf(false) }
-    var rabu by remember { mutableStateOf(false) }
-    var kamis by remember { mutableStateOf(false) }
-    var jumat by remember { mutableStateOf(false) }
-    var sabtu by remember { mutableStateOf(false) }
-    var minggu by remember { mutableStateOf(false) }
+fun StepSix(viewModel: AssessmentViewModel, onNext: () -> Unit, onBack: () -> Unit) {
+    val senin = viewModel.dayPreferences.contains("Senin")
+    val selasa = viewModel.dayPreferences.contains("Selasa")
+    val rabu = viewModel.dayPreferences.contains("Rabu")
+    val kamis = viewModel.dayPreferences.contains("Kamis")
+    val jumat = viewModel.dayPreferences.contains("Jumat")
+    val sabtu = viewModel.dayPreferences.contains("Sabtu")
+    val minggu = viewModel.dayPreferences.contains("Minggu")
 
     Column(modifier = Modifier.padding(16.dp)) {
         TitleLarge("Lebih prefer cerita dihari apa?")
@@ -47,7 +44,7 @@ fun StepSix(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = senin,
-                onCheckedChange = { senin = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Senin", isActive, viewModel.dayPreferences) }
             )
             BodyLarge(
                 "Senin",
@@ -64,7 +61,7 @@ fun StepSix(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = selasa,
-                onCheckedChange = { selasa = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Selasa", isActive, viewModel.dayPreferences) }
             )
             BodyLarge(
                 "Selasa",
@@ -81,7 +78,7 @@ fun StepSix(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = rabu,
-                onCheckedChange = { rabu = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Rabu", isActive, viewModel.dayPreferences) }
             )
             BodyLarge(
                 "Rabu",
@@ -98,7 +95,7 @@ fun StepSix(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = kamis,
-                onCheckedChange = { kamis = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Kamis", isActive, viewModel.dayPreferences) }
             )
             BodyLarge(
                 "Kamis",
@@ -115,7 +112,7 @@ fun StepSix(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = jumat,
-                onCheckedChange = { jumat = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Jumat", isActive, viewModel.dayPreferences) }
             )
             BodyLarge(
                 "Jumat",
@@ -132,7 +129,7 @@ fun StepSix(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = sabtu,
-                onCheckedChange = { sabtu = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Sabtu", isActive, viewModel.dayPreferences) }
             )
             BodyLarge(
                 "Sabtu",
@@ -149,7 +146,7 @@ fun StepSix(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = minggu,
-                onCheckedChange = { minggu = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Minggu", isActive, viewModel.dayPreferences) }
             )
             BodyLarge(
                 "Minggu", modifier = Modifier.padding(start = 8.dp),

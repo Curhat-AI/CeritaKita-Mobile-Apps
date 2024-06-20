@@ -9,10 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -24,11 +20,12 @@ import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.counselor.presentation.component.AssessmentButtonComponent
 import com.ceritakita.app.counselor.presentation.component.ButtonType
 import com.ceritakita.app.counselor.presentation.component.CheckboxComponent
+import com.ceritakita.app.counselor.presentation.viewmodel.AssessmentViewModel
 
 @Composable
-fun StepThree (onNext: () -> Unit, onBack: () -> Unit) {
-    var sebaya by remember { mutableStateOf(false) }
-    var professional by remember { mutableStateOf(false) }
+fun StepThree (viewModel: AssessmentViewModel, onNext: () -> Unit, onBack: () -> Unit) {
+    val sebaya = viewModel.typePreferences.contains("Sebaya")
+    val professional = viewModel.typePreferences.contains("Professional")
 
     Column(modifier = Modifier.padding(16.dp)) {
         TitleLarge("Mau cerita sama siapa?")
@@ -41,7 +38,7 @@ fun StepThree (onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = sebaya,
-                onCheckedChange = { sebaya = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Sebaya", isActive, viewModel.typePreferences) }
             )
             BodyLarge(
                 "Sebaya",
@@ -57,7 +54,7 @@ fun StepThree (onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = professional,
-                onCheckedChange = { professional = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Professional", isActive, viewModel.typePreferences) }
             )
             BodyLarge(
                 "Professional", modifier = Modifier.padding(start = 8.dp),

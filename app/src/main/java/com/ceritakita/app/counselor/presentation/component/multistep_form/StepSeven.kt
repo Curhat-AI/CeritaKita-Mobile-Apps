@@ -9,10 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -24,13 +20,14 @@ import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.counselor.presentation.component.AssessmentButtonComponent
 import com.ceritakita.app.counselor.presentation.component.ButtonType
 import com.ceritakita.app.counselor.presentation.component.CheckboxComponent
+import com.ceritakita.app.counselor.presentation.viewmodel.AssessmentViewModel
 
 @Composable
-fun StepSeven(onNext: () -> Unit, onBack: () -> Unit) {
-    var pagi by remember { mutableStateOf(false) }
-    var siang by remember { mutableStateOf(false) }
-    var sore by remember { mutableStateOf(false) }
-    var malam by remember { mutableStateOf(false) }
+fun StepSeven(viewModel: AssessmentViewModel, onNext: () -> Unit, onBack: () -> Unit) {
+    val pagi = viewModel.timePreferences.contains("Pagi")
+    val siang = viewModel.timePreferences.contains("Siang")
+    val sore = viewModel.timePreferences.contains("Sore")
+    val malam = viewModel.timePreferences.contains("Malam")
 
     Column(modifier = Modifier.padding(16.dp)) {
         TitleLarge("Lebih prefer cerita kapan?")
@@ -44,7 +41,7 @@ fun StepSeven(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = pagi,
-                onCheckedChange = { pagi = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Pagi", isActive, viewModel.timePreferences) }
             )
             BodyLarge(
                 "Pagi",
@@ -61,7 +58,7 @@ fun StepSeven(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = siang,
-                onCheckedChange = { siang = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Siang", isActive, viewModel.timePreferences) }
             )
             BodyLarge(
                 "Siang",
@@ -78,7 +75,7 @@ fun StepSeven(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = sore,
-                onCheckedChange = { sore = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Sore", isActive, viewModel.timePreferences) }
             )
             BodyLarge(
                 "Sore",
@@ -95,7 +92,7 @@ fun StepSeven(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = malam,
-                onCheckedChange = { malam = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Malam", isActive, viewModel.timePreferences) }
             )
             BodyLarge(
                 "Malam", modifier = Modifier.padding(start = 8.dp),

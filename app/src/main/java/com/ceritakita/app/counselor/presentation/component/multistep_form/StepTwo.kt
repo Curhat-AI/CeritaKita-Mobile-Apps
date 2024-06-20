@@ -9,10 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -24,15 +20,16 @@ import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.counselor.presentation.component.AssessmentButtonComponent
 import com.ceritakita.app.counselor.presentation.component.ButtonType
 import com.ceritakita.app.counselor.presentation.component.CheckboxComponent
+import com.ceritakita.app.counselor.presentation.viewmodel.AssessmentViewModel
 
 @Composable
-fun StepTwo(onNext: () -> Unit, onBack: () -> Unit) {
-    var social by remember { mutableStateOf(false) }
-    var relationship by remember { mutableStateOf(false) }
-    var romantic by remember { mutableStateOf(false) }
-    var economy by remember { mutableStateOf(false) }
-    var work by remember { mutableStateOf(false) }
-    var school by remember { mutableStateOf(false) }
+fun StepTwo(viewModel: AssessmentViewModel, onNext: () -> Unit, onBack: () -> Unit) {
+    val social = viewModel.topicPreferences.contains("Social")
+    val relationship = viewModel.topicPreferences.contains("Relationship")
+    val romantic = viewModel.topicPreferences.contains("Romantic")
+    val economy = viewModel.topicPreferences.contains("Economy")
+    val work = viewModel.topicPreferences.contains("Work")
+    val school = viewModel.topicPreferences.contains("School")
 
     Column(modifier = Modifier.padding(16.dp)) {
         TitleLarge("Apa topik yang mau kamu ceritakan?")
@@ -46,7 +43,7 @@ fun StepTwo(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = social,
-                onCheckedChange = { social = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Social", isActive, viewModel.topicPreferences) }
             )
             BodyLarge(
                 "Social",
@@ -63,7 +60,7 @@ fun StepTwo(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = relationship,
-                onCheckedChange = { relationship = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Relationship", isActive, viewModel.topicPreferences) }
             )
             BodyLarge(
                 "Relationship", modifier = Modifier.padding(start = 8.dp),
@@ -72,14 +69,13 @@ fun StepTwo(onNext: () -> Unit, onBack: () -> Unit) {
                 color = TextColors.grey800
             )
         }
-
         Row(
             modifier = Modifier.padding(bottom = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             CheckboxComponent(
                 checked = romantic,
-                onCheckedChange = { romantic = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Romantic", isActive, viewModel.topicPreferences) }
             )
             BodyLarge(
                 "Romantic",
@@ -96,7 +92,7 @@ fun StepTwo(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = economy,
-                onCheckedChange = { economy = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Economy", isActive, viewModel.topicPreferences) }
             )
             BodyLarge(
                 "Economy",
@@ -113,7 +109,7 @@ fun StepTwo(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = work,
-                onCheckedChange = { work = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Work", isActive, viewModel.topicPreferences) }
             )
             BodyLarge(
                 "Work",
@@ -130,7 +126,7 @@ fun StepTwo(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = school,
-                onCheckedChange = { school = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("School", isActive, viewModel.topicPreferences) }
             )
             BodyLarge(
                 "School",
@@ -140,7 +136,6 @@ fun StepTwo(onNext: () -> Unit, onBack: () -> Unit) {
                 color = TextColors.grey800
             )
         }
-
         Row(
             modifier = Modifier
                 .fillMaxWidth(),

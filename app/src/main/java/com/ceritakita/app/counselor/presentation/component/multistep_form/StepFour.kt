@@ -9,10 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -24,13 +20,14 @@ import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.counselor.presentation.component.AssessmentButtonComponent
 import com.ceritakita.app.counselor.presentation.component.ButtonType
 import com.ceritakita.app.counselor.presentation.component.CheckboxComponent
+import com.ceritakita.app.counselor.presentation.viewmodel.AssessmentViewModel
 
 @Composable
-fun StepFour(onNext: () -> Unit, onBack: () -> Unit) {
-    var youngAdults_18_24 by remember { mutableStateOf(false) }
-    var youngAdults_25_34 by remember { mutableStateOf(false) }
-    var middleAged_35_44 by remember { mutableStateOf(false) }
-    var middleAged_45_54 by remember { mutableStateOf(false) }
+fun StepFour(viewModel: AssessmentViewModel, onNext: () -> Unit, onBack: () -> Unit) {
+    val youngAdults_18_24 = viewModel.agePreferences.contains("18-24 tahun")
+    val youngAdults_25_34 = viewModel.agePreferences.contains("25-34 tahun")
+    val middleAged_35_44 = viewModel.agePreferences.contains("35-44 tahun")
+    val middleAged_45_54 = viewModel.agePreferences.contains("45-54 tahun")
 
     Column(modifier = Modifier.padding(16.dp)) {
         TitleLarge("Preferensi umur partner cerita")
@@ -44,7 +41,7 @@ fun StepFour(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = youngAdults_18_24,
-                onCheckedChange = { youngAdults_18_24 = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("18-24 tahun", isActive, viewModel.agePreferences) }
             )
             BodyLarge(
                 "18-24 tahun",
@@ -61,7 +58,7 @@ fun StepFour(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = youngAdults_25_34,
-                onCheckedChange = { youngAdults_25_34 = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("25-34 tahun", isActive, viewModel.agePreferences) }
             )
             BodyLarge(
                 "25-34 tahun", modifier = Modifier.padding(start = 8.dp),
@@ -77,7 +74,7 @@ fun StepFour(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = middleAged_35_44,
-                onCheckedChange = { middleAged_35_44 = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("35-44 tahun", isActive, viewModel.agePreferences) }
             )
             BodyLarge(
                 "35-44 tahun",
@@ -94,7 +91,7 @@ fun StepFour(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = middleAged_45_54,
-                onCheckedChange = { middleAged_45_54 = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("45-54 tahun", isActive, viewModel.agePreferences) }
             )
             BodyLarge(
                 "45-54 tahun",

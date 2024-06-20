@@ -9,10 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -24,11 +20,12 @@ import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.counselor.presentation.component.AssessmentButtonComponent
 import com.ceritakita.app.counselor.presentation.component.ButtonType
 import com.ceritakita.app.counselor.presentation.component.CheckboxComponent
+import com.ceritakita.app.counselor.presentation.viewmodel.AssessmentViewModel
 
 @Composable
-fun StepFive(onNext: () -> Unit, onBack: () -> Unit) {
-    var male by remember { mutableStateOf(false) }
-    var female by remember { mutableStateOf(false) }
+fun StepFive(viewModel: AssessmentViewModel, onNext: () -> Unit, onBack: () -> Unit) {
+    val male = viewModel.genderPreference.contains("Laki-laki")
+    val female = viewModel.genderPreference.contains("Perempuan")
 
     Column(modifier = Modifier.padding(16.dp)) {
         TitleLarge("Preferensi gender partner cerita")
@@ -42,7 +39,7 @@ fun StepFive(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = male,
-                onCheckedChange = { male = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Laki-laki", isActive, viewModel.genderPreference) }
             )
             BodyLarge(
                 "Laki-laki",
@@ -59,7 +56,7 @@ fun StepFive(onNext: () -> Unit, onBack: () -> Unit) {
         ) {
             CheckboxComponent(
                 checked = female,
-                onCheckedChange = { female = it }
+                onCheckedChange = { isActive -> viewModel.addOrRemovePreference("Perempuan", isActive, viewModel.genderPreference) }
             )
             BodyLarge(
                 "Perempuan", modifier = Modifier.padding(start = 8.dp),
