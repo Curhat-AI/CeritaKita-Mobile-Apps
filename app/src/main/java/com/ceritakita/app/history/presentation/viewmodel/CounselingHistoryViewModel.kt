@@ -10,6 +10,7 @@ import com.ceritakita.app.history.data.repository.CounselingHistoryRepository
 import com.ceritakita.app.history.domain.entities.CounselingHistoryEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
@@ -26,32 +27,52 @@ class CounselingHistoryViewModel @Inject constructor(
     val counselors: LiveData<Map<String, CounselorProfileEntities>> = _counselors
 
     fun loadCounselingHistories(patientId: String) {
+        Log.d("CounselingHistoryVM", "Loading counseling histories for patientId: $patientId")
         counselingRepository.getCounselingSessionsByPatientId(patientId)
             .addOnSuccessListener { documents ->
                 val sessionsList = documents.map { document ->
-                    val details = document.get("counselingDetails") as? Map<*, *>
-                    CounselingHistoryEntity(
+                    Log.d("CounselingHistoryVM", "Document: ${document.data}")
+
+                    val counselingDetails = document.get("counselingDetails") as? Map<*, *>
+                    val paymentDetails = document.get("paymentDetails") as? Map<*, *>
+
+                    val historyEntity = CounselingHistoryEntity(
                         sessionId = document.id,
-                        counselorId = document.getString("counselorId") ?: "",
-                        patientId = document.getString("patientId") ?: "",
-                        startTime = document.getDate("startTime"),
-                        endTime = document.getDate("endTime"),
-                        status = details?.get("status") as? String ?: "Unknown",
-                        meetingLink = details?.get("meetingLink") as? String,
-                        communicationPreference = details?.get("communicationPreference") as? String,
-                        counselorFeedback = details?.get("counselorFeedback") as? String,
-                        patientFeedback = details?.get("patientFeedback") as? String,
-                        rating = (details?.get("rating") as? Long)?.toInt()
+                        counselorId = counselingDetails?.get("counselorId") as? String ?: "",
+                        patientId = counselingDetails?.get("patientId") as? String ?: "",
+                        startTime = counselingDetails?.get("startTime") as? Date,
+                        endTime = counselingDetails?.get("endTime") as? Date,
+                        status = counselingDetails?.get("status") as? String ?: "Unknown",
+                        meetingLink = counselingDetails?.get("meetingLink") as? String,
+                        communicationPreference = counselingDetails?.get("communicationPreference") as? String,
+                        counselorFeedback = counselingDetails?.get("counselorFeedback") as? String,
+                        patientFeedback = counselingDetails?.get("patientFeedback") as? String,
+                        rating = (counselingDetails?.get("rating") as? String)?.toIntOrNull().toString(),
+                        counselingFee = (paymentDetails?.get("counselingFee") as? Long)?.toInt() ?: 0,
+                        discount = (paymentDetails?.get("discount") as? Long)?.toInt() ?: 0,
+                        paymentDate = paymentDetails?.get("paymentDate") as? Date,
+                        paymentMethod = paymentDetails?.get("paymentMethod") as? String,
+                        paymentStatus = paymentDetails?.get("paymentStatus") as? String,
+                        tax = (paymentDetails?.get("tax") as? Long)?.toInt() ?: 0,
+                        totalPayment = (paymentDetails?.get("totalPayment") as? Long)?.toInt() ?: 0,
+                        scheduleId = document.getString("scheduleId") ?: ""
                     )
+
+                    Log.d("CounselingHistoryVM", "Parsed History Entity: $historyEntity")
+                    historyEntity
                 }
                 _counselingHistories.value = sessionsList
+                Log.d("CounselingHistoryVM", "Sessions List: $sessionsList")
+
                 sessionsList.map { it.counselorId }.distinct().forEach { counselorId ->
                     loadCounselorDetails(counselorId)
                 }
             }.addOnFailureListener { exception ->
-            // Handle any errors
-        }
+                Log.e("CounselingHistoryVM", "Error fetching counseling sessions", exception)
+            }
     }
+
+
 
     private fun loadCounselorDetails(counselorId: String) {
         counselorRepository.getCounselorById(counselorId).addOnSuccessListener { document ->

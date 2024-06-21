@@ -41,11 +41,12 @@ fun HistoryScreen(
     counselingViewModel: CounselingHistoryViewModel = hiltViewModel()
 ) {
     val userId = "CdURxrK7LYOdRD8nrm3273U7O5E2"
+    val patientId = "CdURxrK7LYOdRD8nrm3273U7O5E2"
     val tabs = listOf("Deteksi", "Konseling")
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     LaunchedEffect(key1 = userId) {
         emotionViewModel.loadEmotionHistories(userId)
-        counselingViewModel.loadCounselingHistories(userId)
+        counselingViewModel.loadCounselingHistories(patientId)
     }
 
     Column(

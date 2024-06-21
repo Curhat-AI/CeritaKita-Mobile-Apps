@@ -10,7 +10,7 @@ class CounselingHistoryRepository @Inject constructor(private val firestore: Fir
 
     fun getCounselingSessionsByPatientId(patientId: String): Task<QuerySnapshot> {
         return firestore.collection("counselingSessions")
-            .whereEqualTo("patientId", patientId)
+            .whereEqualTo("counselingDetails.patientId", patientId)
             .get()
     }
 

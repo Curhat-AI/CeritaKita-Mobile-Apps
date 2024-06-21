@@ -8,8 +8,10 @@ import com.ceritakita.app.counselor.data.repository.CounselorListRepository
 import com.ceritakita.app.counselor.domain.entities.CounselorProfileEntities
 import com.ceritakita.app.history.data.repository.CounselingHistoryRepository
 import com.ceritakita.app.history.domain.entities.CounselingHistoryEntity
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,12 +29,13 @@ class CounselingSessionDetailViewModel @Inject constructor(
 
     fun loadSessionAndCounselorDetails(sessionId: String) {
         counselingRepository.getSessionById(sessionId).addOnSuccessListener { document ->
-            val sessionData = parseCounselingHistoryEntity(document)  // Use the parsing function here
+            val sessionData = parseCounselingHistoryEntity(document)
+            Log.d("CounselingDetailVM", "Document data: ${document.data}")
 
             if (sessionData != null) {
                 _sessionDetail.value = sessionData
+                Log.d("CounselingDetailVM", "Parsed Session Data: $sessionData")
 
-                // Load counselor details
                 sessionData.counselorId?.let { counselorId ->
                     loadCounselorDetails(counselorId)
                 }
@@ -46,10 +49,12 @@ class CounselingSessionDetailViewModel @Inject constructor(
 
     private fun loadCounselorDetails(counselorId: String) {
         counselorRepository.getCounselorById(counselorId).addOnSuccessListener { document ->
-            val counselorData = parseCounselorProfileEntities(document)  // Use the parsing function here
+            val counselorData = parseCounselorProfileEntities(document)
+            Log.d("CounselingDetailVM", "Document data: ${document.data}")
 
             if (counselorData != null) {
                 _counselorDetail.value = counselorData
+                Log.d("CounselingDetailVM", "Parsed Counselor Data: $counselorData")
             } else {
                 Log.d("CounselingDetailVM", "Failed to parse counselor data or counselor does not exist.")
             }
@@ -60,25 +65,35 @@ class CounselingSessionDetailViewModel @Inject constructor(
 
 
     fun parseCounselingHistoryEntity(document: DocumentSnapshot): CounselingHistoryEntity? {
-        val details = document.get("counselingDetails") as? Map<*, *>
+        val counselingDetails = document.get("counselingDetails") as? Map<*, *>
+        val paymentDetails = document.get("paymentDetails") as? Map<*, *>
         return if (document.exists()) {
             CounselingHistoryEntity(
                 sessionId = document.id,
-                counselorId = document.getString("counselorId") ?: "",
-                patientId = document.getString("patientId") ?: "",
-                startTime = document.getDate("startTime"),
-                endTime = document.getDate("endTime"),
-                status = details?.get("status") as? String ?: "Unknown",
-                meetingLink = details?.get("meetingLink") as? String,
-                communicationPreference = details?.get("communicationPreference") as? String,
-                counselorFeedback = details?.get("counselorFeedback") as? String,
-                patientFeedback = details?.get("patientFeedback") as? String,
-                rating = (details?.get("rating") as? Long)?.toInt()
+                counselorId = counselingDetails?.get("counselorId") as? String ?: "",
+                patientId = counselingDetails?.get("patientId") as? String ?: "",
+                startTime = (counselingDetails?.get("startTime") as? Timestamp)?.toDate(),
+                endTime = (counselingDetails?.get("endTime") as? Timestamp)?.toDate(),
+                status = counselingDetails?.get("status") as? String ?: "Unknown",
+                meetingLink = counselingDetails?.get("meetingLink") as? String,
+                communicationPreference = counselingDetails?.get("communicationPreference") as? String,
+                counselorFeedback = counselingDetails?.get("counselorFeedback") as? String,
+                patientFeedback = counselingDetails?.get("patientFeedback") as? String,
+                rating = counselingDetails?.get("rating") as? String,
+                counselingFee = (paymentDetails?.get("counselingFee") as? Long)?.toInt() ?: 0,
+                discount = (paymentDetails?.get("discount") as? Long)?.toInt() ?: 0,
+                paymentDate = paymentDetails?.get("paymentDate") as? Date,
+                paymentMethod = paymentDetails?.get("paymentMethod") as? String,
+                paymentStatus = paymentDetails?.get("paymentStatus") as? String,
+                tax = (paymentDetails?.get("tax") as? Long)?.toInt() ?: 0,
+                totalPayment = (paymentDetails?.get("totalPayment") as? Long)?.toInt() ?: 0,
+                scheduleId = document.getString("scheduleId") ?: ""
             )
         } else {
             null
         }
     }
+
 
     fun parseCounselorProfileEntities(document: DocumentSnapshot): CounselorProfileEntities? {
         val counselorDetails = document.get("counselorDetails") as? Map<*, *>
