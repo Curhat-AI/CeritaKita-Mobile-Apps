@@ -19,7 +19,7 @@ class EmotionDetectionHistoryViewModel @Inject constructor(
 
     fun loadEmotionHistories(userId: String) {
         repository.getEmotionsByUserId(userId).addOnSuccessListener { documents ->
-            if (documents.isEmpty()) {
+            if (documents.isEmpty) {
                 Log.d("EmotionDetectionHistoryVM", "No documents found for user ID: $userId")
             } else {
                 Log.d("EmotionDetectionHistoryVM", "Documents fetched: ${documents.size()}")
@@ -30,15 +30,16 @@ class EmotionDetectionHistoryViewModel @Inject constructor(
             val emotionsList = documents.map { document ->
                 EmotionDetectionHistoryEntity(
                     userId = document.getString("userId") ?: "Unknown",
-                    emotion = document.getString("emotion") ?: "No emotion",
-                    detectionTime = document.getDate("detectionTime"),
-                    imageUrl = document.getString("imageUrl") ?: "No image URL"
+                    emotionFromImage = document.getString("emotionFromImage") ?: "No emotion from image",
+                    emotionFromText = document.getString("emotionFromText") ?: "No emotion from text",
+                    issueResult = document.getString("issueResult") ?: "No issue result",
+                    storyFromUser = document.getString("storyFromUser") ?: "No story",
+                    detectionTime = document.getDate("detectionTime")
                 )
             }
             _emotionHistories.value = emotionsList
         }.addOnFailureListener { exception ->
             Log.e("EmotionDetectionHistoryVM", "Error loading documents: ", exception)
-            // Handle errors, possibly updating the UI to show an error message
         }
     }
 }

@@ -92,8 +92,8 @@ fun TabOneContent(viewModel: EmotionDetectionHistoryViewModel) {
                     textDate = emotion.detectionTime?.let {
                         SimpleDateFormat("HH:mm, dd MMM yyyy", Locale.getDefault()).format(it)
                     } ?: "",
-                    textTitle = emotion.emotion,
-                    textDescription = emotion.emotion
+                    textTitle = emotion.issueResult,
+                    textDescription = emotion.storyFromUser
                 )
                 Spacer(modifier = Modifier.height(10.dp))
             }

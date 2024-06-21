@@ -8,14 +8,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -87,8 +84,7 @@ fun CounselingDetailScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(WindowInsets.systemBars.asPaddingValues())
-                .padding(horizontal = 16.dp, vertical = 16.dp)
+                .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
             Image(
@@ -153,7 +149,7 @@ fun CounselingDetailScreen(
             TitleMedium(text = "Ulasan Kamu")
             Spacer(modifier = Modifier.heightIn(10.dp))
             RatingReviewCard(rating = null, review = null, onWriteReviewClick = openReviewForm)
-
+            Spacer(modifier = Modifier.heightIn(24.dp))
             if (showReviewForm) {
                 ReviewFormBottomSheet(
                     onReviewSubmit = { rating, review ->
