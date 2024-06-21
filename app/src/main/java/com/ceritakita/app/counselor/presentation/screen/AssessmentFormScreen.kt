@@ -21,13 +21,15 @@ import com.ceritakita.app.counselor.presentation.component.multistep_form.StepSi
 import com.ceritakita.app.counselor.presentation.component.multistep_form.StepThree
 import com.ceritakita.app.counselor.presentation.component.multistep_form.StepTwo
 import com.ceritakita.app.counselor.presentation.viewmodel.AssessmentViewModel
+import androidx.compose.runtime.livedata.observeAsState
 
 @Composable
 fun AssessmentFormScreen(
     navController: NavController,
     viewModel: AssessmentViewModel = hiltViewModel()
 ) {
-    val step by remember { mutableStateOf(viewModel.currentStep) }
+    val step = viewModel.currentStep
+
     Scaffold(
         containerColor = Color.White,
         topBar = {
@@ -57,3 +59,5 @@ fun AssessmentFormScreen(
         }
     }
 }
+
+

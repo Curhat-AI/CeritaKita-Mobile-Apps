@@ -68,6 +68,7 @@ import com.ceritakita.app.auth.presentation.screen.LoginScreen
 import com.ceritakita.app.auth.presentation.screen.RegisterScreen
 import com.ceritakita.app.camera.CameraCaptureScreen
 import com.ceritakita.app.camera.createImageFileUri
+import com.ceritakita.app.counselor.presentation.screen.AssessmentFormScreen
 import com.ceritakita.app.counselor.presentation.screen.CounselorDetailScreen
 import com.ceritakita.app.counselor.presentation.screen.CounselorListScreen
 import com.ceritakita.app.counselor.presentation.screen.PaymentScreen
@@ -105,7 +106,7 @@ fun AnimatedNavHost() {
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = "loginScreen",
+            startDestination = "assessmentFormScreen",
             modifier = Modifier.padding(padding),
             enterTransition = {
                 slideInHorizontally(
@@ -134,6 +135,9 @@ fun AnimatedNavHost() {
         ) {
             composable("homeScreen") {
                 HomeScreen(navController)
+            }
+            composable("assessmentFormScreen") {
+                AssessmentFormScreen(navController)
             }
             composable("profileScreen") {
                 ProfileScreen(navController)

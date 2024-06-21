@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ceritakita.app.counselor.data.repository.UserPreferenceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -13,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AssessmentViewModel @Inject constructor(
-    private val userPreferenceViewModel: UserPreferenceViewModel
+    private val userPreferenceRepository: UserPreferenceRepository
 ) : ViewModel() {
     var currentStep by mutableStateOf(1)
     var servicePreferences = mutableStateListOf<String>()
@@ -45,7 +46,11 @@ class AssessmentViewModel @Inject constructor(
             timePref = timePreferences
         )
         viewModelScope.launch {
-            userPreferenceViewModel.submitUserPreferences(userId, userPreferences)
+            userPreferenceRepository.setUserPreferences(userId, userPreferences).addOnSuccessListener {
+                // Handle success
+            }.addOnFailureListener {
+                // Handle failure
+            }
         }
     }
 
@@ -64,3 +69,4 @@ class AssessmentViewModel @Inject constructor(
         }
     }
 }
+

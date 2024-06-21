@@ -25,6 +25,7 @@ class UserPreferenceViewModel @Inject constructor(
     }
 }
 
+
 data class UserPreferences(
     val servicePref: List<String>,
     val topicPref: List<String>,
