@@ -36,6 +36,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -76,6 +77,7 @@ import com.ceritakita.app.counselor.presentation.screen.PaymentSuccessScreen
 import com.ceritakita.app.history.presentation.screen.CounselingDetailScreen
 import com.ceritakita.app.history.presentation.screen.HistoryScreen
 import com.ceritakita.app.homepage.presentation.screen.HomeScreen
+import com.ceritakita.app.homepage.presentation.viewmodel.UserViewModel
 import com.ceritakita.app.profile.presentation.screen.ProfileScreen
 import com.ceritakita.app.recognition.presentation.presentation.viewmodel.PredictViewModel
 import com.ceritakita.app.recognition.presentation.screen.RecognitionResultScreen
@@ -96,6 +98,17 @@ fun AnimatedNavHost() {
         "historyScreen",
         "counselorListScreen"
     )
+    val viewModelUser: UserViewModel = hiltViewModel()
+    val userData by viewModelUser.userData.observeAsState()
+
+    LaunchedEffect(userData) {
+        if (userData != null) {
+            navController.navigate("homeScreen") {
+                popUpTo("loginScreen") { inclusive = true }
+            }
+        }
+    }
+
 
     Scaffold(
         bottomBar = {
@@ -106,7 +119,7 @@ fun AnimatedNavHost() {
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = "homeScreen",
+            startDestination = if (userData != null) "homeScreen" else "loginScreen",
             modifier = Modifier.padding(padding),
             enterTransition = {
                 slideInHorizontally(
