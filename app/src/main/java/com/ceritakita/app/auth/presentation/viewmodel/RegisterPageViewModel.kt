@@ -31,16 +31,6 @@ class RegisterPageViewModel @Inject constructor(
                 val userData: Map<String, Any> = hashMapOf(
                     "displayName" to (user.displayName ?: ""),
                     "email" to (user.email ?: ""),
-                    "roles" to mapOf(
-                        "counselor" to false,
-                        "patient" to false
-                    ),
-                    "details" to mapOf(
-                        "dob" to null,
-                        "gender" to null,
-                        "phone" to null,
-                        "photoUrl" to (user.photoUrl?.toString() ?: "")
-                    )
                 )
                 saveUserDetailsToSharedPrefd(userData,user.uid)
                 firestore.collection("users").document(user.uid).set(userData).await()

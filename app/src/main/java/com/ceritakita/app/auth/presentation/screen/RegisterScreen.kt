@@ -109,6 +109,17 @@ fun RegisterScreen(navController: NavController) {
     }
 
     val loginSuccess by viewModel.loginSuccess.observeAsState()
+    registerSuccess?.let {
+        if (it) {
+            Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
+            // Navigate to another screen if needed
+            navController.navigate("HomeScreen") {
+                popUpTo("RegisterScreen") { inclusive = true }
+            }
+        } else {
+            Toast.makeText(context, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show()
+        }
+    }
     LaunchedEffect(loginSuccess) {
         loginSuccess?.let {
             if (it) {
@@ -214,17 +225,7 @@ fun RegisterScreen(navController: NavController) {
 
             launcher
                 .launch(googleSignInClient.signInIntent)
-            registerSuccess?.let {
-                if (it) {
-                    Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
-                    // Navigate to another screen if needed
-                    navController.navigate("HomeScreen") {
-                        popUpTo("RegisterScreen") { inclusive = true }
-                    }
-                } else {
-                    Toast.makeText(context, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show()
-                }
-            }
+
 
         }, buttonType = ButtonType.Secondary,
             icon = ImageVector.vectorResource(id = R.drawable.ic_google_sign_in),
