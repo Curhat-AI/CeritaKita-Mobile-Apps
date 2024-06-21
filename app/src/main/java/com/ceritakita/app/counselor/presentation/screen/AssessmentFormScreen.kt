@@ -22,12 +22,18 @@ import com.ceritakita.app.counselor.presentation.component.multistep_form.StepTh
 import com.ceritakita.app.counselor.presentation.component.multistep_form.StepTwo
 import com.ceritakita.app.counselor.presentation.viewmodel.AssessmentViewModel
 import androidx.compose.runtime.livedata.observeAsState
+import com.ceritakita.app._core.presentation.components.texts.BodyMedium
+import com.ceritakita.app._core.presentation.components.texts.TitleLarge
+import com.ceritakita.app.homepage.presentation.viewmodel.UserViewModel
 
 @Composable
 fun AssessmentFormScreen(
     navController: NavController,
     viewModel: AssessmentViewModel = hiltViewModel()
 ) {
+    val viewModelUser: UserViewModel = hiltViewModel()
+    val userData by viewModelUser.userData.observeAsState()
+
     val step = viewModel.currentStep
 
     Scaffold(
@@ -52,8 +58,9 @@ fun AssessmentFormScreen(
                 5 -> StepFive(viewModel = viewModel, onNext = { viewModel.nextStep() }, onBack = { viewModel.previousStep() })
                 6 -> StepSix(viewModel = viewModel, onNext = { viewModel.nextStep() }, onBack = { viewModel.previousStep() })
                 7 -> StepSeven(viewModel = viewModel, onNext = {
-                    viewModel.submitUserPreferences("userId") // Replace "userId" with actual user ID
-                    navController.navigate("nextScreen") // Replace with actual navigation target
+                    userData?.let{
+                        viewModel.submitUserPreferences("${it.userId}") // Replace "userId" with actual user ID
+                    }
                 }, onBack = { viewModel.previousStep() })
             }
         }

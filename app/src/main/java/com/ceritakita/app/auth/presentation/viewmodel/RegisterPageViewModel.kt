@@ -42,8 +42,7 @@ class RegisterPageViewModel @Inject constructor(
                         "photoUrl" to (user.photoUrl?.toString() ?: "")
                     )
                 )
-                saveUserDetailsToSharedPrefd(userData)
-
+                saveUserDetailsToSharedPrefd(userData,user.uid)
                 firestore.collection("users").document(user.uid).set(userData).await()
                 _registerSuccess.postValue(true)
 
@@ -53,10 +52,10 @@ class RegisterPageViewModel @Inject constructor(
             e.printStackTrace()
         }
     }
-    private fun saveUserDetailsToSharedPrefd(userData: Map<String, Any>) {
+    private fun saveUserDetailsToSharedPrefd(userData: Map<String, Any>, userId: String) {
         val detailsMap = userData["details"] as? Map<String, Any?>
         sharedPreferences.edit().apply {
-            putString("userId", userData["userId"] as? String)
+            putString("userId", userId)
             putString("displayName", userData["displayName"] as? String)
             putString("email", userData["email"] as? String)
             putBoolean("isCounselor", (userData["roles"] as? Map<String, Boolean>)?.get("counselor") ?: false)
@@ -87,7 +86,7 @@ class RegisterPageViewModel @Inject constructor(
                 val docSnapshot = docRef.get().await()
                 if (docSnapshot.exists()) {
                     val userData = docSnapshot.data
-                    saveUserDetailsToSharedPref(userData)
+                    saveUserDetailsToSharedPref(userData,it.uid)
                 }
                 _loginSuccess.postValue(true)
             }
@@ -97,10 +96,10 @@ class RegisterPageViewModel @Inject constructor(
         }
     }
 
-     fun saveUserDetailsToSharedPref(userData: Map<String, Any>?) {
+     fun saveUserDetailsToSharedPref(userData: Map<String, Any>?, userId: String) {
         val detailsMap = userData?.get("details") as? Map<String, Any?>
         sharedPreferences.edit().apply {
-            putString("userId", userData?.get("userId") as? String)
+            putString("userId", userId)
             putString("displayName", userData?.get("displayName") as? String)
             putString("email", userData?.get("email") as? String)
             putBoolean("isCounselor", (userData?.get("roles") as? Map<String, Boolean>)?.get("counselor") ?: false)

@@ -1,6 +1,7 @@
 package com.ceritakita.app.homepage.presentation.screen
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -87,7 +88,10 @@ fun HomeScreen(navController: NavController, viewModel: CounselorListViewModel =
         TitleLarge(
             text = "DISINI HARUSNYA ADA GRAFIK, TAPI AKU BINGUNG BJIRR",
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp).clickable {
+                navController.navigate("assessmentFormScreen")
+
+            }
         )
         Divider(
             color = TextColors.grey100,
