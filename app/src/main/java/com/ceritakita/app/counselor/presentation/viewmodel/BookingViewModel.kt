@@ -40,7 +40,7 @@ class BookingViewModel @Inject constructor(
                 "meetingLink" to "",
                 "patientFeedback" to "",
                 "rating" to "",
-                "status" to "Booked"
+                "status" to ""
             ),
             "paymentDetails" to mapOf(
                 "counselingFee" to counselingFee,
@@ -69,6 +69,7 @@ class BookingViewModel @Inject constructor(
     ): Task<Void> {
         _isLoading.value = true
         val paymentUpdate = hashMapOf(
+            "counselingDetails.status" to "Berlangsung",
             "paymentDetails.paymentMethod" to paymentMethod,
             "paymentDetails.paymentStatus" to "Dibayar",
             "paymentDetails.paymentDate" to FieldValue.serverTimestamp()

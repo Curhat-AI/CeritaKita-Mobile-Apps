@@ -1,5 +1,6 @@
 package com.ceritakita.app.history.presentation.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,18 +21,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.tabBar.CustomTabBar
 import com.ceritakita.app.history.presentation.components.DeteksiHistoryCard
 import com.ceritakita.app.history.presentation.components.KonselingHistoryCard
 import com.ceritakita.app.history.presentation.viewmodel.CounselingHistoryViewModel
 import com.ceritakita.app.history.presentation.viewmodel.EmotionDetectionHistoryViewModel
+import com.ceritakita.app.homepage.presentation.viewmodel.UserViewModel
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 @Composable
@@ -40,12 +41,13 @@ fun HistoryScreen(
     emotionViewModel: EmotionDetectionHistoryViewModel = hiltViewModel(),
     counselingViewModel: CounselingHistoryViewModel = hiltViewModel()
 ) {
-    val userId = "CdURxrK7LYOdRD8nrm3273U7O5E2"
-    val patientId = "CdURxrK7LYOdRD8nrm3273U7O5E2"
+    val viewModelUser: UserViewModel = hiltViewModel()
+    val userData by viewModelUser.userData.observeAsState()
+    val patientId = userData?.userId.toString()
     val tabs = listOf("Deteksi", "Konseling")
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    LaunchedEffect(key1 = userId) {
-        emotionViewModel.loadEmotionHistories(userId)
+    LaunchedEffect(key1 = patientId) {
+        emotionViewModel.loadEmotionHistories(patientId)
         counselingViewModel.loadCounselingHistories(patientId)
     }
 
@@ -109,14 +111,13 @@ fun TabTwoContent(viewModel: CounselingHistoryViewModel, navController: NavContr
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         counselingHistories.forEach { history ->
             val counselor = counselors[history.counselorId]
+            Log.d("TabTwoContent", "Start Time: ${history.startTime}, End Time: ${history.endTime}")
             KonselingHistoryCard(
                 imagePainter = painterResource(id = R.drawable.sample_image),
-                textDate = history.startTime?.let {
-                    SimpleDateFormat("dd MMM yyyy • HH:mm", Locale.getDefault()).format(it)
-                } ?: "Unknown date",
+                textDate = formatCounselingDate(history.startTime, history.endTime),
                 textName = counselor?.name ?: "Loading counselor...",
                 textStatus = history.status,
-                textPrice = "Rp 50.000", // Placeholder for actual pricing
+                textPrice = formatToRupiah(history.totalPayment),
                 onClick = { navController.navigate("counselingDetailScreen/${history.sessionId}") }
             )
             Spacer(modifier = Modifier.height(10.dp))
@@ -124,8 +125,13 @@ fun TabTwoContent(viewModel: CounselingHistoryViewModel, navController: NavContr
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewTabBarWithScrollableContent() {
-    HistoryScreen(navController = rememberNavController())
+fun formatCounselingDate(startTime: Date?, endTime: Date?): String {
+    return if (startTime != null && endTime != null) {
+        val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        "${dateFormat.format(startTime)}, ${timeFormat.format(startTime)} - ${timeFormat.format(endTime)}"
+    } else {
+        Log.d("FormatDate", "Unknown date: startTime=$startTime, endTime=$endTime")
+        "Unknown date"
+    }
 }

@@ -52,6 +52,7 @@ import com.ceritakita.app.counselor.presentation.component.TimeChipRow
 import com.ceritakita.app.counselor.presentation.viewmodel.BookingViewModel
 import com.ceritakita.app.counselor.presentation.viewmodel.CounselorListViewModel
 import com.ceritakita.app.counselor.presentation.viewmodel.CounselorScheduleViewModel
+import com.ceritakita.app.homepage.presentation.viewmodel.UserViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -72,17 +73,21 @@ fun CounselorDetailScreen(
     val counselor by viewModel.selectedCounselor.observeAsState()
     val schedules by scheduleViewModel.schedules.observeAsState(emptyList())
 
+    val viewModelUser: UserViewModel = hiltViewModel()
+    val userData by viewModelUser.userData.observeAsState()
+    val patientId = userData?.userId.toString()
+
     val onReviewSubmit = { startTime: Date, endTime: Date, communicationPreference: String, counselingFee: Int ->
         bookingViewModel.bookCounselingSession(
             counselorId = counselorId,
-            patientId = "HardcodedPatientId", // Replace with actual patient ID
+            patientId = patientId,
             scheduleId = schedules[selectedDateIndex].id,
             startTime = startTime,
             endTime = endTime,
             communicationPreference = communicationPreference,
             counselingFee = counselingFee
         ).addOnSuccessListener { documentReference ->
-            val route = "paymentScreen/${documentReference.id}/${counselorId}/HardcodedPatientId/${schedules[selectedDateIndex].id}/$startTime/$endTime/$communicationPreference/$counselingFee"
+            val route = "paymentScreen/${documentReference.id}/${counselorId}/${patientId}/${schedules[selectedDateIndex].id}/$startTime/$endTime/$communicationPreference/$counselingFee"
             navController.navigate(route) {
                 popUpTo("counselorDetailScreen") { inclusive = true }
             }

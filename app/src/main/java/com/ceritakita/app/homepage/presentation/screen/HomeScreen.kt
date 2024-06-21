@@ -64,7 +64,7 @@ fun HomeScreen(navController: NavController, viewModel: CounselorListViewModel =
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://picsum.photos/600")
+                    .data(userData?.photoUrl ?: "https://picsum.photos/600")
                     .crossfade(true)
                     .transformations(CircleCropTransformation())
                     .build(),

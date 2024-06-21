@@ -8,6 +8,7 @@ import com.ceritakita.app.counselor.data.repository.CounselorListRepository
 import com.ceritakita.app.counselor.domain.entities.CounselorProfileEntities
 import com.ceritakita.app.history.data.repository.CounselingHistoryRepository
 import com.ceritakita.app.history.domain.entities.CounselingHistoryEntity
+import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -40,8 +41,8 @@ class CounselingHistoryViewModel @Inject constructor(
                         sessionId = document.id,
                         counselorId = counselingDetails?.get("counselorId") as? String ?: "",
                         patientId = counselingDetails?.get("patientId") as? String ?: "",
-                        startTime = counselingDetails?.get("startTime") as? Date,
-                        endTime = counselingDetails?.get("endTime") as? Date,
+                        startTime = (counselingDetails?.get("startTime") as? Timestamp)?.toDate(),
+                        endTime = (counselingDetails?.get("endTime") as? Timestamp)?.toDate(),
                         status = counselingDetails?.get("status") as? String ?: "Unknown",
                         meetingLink = counselingDetails?.get("meetingLink") as? String,
                         communicationPreference = counselingDetails?.get("communicationPreference") as? String,

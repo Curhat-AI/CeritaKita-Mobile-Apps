@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,6 +40,7 @@ import com.ceritakita.app._core.presentation.components.texts.BodyLarge
 import com.ceritakita.app._core.presentation.components.texts.TitleLarge
 import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app._core.presentation.ui.theme.dmSansFontFamily
+import com.ceritakita.app.homepage.presentation.viewmodel.UserViewModel
 import com.ceritakita.app.recognition.presentation.presentation.screens.loading.StatusDialog
 import com.ceritakita.app.recognition.presentation.presentation.viewmodel.PredictViewModel
 import com.ceritakita.app.recognition.presentation.presentation.viewmodel.PredictionStatus
@@ -56,6 +58,9 @@ fun TextRecognitionScreen(
     var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
     val imageUri by viewModel.imageUri.collectAsState()
     val context = LocalContext.current
+    val viewModelUser: UserViewModel = hiltViewModel()
+    val userData by viewModelUser.userData.observeAsState()
+    val patientId = userData?.userId.toString()
 
     LaunchedEffect(imageUri) {
         Log.d("TextRecognitionScreen", "imageUri: $imageUri")
@@ -66,7 +71,7 @@ fun TextRecognitionScreen(
 
     LaunchedEffect(predictionStatus) {
         if (predictionStatus == PredictionStatus.SUCCESS) {
-            val userId = "hardcodedUserId"
+            val userId = patientId
             val issueResult = viewModel.mentalIssuePrediction.value?.joinToString() ?: "hardcodedIssueResult"
             val storyFromUser = textFieldValue.text
             val emotionFromText = viewModel.textPrediction.value?.joinToString()
