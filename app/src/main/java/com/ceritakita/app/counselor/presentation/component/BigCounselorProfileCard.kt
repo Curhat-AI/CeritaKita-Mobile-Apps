@@ -1,6 +1,5 @@
 package com.ceritakita.app.counselor.presentation.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,12 +22,14 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.texts.BodyLarge
 import com.ceritakita.app._core.presentation.components.texts.BodyMedium
@@ -68,9 +69,12 @@ fun BigCounselorProfileCard(
             modifier = Modifier.padding(16.dp)
         ) {
             Row {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_background),
-                    contentDescription = "Profile Image",
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(counselorProfileEntities.imageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Image",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(100.dp)

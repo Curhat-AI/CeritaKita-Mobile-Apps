@@ -1,7 +1,6 @@
 package com.ceritakita.app.counselor.presentation.screen
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,13 +29,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.buttons.ButtonType
 import com.ceritakita.app._core.presentation.components.buttons.CustomButton
@@ -126,13 +127,16 @@ fun CounselorDetailScreen(
         counselor?.let { counselorData ->
             Log.d("CounselorDetailScreen", "Displaying data for counselor: ${counselorData.name}")
             Log.d("CounselorDetailScreen", "Displaying data for counselor: ${counselorData}")
-            Image(
-                painter = painterResource(id = R.drawable.sample_image),
-                contentDescription = "Profile Image",
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(counselorData.imageUrl)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(260.dp)
                     .align(Alignment.CenterHorizontally)
             )
             Spacer(modifier = Modifier.height(16.dp))

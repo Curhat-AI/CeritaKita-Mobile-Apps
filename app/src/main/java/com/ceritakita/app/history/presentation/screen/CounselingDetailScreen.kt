@@ -1,7 +1,6 @@
 package com.ceritakita.app.history.presentation.screen
 
 import CustomAppBar
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,12 +29,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.ceritakita.app.R
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.ceritakita.app._core.presentation.components.texts.TitleMedium
 import com.ceritakita.app._core.presentation.components.texts.TitleSmall
 import com.ceritakita.app._core.presentation.ui.theme.AppColors
@@ -87,14 +87,18 @@ fun CounselingDetailScreen(
                 .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.sample_image),
-                contentDescription = "Image Description",
+            Spacer(modifier = Modifier.heightIn(16.dp))
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(counselorDetail?.imageUrl)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "Image",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(16f / 9f)
-                    .clip(RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Crop,
+                    .clip(RoundedCornerShape(8.dp))
             )
             Spacer(modifier = Modifier.heightIn(16.dp))
             Row(

@@ -1,13 +1,13 @@
 package com.ceritakita.app.homepage.presentation.screen
 
 import android.util.Log
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -78,28 +78,13 @@ fun HomeScreen(navController: NavController, viewModel: CounselorListViewModel =
             userData?.let {
                 Column {
                     TitleLarge(text = "${it.displayName}")
-                    BodyMedium(text = "Gimana harimu berjalan, Kahfi?")
+                    BodyMedium(text = "Gimana harimu berjalan?")
                 }
             }
 
 
         }
         Spacer(modifier = Modifier.heightIn(20.dp))
-        TitleLarge(
-            text = "DISINI HARUSNYA ADA GRAFIK, TAPI AKU BINGUNG BJIRR",
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 16.dp).clickable {
-                navController.navigate("assessmentFormScreen")
-
-            }
-        )
-        Divider(
-            color = TextColors.grey100,
-            thickness = 6.dp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 20.dp)
-        )
         TestActionCard(onClick = { /*TODO*/ }, modifier = Modifier.padding(horizontal = 20.dp))
         Divider(
             color = TextColors.grey100,
@@ -130,6 +115,44 @@ fun HomeScreen(navController: NavController, viewModel: CounselorListViewModel =
             Spacer(modifier = Modifier.heightIn(2.dp))
             BodyLarge(
                 text = "Psikolog sebaya dan cocok dengan keadaanmu",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Start,
+                color = TextColors.grey600
+            )
+            RowProfileList(
+                counselorProfileEntities = profiles,
+                onCounselorClick = { counselorId ->
+                    Log.d(
+                        "CounselorListScreen",
+                        "Navigating to counselorDetail with ID: $counselorId"
+                    )
+                    navController.navigate("counselorDetailScreen/$counselorId")
+                }
+            )
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                HeadingSmall(
+                    text = "Tersedia Hari Ini",
+                    fontSize = 22.sp
+                )
+                BodyLarge(
+                    text = "Semua",
+                    fontWeight = FontWeight.Medium,
+                    color = AppColors.linkColor
+                )
+            }
+            Spacer(modifier = Modifier.heightIn(2.dp))
+            BodyLarge(
+                text = "Psikolog yang tersedia hari ini",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Start,
                 color = TextColors.grey600

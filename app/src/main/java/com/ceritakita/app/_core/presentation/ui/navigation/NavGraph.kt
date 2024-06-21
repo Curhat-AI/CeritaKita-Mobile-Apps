@@ -106,7 +106,7 @@ fun AnimatedNavHost() {
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = "loginScreen",
+            startDestination = "homeScreen",
             modifier = Modifier.padding(padding),
             enterTransition = {
                 slideInHorizontally(

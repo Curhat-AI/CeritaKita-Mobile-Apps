@@ -1,12 +1,6 @@
 package com.ceritakita.app.auth.presentation.screen
 
-import android.content.Intent
-import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,23 +13,10 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -56,7 +37,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.credentials.CredentialManager
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -64,7 +44,6 @@ import androidx.navigation.compose.rememberNavController
 import com.ceritakita.app.R
 import com.ceritakita.app._core.presentation.components.buttons.ButtonType
 import com.ceritakita.app._core.presentation.components.buttons.CustomButton
-import com.ceritakita.app._core.presentation.components.fields.CustomTextField
 import com.ceritakita.app._core.presentation.components.textfield.CustomOutlinedTextField
 import com.ceritakita.app._core.presentation.components.textfield.CustomPasswordTextField
 import com.ceritakita.app._core.presentation.components.texts.BodyLarge
@@ -77,14 +56,10 @@ import com.ceritakita.app._core.presentation.ui.theme.TextColors
 import com.ceritakita.app.auth.presentation.viewmodel.RegisterPageViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
 import com.google.firebase.Firebase
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
 data class EmojiDataPoint(val value: Float, val emoji: String)
 
@@ -107,7 +82,11 @@ fun LoginScreen(navController: NavController) {
             googleAccount = authResult.user
         },
         onAuthError = { exception ->
-            Toast.makeText(context, "Authentication failed: ${exception.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                "Authentication failed: ${exception.message}",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     )
     LaunchedEffect(googleAccount) {
@@ -139,7 +118,8 @@ fun LoginScreen(navController: NavController) {
         } else {
             // Handle login failure
             LaunchedEffect(success) {
-                Toast.makeText(context, "Login failed. Please try again.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Login failed. Please try again.", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
@@ -150,7 +130,8 @@ fun LoginScreen(navController: NavController) {
                 popUpTo("RegisterScreen") { inclusive = true }
             }
         } else {
-            Toast.makeText(context, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Registration failed. Please try again.", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
@@ -214,33 +195,34 @@ fun LoginScreen(navController: NavController) {
         Spacer(modifier = Modifier.heightIn(40.dp))
         CustomButton(text = "Masuk", onClick = {
             coroutineScope.launch {
-                viewModel.loginUser(emailState.value,passwordState.value)
+                viewModel.loginUser(emailState.value, passwordState.value)
             }
 
 
         }, buttonType = ButtonType.Primary)
-        Spacer(modifier = Modifier.weight(0.1f))
         BodyMedium(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 32.dp),
             text = "Atau",
             color = TextColors.grey500,
             textAlign = TextAlign.Center,
         )
-        Spacer(modifier = Modifier.weight(0.1f))
-        CustomButton(text = "Masuk dengan Google", onClick = {
-            val gso =
-                GoogleSignInOptions
-                    .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(token)
-                    .requestEmail()
-                    .build()
-            val googleSignInClient = GoogleSignIn
-                .getClient(context, gso)
-            launcher
-                .launch(googleSignInClient.signInIntent)
+        CustomButton(
+            text = "Masuk dengan Google", onClick = {
+                val gso =
+                    GoogleSignInOptions
+                        .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(token)
+                        .requestEmail()
+                        .build()
+                val googleSignInClient = GoogleSignIn
+                    .getClient(context, gso)
+                launcher
+                    .launch(googleSignInClient.signInIntent)
 
 
-        }, buttonType = ButtonType.Secondary,
+            }, buttonType = ButtonType.Secondary,
             icon = ImageVector.vectorResource(id = R.drawable.ic_google_sign_in),
             textButtonColor = Color.Black,
             outlineButtonColor = Color.Black
