@@ -1,6 +1,7 @@
 package com.ceritakita.app.homepage.presentation.component
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -91,7 +92,9 @@ fun TestActionCard(
                     shape = CircleShape,
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
                 ) {
-                    LabelMedium(text = "Mulai Tes", color = Color.White)
+                    LabelMedium(text = "Mulai Tes", color = Color.White, modifier = Modifier.clickable {
+                        onClick()
+                    })
                 }
             }
         }

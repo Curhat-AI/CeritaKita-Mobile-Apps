@@ -85,7 +85,9 @@ fun HomeScreen(navController: NavController, viewModel: CounselorListViewModel =
 
         }
         Spacer(modifier = Modifier.heightIn(20.dp))
-        TestActionCard(onClick = { /*TODO*/ }, modifier = Modifier.padding(horizontal = 20.dp))
+        TestActionCard(onClick = {
+                                 navController.navigate("assessmentFormScreen")
+        }, modifier = Modifier.padding(horizontal = 20.dp))
         Divider(
             color = TextColors.grey100,
             thickness = 6.dp,

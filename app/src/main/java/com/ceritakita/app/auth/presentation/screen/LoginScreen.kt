@@ -134,7 +134,6 @@ fun LoginScreen(navController: NavController) {
                 .show()
         }
     }
-
     Column(
         modifier = Modifier
             .fillMaxSize()

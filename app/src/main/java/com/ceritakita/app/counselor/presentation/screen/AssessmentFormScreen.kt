@@ -61,6 +61,7 @@ fun AssessmentFormScreen(
                     userData?.let{
                         viewModel.submitUserPreferences("${it.userId}") // Replace "userId" with actual user ID
                     }
+                    navController.navigate("CounselorListScreen")
                 }, onBack = { viewModel.previousStep() })
             }
         }

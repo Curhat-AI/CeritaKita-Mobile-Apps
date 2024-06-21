@@ -19,7 +19,6 @@ class RegisterPageViewModel @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
     private val sharedPreferences: SharedPreferences
-
 ) : ViewModel() {
     private val _loginSuccess = MutableLiveData<Boolean>()
     val loginSuccess: LiveData<Boolean> = _loginSuccess
@@ -77,7 +76,6 @@ class RegisterPageViewModel @Inject constructor(
         Log.i("SharedPreferences", "phone: ${sharedPreferences.getString("phone", "No Phone")}")
         Log.i("SharedPreferences", "photoUrl: ${sharedPreferences.getString("photoUrl", "No Photo")}")
     }
-
     suspend fun loginUser(email: String, password: String) {
         try {
             val user = auth.signInWithEmailAndPassword(email.trim(), password.trim()).await().user
@@ -121,8 +119,6 @@ class RegisterPageViewModel @Inject constructor(
         Log.i("SharedPreferences", "phone: ${sharedPreferences.getString("phone", "No Phone")}")
         Log.i("SharedPreferences", "photoUrl: ${sharedPreferences.getString("photoUrl", "No Photo")}")
     }
-
-
     suspend fun registerUser(nama: String, email: String, password: String) {
         try {
             val user = auth.createUserWithEmailAndPassword(email.trim(), password.trim()).await().user
