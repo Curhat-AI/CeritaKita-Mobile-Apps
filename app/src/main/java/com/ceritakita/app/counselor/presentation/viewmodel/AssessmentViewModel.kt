@@ -7,14 +7,19 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ceritakita.app.counselor.data.repository.UserPreferenceRepository
+import com.ceritakita.app.recognition.presentation.data.remote.CounselourRecommendationRequest
+import com.ceritakita.app.recognition.presentation.domain.usecase.RecommendCounselourUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @HiltViewModel
 class AssessmentViewModel @Inject constructor(
-    private val userPreferenceRepository: UserPreferenceRepository
+    private val userPreferenceRepository: UserPreferenceRepository,
+    private val recommendCounselourUseCase: RecommendCounselourUseCase
 ) : ViewModel() {
     var currentStep by mutableStateOf(1)
     var servicePreferences = mutableStateListOf<String>()
@@ -24,6 +29,9 @@ class AssessmentViewModel @Inject constructor(
     var genderPreference = mutableStateListOf<String>()
     var dayPreferences = mutableStateListOf<String>()
     var timePreferences = mutableStateListOf<String>()
+
+    private val _counselorRecommendations = MutableStateFlow<List<String>>(emptyList())
+    val counselorRecommendations: StateFlow<List<String>> get() = _counselorRecommendations
 
     fun addOrRemovePreference(preference: String, isActive: Boolean, preferencesList: MutableList<String>) {
         if (isActive) {
@@ -54,12 +62,31 @@ class AssessmentViewModel @Inject constructor(
         }
     }
 
-    fun nextStep() {
+    fun recommendCounselors(request: CounselourRecommendationRequest) {
+        viewModelScope.launch {
+            try {
+                val result = recommendCounselourUseCase(request)
+                _counselorRecommendations.value = result.recommendations
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
+    }
+
+    fun nextStep(userId: String) {
         if (currentStep < 7) {
             currentStep++
         } else {
-            // Modify this to use the correct user ID from user authentication or another source
-            submitUserPreferences("userId")
+            submitUserPreferences(userId)
+            val request = CounselourRecommendationRequest(
+                gender = genderPreference.firstOrNull() ?: "m",
+                counselourType = typePreferences.firstOrNull() ?: "professional",
+                dateUp = "2024-06-01",
+                dateDown = "2024-06-29",
+                timeUp = 20.5,
+                timeDown = 18.0
+            )
+            recommendCounselors(request)
         }
     }
 
@@ -69,4 +96,3 @@ class AssessmentViewModel @Inject constructor(
         }
     }
 }
-

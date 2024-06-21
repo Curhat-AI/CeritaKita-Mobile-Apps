@@ -3,6 +3,7 @@ package com.ceritakita.app.counselor.data.repository
 import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import javax.inject.Inject
@@ -31,5 +32,24 @@ class CounselorListRepository @Inject constructor(private val firestore: Firebas
         }.addOnFailureListener { e ->
             Log.e("CounselorListRepository", "Failed to fetch counselor details for ID: $id", e)
         }
+    }
+
+    fun loadProfilesByPreferences(counselorIds: List<String>): Task<QuerySnapshot> {
+        Log.d("CounselorListRepository", "Fetching counselors based on provided IDs")
+        return firestore.collection("users")
+            .whereIn(FieldPath.documentId(), counselorIds)
+            .get()
+            .addOnSuccessListener {
+                Log.d("CounselorListRepository", "Successfully fetched counselors with provided IDs")
+            }
+            .addOnFailureListener { e ->
+                Log.e("CounselorListRepository", "Failed to fetch counselors with provided IDs", e)
+            }
+    }
+
+    fun getCounselorsByIds(ids: List<String>): Task<QuerySnapshot> {
+        return firestore.collection("users")
+            .whereIn(FieldPath.documentId(), ids)
+            .get()
     }
 }

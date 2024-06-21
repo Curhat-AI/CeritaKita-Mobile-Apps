@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -36,8 +37,21 @@ import com.ceritakita.app.counselor.presentation.component.MiniCounselorProfileC
 import com.ceritakita.app.counselor.presentation.viewmodel.CounselorListViewModel
 
 @Composable
-fun CounselorListScreen(navController: NavController, viewModel: CounselorListViewModel = hiltViewModel()) {
+fun CounselorListScreen(
+    navController: NavController,
+    counselorIds: String? = null,
+    viewModel: CounselorListViewModel = hiltViewModel()
+) {
     val profiles by viewModel.profiles.observeAsState(initial = emptyList())
+
+    LaunchedEffect(counselorIds) {
+        if (!counselorIds.isNullOrEmpty()) {
+            val ids = counselorIds.split(",")
+            viewModel.loadProfilesByPreferences(ids)
+        } else {
+            viewModel.loadProfiles()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -78,9 +92,7 @@ fun CounselorListScreen(navController: NavController, viewModel: CounselorListVi
                 navController.navigate("counselorDetailScreen/$counselorId")
             }
         )
-//        Button(onClick = { navController.navigate("paymentScreen") }) {
-//
-//        }
+
         Spacer(modifier = Modifier.heightIn(24.dp))
         HeadingSmall(
             text = "Semua Konselor",
@@ -98,7 +110,7 @@ fun CounselorListScreen(navController: NavController, viewModel: CounselorListVi
 @Composable
 fun RowProfileList(
     counselorProfileEntities: List<CounselorProfileEntities>,
-    onCounselorClick: (String) -> Unit // Add the callback function for counselor clicks
+    onCounselorClick: (String) -> Unit
 ) {
     LazyRow(
         contentPadding = PaddingValues(vertical = 8.dp),
@@ -107,7 +119,7 @@ fun RowProfileList(
         items(counselorProfileEntities) { profile ->
             MiniCounselorProfileCard(
                 counselorProfileEntities = profile,
-                onClick = { onCounselorClick(profile.id) }  // Pass the onClick to the card
+                onClick = { onCounselorClick(profile.id) }
             )
         }
     }

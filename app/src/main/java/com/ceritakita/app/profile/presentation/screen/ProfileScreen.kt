@@ -1,5 +1,6 @@
 package com.ceritakita.app.profile.presentation.screen
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -68,19 +69,22 @@ fun ProfileScreen(navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(userData?.photoUrl ?: "https://picsum.photos/600")
-                    .crossfade(true)
-                    .transformations(CircleCropTransformation())
-                    .build(),
-                contentDescription = "Image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(140.dp)
-            )
+
             userData?.let {
+                val photoUrl = userData?.photoUrl ?: "https://picsum.photos/600"
+                Log.d("ProfileScreen", "User Data: $it")
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(photoUrl)
+                        .crossfade(true)
+                        .transformations(CircleCropTransformation())
+                        .build(),
+                    contentDescription = "Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(140.dp)
+                )
                 // Gunakan data user yang dimuat
                 Spacer(modifier = Modifier.height(16.dp))
                 HeadingMedium(text = "${it.displayName}")
