@@ -13,6 +13,13 @@ data class CounselingHistoryEntity(
     var communicationPreference: String? = null,
     var counselorFeedback: String? = null,
     var patientFeedback: String? = null,
-    var rating: Int? = null
+    var rating: String? = null,
+    var counselingFee: Int = 0,
+    var discount: Int = 0,
+    var paymentDate: Date? = null,
+    var paymentMethod: String? = null,
+    var paymentStatus: String? = null,
+    var tax: Int = 0,
+    var totalPayment: Int = 0,
+    var scheduleId: String = ""
 )
-
