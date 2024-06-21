@@ -39,7 +39,7 @@ class RegisterPageViewModel @Inject constructor(
                         "dob" to null,
                         "gender" to null,
                         "phone" to null,
-                        "photoUrl" to null
+                        "photoUrl" to account.photoUrl
                     )
                 )
                 saveUserDetailsToSharedPrefd(userData,user.uid)
